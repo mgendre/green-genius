@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="compose.yaml" />
+    <File Path="README.md" />
+    <File Path=".env" />
+    <File Path=".gitignore" />
+    <File Path=".env.local" />
+    <File Path="infra" />
+  </Folder>
+  <Project Path="GreenGenius.App.IntegrationTests\GreenGenius.App.IntegrationTests.csproj" />
+  <Project Path="GreenGenius.App\GreenGenius.App.csproj" />
+</Solution>
