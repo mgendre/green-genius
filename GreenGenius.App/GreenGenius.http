@@ -1,0 +1,6 @@
+@GreenGenius_HostAddress = http://localhost:5074
+
+GET {{GreenGenius_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

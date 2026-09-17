@@ -1,2 +1,5 @@
-# green-genius
-Helps you make your garden green, helps you understand plants associations
+# GreenGenius
+
+## How to start
+
+Just run `start.sh`.
