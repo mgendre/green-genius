@@ -1,0 +1,9 @@
+<Project>
+    <PropertyGroup>
+        <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <Target Name="ValidateNamingConventions" BeforeTargets="CoreCompile">
+    </Target>
+</Project>
