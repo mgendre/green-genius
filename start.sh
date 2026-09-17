@@ -2,13 +2,13 @@
 
 localEnvFile=".env.local"
 
-if [ ! -f "$localEnvFile" ]; then
+if [[ ! -f "$localEnvFile" ]]; then
     echo "First we need to setup your environment"
     echo "We need your local development password"
     
-    read -s PASS
+    read -r -s PASS
     
-    echo "POSTGRES_PASSWORD" > "$localEnvFile"
+    echo "POSTGRES_PASSWORD=$PASS" > "$localEnvFile"
     
     echo "Development environment set !"
 fi

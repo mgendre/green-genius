@@ -14,7 +14,7 @@ if (app.Environment.IsDevelopment())
 app.MapHealthChecks("/health");
 app.UseHttpsRedirection();
 
-app.Run();
+await app.RunAsync();
 
 // Required for integration tests
 #pragma warning disable ASP0027
