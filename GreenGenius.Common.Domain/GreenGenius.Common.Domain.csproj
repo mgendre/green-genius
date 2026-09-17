@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\GreenGenius.Infra.Hosting\GreenGenius.Infra.Hosting.csproj" />
       <ProjectReference Include="..\GreenGenius.Infra.PgSql\GreenGenius.Infra.PgSql.csproj" />
     </ItemGroup>
 

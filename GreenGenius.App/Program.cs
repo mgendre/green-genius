@@ -1,4 +1,5 @@
 using GreenGenius.App.Extensions;
+using GreenGenius.Common.Domain.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,8 @@ if (app.Environment.IsDevelopment())
 
 app.MapHealthChecks("/health");
 app.UseHttpsRedirection();
+
+await app.MigrateAsync();
 
 await app.RunAsync();
 

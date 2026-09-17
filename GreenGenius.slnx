@@ -1,5 +1,6 @@
 <Solution>
   <Folder Name="/10_infra/">
+    <Project Path="GreenGenius.Infra.Hosting/GreenGenius.Infra.Hosting.csproj" />
     <Project Path="GreenGenius.Infra.PgSql\GreenGenius.Infra.PgSql.csproj" />
   </Folder>
   <Folder Name="/11_Shared/">
@@ -19,8 +20,9 @@
     <File Path="README.md" />
     <File Path=".env" />
     <File Path=".gitignore" />
-    <File Path=".env.local" />
     <File Path="infra" />
     <File Path="start.sh" />
+    <File Path="dotnet-tools.json"/>
+    <File Path=".github"/>
   </Folder>
 </Solution>
