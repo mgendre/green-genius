@@ -6,6 +6,7 @@
     <File Path=".gitignore" />
     <File Path=".env.local" />
     <File Path="infra" />
+    <File Path="start.sh" />
   </Folder>
   <Project Path="GreenGenius.App.IntegrationTests\GreenGenius.App.IntegrationTests.csproj" />
   <Project Path="GreenGenius.App\GreenGenius.App.csproj" />

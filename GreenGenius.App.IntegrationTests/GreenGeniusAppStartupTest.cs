@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
+﻿using System.Net;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Shouldly;
 
 namespace GreenGenius.App.IntegrationTests;
 
@@ -13,5 +15,6 @@ public class GreenGeniusAppStartupTest(WebApplicationFactory<Program> webApplica
         var response = await _client.GetAsync("/health");
 
         response.EnsureSuccessStatusCode();
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 }

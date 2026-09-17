@@ -11,11 +11,11 @@ COPY ["GreenGenius.App/GreenGenius.App.csproj", "GreenGenius.App/"]
 RUN dotnet restore "GreenGenius.App/GreenGenius.App.csproj"
 COPY . .
 WORKDIR "/src/GreenGenius.App"
-RUN dotnet build "./GreenGenius.App.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./GreenGenius.App.csproj" -c "$BUILD_CONFIGURATION" -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./GreenGenius.App.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./GreenGenius.App.csproj" -c "$BUILD_CONFIGURATION" -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
