@@ -1,4 +1,19 @@
 <Solution>
+  <Folder Name="/10_infra/">
+    <Project Path="GreenGenius.Infra.PgSql\GreenGenius.Infra.PgSql.csproj" />
+  </Folder>
+  <Folder Name="/11_Shared/">
+    <Project Path="GreenGenius.Common.Domain/GreenGenius.Common.Domain.csproj" />
+  </Folder>
+  <Folder Name="/20_Domains/">
+    <Project Path="GreenGenius.Services/GreenGenius.Services.csproj" />
+  </Folder>
+  <Folder Name="/30_App/">
+    <Project Path="GreenGenius.App\GreenGenius.App.csproj" />
+  </Folder>
+  <Folder Name="/90_Tests/">
+    <Project Path="GreenGenius.App.IntegrationTests\GreenGenius.App.IntegrationTests.csproj" />
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path="compose.yaml" />
     <File Path="README.md" />
@@ -8,6 +23,4 @@
     <File Path="infra" />
     <File Path="start.sh" />
   </Folder>
-  <Project Path="GreenGenius.App.IntegrationTests\GreenGenius.App.IntegrationTests.csproj" />
-  <Project Path="GreenGenius.App\GreenGenius.App.csproj" />
 </Solution>

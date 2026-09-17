@@ -17,4 +17,9 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\GreenGenius.Infra.PgSql\GreenGenius.Infra.PgSql.csproj" />
+      <ProjectReference Include="..\GreenGenius.Services\GreenGenius.Services.csproj" />
+    </ItemGroup>
+
 </Project>
