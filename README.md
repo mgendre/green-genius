@@ -8,13 +8,21 @@ Install dotnet tools:
 dotnet tool restore
 ```
 
+### Testcontainers and Podman
+
+Special case for podman, you need to configure podman.socket
+
+```
+systemctl --user enable --now podman.socket
+```
+
 ## How to start
 
 Just run `start.sh`.
 
 ## How to
 
-### Migration
+### Run EF Migrations
 
 Run a migration in `Domain` with:
 
