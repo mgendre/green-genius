@@ -20,7 +20,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\GreenGenius.Infra.PgSql\GreenGenius.Infra.PgSql.csproj" />
-      <ProjectReference Include="..\GreenGenius.Services\GreenGenius.Services.csproj" />
+      <ProjectReference Include="..\GreenGenius.Api\GreenGenius.Api.csproj" />
     </ItemGroup>
 
 </Project>

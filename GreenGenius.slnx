@@ -7,7 +7,7 @@
     <Project Path="GreenGenius.Common.Domain/GreenGenius.Common.Domain.csproj" />
   </Folder>
   <Folder Name="/20_Domains/">
-    <Project Path="GreenGenius.Services/GreenGenius.Services.csproj" />
+    <Project Path="GreenGenius.Api\GreenGenius.Api.csproj" />
   </Folder>
   <Folder Name="/30_App/">
     <Project Path="GreenGenius.App\GreenGenius.App.csproj" />
@@ -22,7 +22,7 @@
     <File Path=".gitignore" />
     <File Path="infra" />
     <File Path="start.sh" />
-    <File Path="dotnet-tools.json"/>
-    <File Path=".github"/>
+    <File Path="dotnet-tools.json" />
+    <File Path=".github" />
   </Folder>
 </Solution>

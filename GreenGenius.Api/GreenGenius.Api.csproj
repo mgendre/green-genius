@@ -10,4 +10,7 @@
       <ProjectReference Include="..\GreenGenius.Common.Domain\GreenGenius.Common.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
 </Project>
