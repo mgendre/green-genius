@@ -10,9 +10,12 @@ public class ApplicationDbContext(
 {
     public DbSet<Garden> Gardens { get; set; } = null!;
 
+    // required for re-evaluation
+    public Guid CurrentUserId => currentUserService.GetCurrentUserId();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfiguration(new GardenConfiguration(currentUserService));
+        modelBuilder.ApplyConfiguration(new GardenConfiguration(this));
     }
 }

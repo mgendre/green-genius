@@ -16,6 +16,7 @@ if (app.Environment.IsDevelopment())
 
 app.WithGardensApi();
 
+app.UseExceptionHandler();
 app.MapHealthChecks("/health");
 app.UseHttpsRedirection();
 

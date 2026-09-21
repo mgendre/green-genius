@@ -10,6 +10,6 @@ public class ListGardensHandler(ApplicationDbContext dbContext)
     {
         var result = await dbContext.Gardens.OrderBy(garden => garden.Name).ToListAsync();
         
-        return Results.Ok(result);
+        return Results.Ok(result.Select(g => g.ToDto()));
     }
 }

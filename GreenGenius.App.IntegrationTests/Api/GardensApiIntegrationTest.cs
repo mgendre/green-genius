@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Json;
 using GreenGenius.Api.Constants;
 using GreenGenius.Api.Features.Gardens.Dtos;
 using GreenGenius.Api.Features.Gardens.Handlers;
@@ -6,6 +7,7 @@ using GreenGenius.App.IntegrationTests.Extensions;
 using GreenGenius.App.IntegrationTests.Fixtures;
 using GreenGenius.App.IntegrationTests.Infra;
 using GreenGenius.Common.Domain.Entities;
+using GreenGenius.Infra.Database.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 
@@ -31,7 +33,6 @@ public class GardensApiIntegrationTest(
         
         await ExecuteInScopeAsync(async ctx =>
         {
-            var list = ctx.Gardens.ToList();
             (await ctx.Gardens.AnyAsync(g => g.Name == name)).ShouldBeTrue();
         });
     }
@@ -61,7 +62,7 @@ public class GardensApiIntegrationTest(
         await ExecuteInScopeAsync(async ctx =>
         {
             myGarden = await ctx.PersistGardenAsync("MyGarden", DefaultCurrentUser);
-            await ctx.PersistGardenAsync("AnotherGarden", Guid.NewGuid());
+            anotherGarden = await ctx.PersistGardenAsync("AnotherGarden", Guid.NewGuid());
         });
 
         var gardens = CreateClient().GetAndRead<IList<GardenDto>>(RouteConstants.Gardens, out _);
@@ -69,6 +70,55 @@ public class GardensApiIntegrationTest(
         gardens!.Count.ShouldBe(1);
         gardens.First().Id.ShouldBe(myGarden.Id);
         gardens.Any(g => g.Id == anotherGarden.Id).ShouldBeFalse();
+    }
+
+    [Fact]
+    public async Task UpdateGarden_ShouldPatchExistingGardenInDb()
+    {
+        Garden existing = null!;
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            existing = await ctx.PersistGardenAsync("MyGarden", DefaultCurrentUser);
+        });
+
+        var update = new UpdateGardenDto { Name = "newName" };
+        
+        var response = CreateClient().PutAndRead<GardenDto, UpdateGardenDto>(
+            RouteConstants.Gardens + "/" + existing.Id, update, out _);
+        
+        response!.Name.ShouldBe("newName");
+        
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            var updated = await ctx.Gardens.GetAsync(existing.Id);
+            updated.Name.ShouldBe("newName");
+        });
+    }
+    
+    [Fact]
+    public async Task UpdateGarden_WhenUpdatingUnOwnedGarden_ShouldBeNotFound()
+    {
+        Garden wrongOwner = null!;
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            wrongOwner = await ctx.PersistGardenAsync("MyGarden", Guid.NewGuid());
+        });
+
+        var update = new UpdateGardenDto { Name = "newName" };
+        
+        var response = await CreateClient().PutAsJsonAsync(RouteConstants.Gardens + "/" + wrongOwner.Id, update);
+        
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+    
+    [Fact]
+    public async Task UpdateGarden_WhenUpdatingUnknownGarden_ShouldBeNotFound()
+    {
+        var update = new UpdateGardenDto { Name = "newName" };
+        
+        var response = await CreateClient().PutAsJsonAsync(RouteConstants.Gardens + "/" + Guid.NewGuid(), update);
+        
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     private static CreateGardenDto NewCreateGardenDto(string name = "Garden")

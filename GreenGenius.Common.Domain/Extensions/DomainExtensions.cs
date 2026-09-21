@@ -29,8 +29,8 @@ public static class DomainExtensions
 
     public static void ConfigureOwnerIdQueryFilter<T>(
         this EntityTypeBuilder<T> builder, 
-        ICurrentUserService currentUserService) where T : class, IHasOwner
+        ApplicationDbContext dbContext) where T : class, IHasOwner
     {
-        builder.HasQueryFilter(garden => garden.OwnerId == currentUserService.GetCurrentUserId());
+        builder.HasQueryFilter(entity => entity.OwnerId == dbContext.CurrentUserId);
     }
 }

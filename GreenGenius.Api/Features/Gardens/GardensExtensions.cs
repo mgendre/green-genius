@@ -11,6 +11,7 @@ public static class GardensExtensions
     {
         services.AddScoped<CreateGardenHandler>();
         services.AddScoped<ListGardensHandler>();
+        services.AddScoped<UpdateGardenHandler>();
     }
 
     public static GardenDto ToDto(this Garden garden)
