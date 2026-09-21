@@ -1,4 +1,3 @@
-using GreenGenius.Api.Extensions;
 using GreenGenius.Api.Features.Gardens;
 using GreenGenius.Common.Domain.Extensions;
 
@@ -10,7 +9,6 @@ public static class StartupExtensions
     {
         builder.ConfigureDomain();
         
-        builder.Services.ConfigureApiServices();
         builder.Services.WithGardensServices();
         
         builder.Services.AddHealthChecks();

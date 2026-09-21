@@ -1,4 +1,4 @@
-namespace GreenGenius.Api.Services.Interfaces;
+namespace GreenGenius.Common.Domain.Services.Interfaces;
 
 public interface ICurrentUserService
 {

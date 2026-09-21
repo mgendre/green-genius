@@ -1,4 +1,4 @@
-using GreenGenius.Api.Services.Interfaces;
+using GreenGenius.Common.Domain.Services.Interfaces;
 using Moq;
 
 namespace GreenGenius.App.IntegrationTests.Mocks;

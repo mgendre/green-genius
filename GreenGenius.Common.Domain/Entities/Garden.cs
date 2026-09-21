@@ -1,6 +1,8 @@
-﻿namespace GreenGenius.Common.Domain.Entities;
+﻿using GreenGenius.Common.Domain.Security;
 
-public class Garden
+namespace GreenGenius.Common.Domain.Entities;
+
+public class Garden : IHasOwner
 {
     public Guid Id { get; init; }
 
