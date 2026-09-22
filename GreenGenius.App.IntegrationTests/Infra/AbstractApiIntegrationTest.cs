@@ -1,8 +1,8 @@
-using GreenGenius.Api.Services.Interfaces;
 using GreenGenius.App.IntegrationTests.Extensions;
 using GreenGenius.App.IntegrationTests.Fixtures;
 using GreenGenius.App.IntegrationTests.Mocks;
 using GreenGenius.Common.Domain;
+using GreenGenius.Common.Domain.Services.Interfaces;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +13,7 @@ namespace GreenGenius.App.IntegrationTests.Infra;
 public abstract class AbstractApiIntegrationTest(
         IntegrationTestsApplicationFixture integrationFixture)
     : WebApplicationFactory<Program>,
-    IClassFixture<IntegrationTestsApplicationFixture>
+    IClassFixture<IntegrationTestsApplicationFixture>, IAsyncLifetime
 {
     protected Guid DefaultCurrentUser = Guid.NewGuid();
     
@@ -52,8 +52,25 @@ public abstract class AbstractApiIntegrationTest(
         }
     }
 
-    protected ApplicationDbContext GetDbContext()
+    protected ApplicationDbContext CreateDbContext()
     {
         return Services.CreateScope().ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    }
+
+    protected async Task ExecuteInScopeAsync(Func<ApplicationDbContext, Task> action)
+    {
+        using var scope = Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await action(context);
+    }
+
+    public Task InitializeAsync()
+    {
+        return integrationFixture.ResetDbAsync();
+    }
+
+    public new Task DisposeAsync()
+    {
+        return Task.CompletedTask;
     }
 }

@@ -1,15 +1,21 @@
 using GreenGenius.Common.Domain.Entities;
+using GreenGenius.Common.Domain.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreenGenius.Common.Domain;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
+public class ApplicationDbContext(
+    DbContextOptions<ApplicationDbContext> options,
+    ICurrentUserService currentUserService) : DbContext(options)
 {
-    public required DbSet<Garden> Gardens { get; set; }
+    public DbSet<Garden> Gardens { get; set; } = null!;
+
+    // required for re-evaluation
+    public Guid CurrentUserId => currentUserService.GetCurrentUserId();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfiguration(new GardenConfiguration());
+        modelBuilder.ApplyConfiguration(new GardenConfiguration(this));
     }
 }

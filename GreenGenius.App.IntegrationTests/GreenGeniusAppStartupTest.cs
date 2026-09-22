@@ -25,6 +25,6 @@ public class GreenGeniusAppStartupTest(
     public async Task IntegrationTests_ShouldBeConfigured() // Helps troubleshoot integration tests configuration 
     {
         _integrationFixture.IsPostgresContainerRunning().ShouldBeTrue();
-        await GetDbContext().Gardens.ToListAsync();
+        await CreateDbContext().Gardens.ToListAsync();
     }
 }

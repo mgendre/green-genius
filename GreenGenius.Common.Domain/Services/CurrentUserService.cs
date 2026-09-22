@@ -1,6 +1,6 @@
-using GreenGenius.Api.Services.Interfaces;
+using GreenGenius.Common.Domain.Services.Interfaces;
 
-namespace GreenGenius.Api.Services;
+namespace GreenGenius.Common.Domain.Services;
 
 public class CurrentUserService : ICurrentUserService
 {
