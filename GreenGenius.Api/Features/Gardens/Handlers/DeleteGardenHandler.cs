@@ -8,7 +8,7 @@ namespace GreenGenius.Api.Features.Gardens.Handlers;
 
 public class DeleteGardenHandler(ApplicationDbContext dbContext) : IApiHandler
 {
-    public async Task<Results<NoContent, NotFound>> Handle(Guid id)
+    public async Task<NoContent> Handle(Guid id)
     {
         var gardenToDelete = await dbContext.Gardens.GetAsync(id);
 

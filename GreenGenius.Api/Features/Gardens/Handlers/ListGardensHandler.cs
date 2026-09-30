@@ -11,7 +11,7 @@ public class ListGardensHandler(ApplicationDbContext dbContext) : IApiHandler
 {
     public async Task<Ok<IEnumerable<GardenDto>>> Handle()
     {
-        var result = await dbContext.Gardens.OrderBy(garden => garden.Name).ToListAsync();
+        var result = await dbContext.Gardens.OrderBy(garden => garden.Name).AsNoTracking().ToListAsync();
         
         return TypedResults.Ok(result.Select(g => g.ToDto()));
     }

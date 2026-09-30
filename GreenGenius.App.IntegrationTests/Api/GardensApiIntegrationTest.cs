@@ -54,7 +54,7 @@ public class GardensApiIntegrationTest(
     }
     
     [Fact]
-    public async Task ListGardens_ShouldOnlySortMyGardens()
+    public async Task ListGardens_ShouldOnlyListMyGardens()
     {
         Garden myGarden = null!;
         Garden anotherGarden = null!;

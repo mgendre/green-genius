@@ -9,7 +9,7 @@ namespace GreenGenius.Api.Features.Gardens.Handlers;
 
 public class UpdateGardenHandler(ApplicationDbContext dbContext) : IApiHandler
 {
-    public async Task<Results<Ok<GardenDto>, NotFound>> Handle(Guid id, UpdateGardenDto dto)
+    public async Task<Ok<GardenDto>> Handle(Guid id, UpdateGardenDto dto)
     {
         var result = await dbContext.Gardens.GetAsync(id);
 

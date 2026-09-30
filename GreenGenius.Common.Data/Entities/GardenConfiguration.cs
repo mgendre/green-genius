@@ -10,14 +10,14 @@ public sealed class GardenConfiguration(ApplicationDbContext dbContext) : IEntit
     public void Configure(EntityTypeBuilder<Garden> builder)
     {
         builder.ToTable("gardens");
-        
+
         builder.HasKey(garden => garden.Id);
         builder.Property(garden => garden.Id).ValueGeneratedNever();
 
         builder.Property(garden => garden.Name)
             .IsRequired()
             .HasMaxLength(EntitiesConstants.FieldMaxLength250);
-        
+
         builder.Property(garden => garden.OwnerId)
             .IsRequired();
 

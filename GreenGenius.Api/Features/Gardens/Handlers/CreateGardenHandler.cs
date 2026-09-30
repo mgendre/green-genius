@@ -1,4 +1,3 @@
-using GreenGenius.Api.Constants;
 using GreenGenius.Api.Features.Gardens.Dtos;
 using GreenGenius.Common.Data;
 using GreenGenius.Common.Data.Entities;
@@ -20,12 +19,12 @@ public class CreateGardenHandler(ApplicationDbContext dbContext, ICurrentUserSer
             OwnerId = currentUser.GetCurrentUserId(),
             Name = dto.Name
         };
-        
+
         dbContext.Gardens.Add(garden);
-        
+
         await dbContext.SaveChangesAsync();
-        
-        return TypedResults.Created(RouteConstants.Gardens + "/" + garden.Id, garden.ToDto());
+
+        return TypedResults.Created((string?)null, garden.ToDto());
     }
 }
 
