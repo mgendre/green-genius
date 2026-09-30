@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test-analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0 # Sonar needs history to detect "new code"
+
+      - name: Setup Java
+        uses: actions/setup-java@v6.0.1
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6.0.0
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Build.props', 'dotnet-tools.json') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Restore tools and dependencies
+        run: |
+          dotnet tool restore
+          dotnet restore
+
+      - name: Sonar begin
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: >
+          dotnet sonarscanner begin
+          /k:"mgendre_green-genius"
+          /o:"mgendre"
+          /d:sonar.host.url="https://sonarcloud.io"
+          /d:sonar.token="${SONAR_TOKEN}"
+          /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+          /d:sonar.exclusions="**/Migrations/**,**/*generated.*"
+
+      - name: Build
+        run: dotnet build --no-restore --no-incremental
+
+      - name: Test with coverage
+        run: dotnet coverage collect "dotnet test --no-build" -f xml -o coverage.xml
+
+      - name: Sonar end
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: dotnet sonarscanner end /d:sonar.token="${SONAR_TOKEN}"

@@ -16,7 +16,7 @@ public sealed class GardenConfiguration(ApplicationDbContext dbContext) : IEntit
 
         builder.Property(garden => garden.Name)
             .IsRequired()
-            .HasMaxLength(EntitiesConstants.FieldMaxLength250);
+            .HasMaxLength(EntitiesConstants.MediumTextMaxLength);
 
         builder.Property(garden => garden.OwnerId)
             .IsRequired();

@@ -9,10 +9,13 @@ namespace GreenGenius.Api.Features.Gardens.Handlers;
 
 public class ListGardensHandler(ApplicationDbContext dbContext) : IApiHandler
 {
-    public async Task<Ok<IEnumerable<GardenDto>>> Handle()
+    public async Task<Ok<List<GardenDto>>> Handle()
     {
-        var result = await dbContext.Gardens.OrderBy(garden => garden.Name).AsNoTracking().ToListAsync();
-        
-        return TypedResults.Ok(result.Select(g => g.ToDto()));
+        var gardens = await dbContext.Gardens
+            .OrderBy(garden => garden.Name)
+            .Select(GardensExtensions.AsDto)
+            .ToListAsync();
+
+        return TypedResults.Ok(gardens);
     }
 }

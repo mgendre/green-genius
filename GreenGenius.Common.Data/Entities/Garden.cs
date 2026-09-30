@@ -1,4 +1,4 @@
-﻿using GreenGenius.Common.Data.Security;
+using GreenGenius.Common.Data.Security;
 
 namespace GreenGenius.Common.Data.Entities;
 

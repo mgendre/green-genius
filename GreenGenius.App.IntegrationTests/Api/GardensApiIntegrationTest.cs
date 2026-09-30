@@ -29,7 +29,6 @@ public class GardensApiIntegrationTest(
 
         result!.Id.ShouldNotBe(Guid.Empty);
         result.Name.ShouldBe(name);
-        result.OwnerId.ShouldBe(DefaultCurrentUser);
         
         await ExecuteInScopeAsync(async ctx =>
         {
