@@ -59,3 +59,4 @@ nunit-*.xml
 
 .idea
 .env.local
+/coveragereport
