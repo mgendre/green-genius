@@ -17,4 +17,9 @@ if [[ ! -f "$localEnvFile" ]]; then
     echo "Development environment set !"
 fi
 
+set -a
+[[ -f .env ]] && source .env
+source "$localEnvFile"
+set +a
+
 podman compose up -d

@@ -1,5 +1,8 @@
 ﻿**/.dockerignore
 **/.env
+**/.env.*
+**/coveragereport
+**/TestResults
 **/.git
 **/.gitignore
 **/.project
