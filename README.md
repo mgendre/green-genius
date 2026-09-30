@@ -24,10 +24,10 @@ Just run `start.sh`.
 
 ### Run EF Migrations
 
-Run a migration in `Domain` with:
+Run a migration in `GreenGenius.Common.Data` with:
 
 ```shell
 dotnet ef migrations add <your-migration-name> \
-    -p GreenGenius.Common.Domain/GreenGenius.Common.Domain.csproj \
+    -p GreenGenius.Common.Data/GreenGenius.Common.Data.csproj \
     -s GreenGenius.App/GreenGenius.App.csproj
 ```

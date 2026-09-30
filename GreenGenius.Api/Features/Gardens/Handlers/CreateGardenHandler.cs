@@ -1,15 +1,18 @@
 using GreenGenius.Api.Constants;
-using GreenGenius.Common.Domain;
-using GreenGenius.Common.Domain.Entities;
-using GreenGenius.Common.Domain.Services.Interfaces;
+using GreenGenius.Api.Features.Gardens.Dtos;
+using GreenGenius.Common.Data;
+using GreenGenius.Common.Data.Entities;
+using GreenGenius.Common.Data.Security;
+using GreenGenius.Infra.Hosting.Handlers;
 using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace GreenGenius.Api.Features.Gardens.Handlers;
 
-public class CreateGardenHandler(ApplicationDbContext dbContext, ICurrentUserService currentUser)
+public class CreateGardenHandler(ApplicationDbContext dbContext, ICurrentUserService currentUser) : IApiHandler
 {
-    public async Task<IResult> Handle(CreateGardenDto dto)
+    public async Task<Created<GardenDto>> Handle(CreateGardenDto dto)
     {
         var garden = new Garden
         {
@@ -17,11 +20,12 @@ public class CreateGardenHandler(ApplicationDbContext dbContext, ICurrentUserSer
             OwnerId = currentUser.GetCurrentUserId(),
             Name = dto.Name
         };
-        await dbContext.Gardens.AddAsync(garden);
+        
+        dbContext.Gardens.Add(garden);
         
         await dbContext.SaveChangesAsync();
         
-        return Results.Created(RouteConstants.Gardens + "/" + garden.Id, garden.ToDto());
+        return TypedResults.Created(RouteConstants.Gardens + "/" + garden.Id, garden.ToDto());
     }
 }
 

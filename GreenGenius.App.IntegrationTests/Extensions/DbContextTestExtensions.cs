@@ -1,5 +1,5 @@
-using GreenGenius.Common.Domain;
-using GreenGenius.Common.Domain.Entities;
+using GreenGenius.Common.Data;
+using GreenGenius.Common.Data.Entities;
 
 namespace GreenGenius.App.IntegrationTests.Extensions;
 

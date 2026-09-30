@@ -6,9 +6,9 @@ namespace GreenGenius.Infra.Hosting.Extensions;
 
 public static class HostingExtensions
 {
-    public static void WithHostingServices(this WebApplicationBuilder app)
+    public static void WithHostingServices(this WebApplicationBuilder builder)
     {
-        app.Services.AddProblemDetails();
-        app.Services.AddExceptionHandler<GlobalExceptionHandler>();
+        builder.Services.AddProblemDetails();
+        builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     }
 }

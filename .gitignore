@@ -60,3 +60,4 @@ nunit-*.xml
 .idea
 .env.local
 /coveragereport
+GreenGenius.sln.DotSettings.user

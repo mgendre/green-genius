@@ -1,6 +1,7 @@
 using GreenGenius.Api.Features.Gardens;
 using GreenGenius.App.Extensions;
-using GreenGenius.Common.Domain.Extensions;
+using GreenGenius.Common.Data.Extensions;
+using JetBrains.Annotations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,8 @@ await app.RunAsync();
 #pragma warning disable ASP0027
 namespace GreenGenius.App
 {
-    public partial class Program { }
+    // ReSharper disable once PartialTypeWithSinglePart
+    [UsedImplicitly]
+    public partial class Program;
 }
 #pragma warning restore ASP0027

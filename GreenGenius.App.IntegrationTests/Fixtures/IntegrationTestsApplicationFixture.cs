@@ -1,6 +1,6 @@
 using DotNet.Testcontainers.Containers;
 using GreenGenius.App.IntegrationTests.Mocks;
-using GreenGenius.Common.Domain;
+using GreenGenius.Common.Data;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;

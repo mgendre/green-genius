@@ -1,10 +1,9 @@
 <Solution>
-  <Folder Name="/10_infra/">
-    <Project Path="GreenGenius.Infra.Hosting/GreenGenius.Infra.Hosting.csproj" />
-    <Project Path="GreenGenius.Infra.PgSql\GreenGenius.Infra.PgSql.csproj" />
+  <Folder Name="/10_Shared/">
+    <Project Path="GreenGenius.Common.Data\GreenGenius.Common.Data.csproj" />
   </Folder>
-  <Folder Name="/11_Shared/">
-    <Project Path="GreenGenius.Common.Domain/GreenGenius.Common.Domain.csproj" />
+  <Folder Name="/11_infra/">
+    <Project Path="GreenGenius.Infra.Hosting/GreenGenius.Infra.Hosting.csproj" />
   </Folder>
   <Folder Name="/20_Domains/">
     <Project Path="GreenGenius.Api\GreenGenius.Api.csproj" />

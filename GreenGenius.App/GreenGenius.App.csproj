@@ -1,9 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
       <UserSecretsId>a98688d9-cb40-4424-8409-1157ee90ddaf</UserSecretsId>
   </PropertyGroup>
@@ -19,7 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\GreenGenius.Infra.PgSql\GreenGenius.Infra.PgSql.csproj" />
       <ProjectReference Include="..\GreenGenius.Api\GreenGenius.Api.csproj" />
     </ItemGroup>
 

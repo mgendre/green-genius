@@ -1,8 +1,8 @@
 using GreenGenius.App.IntegrationTests.Extensions;
 using GreenGenius.App.IntegrationTests.Fixtures;
 using GreenGenius.App.IntegrationTests.Mocks;
-using GreenGenius.Common.Domain;
-using GreenGenius.Common.Domain.Services.Interfaces;
+using GreenGenius.Common.Data;
+using GreenGenius.Common.Data.Security;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;

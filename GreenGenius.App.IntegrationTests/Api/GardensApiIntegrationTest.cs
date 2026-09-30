@@ -6,8 +6,8 @@ using GreenGenius.Api.Features.Gardens.Handlers;
 using GreenGenius.App.IntegrationTests.Extensions;
 using GreenGenius.App.IntegrationTests.Fixtures;
 using GreenGenius.App.IntegrationTests.Infra;
-using GreenGenius.Common.Domain.Entities;
-using GreenGenius.Infra.Database.Extensions;
+using GreenGenius.Common.Data.Entities;
+using GreenGenius.Common.Data.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 
@@ -47,9 +47,9 @@ public class GardensApiIntegrationTest(
             await ctx.PersistGardenAsync("BName", DefaultCurrentUser);
         });
 
-        var gardens = CreateClient().GetAndRead<IList<GardenDto>>(RouteConstants.Gardens, out _);
+        var gardens = CreateClient().GetAndReadList<GardenDto>(RouteConstants.Gardens, out _);
         
-        gardens!.Count.ShouldBe(3);
+        gardens.Count.ShouldBe(3);
         gardens.Select(g => g.Name).ToList().ShouldBeInOrder(SortDirection.Ascending);
     }
     
@@ -65,9 +65,9 @@ public class GardensApiIntegrationTest(
             anotherGarden = await ctx.PersistGardenAsync("AnotherGarden", Guid.NewGuid());
         });
 
-        var gardens = CreateClient().GetAndRead<IList<GardenDto>>(RouteConstants.Gardens, out _);
+        var gardens = CreateClient().GetAndReadList<GardenDto>(RouteConstants.Gardens, out _);
 
-        gardens!.Count.ShouldBe(1);
+        gardens.Count.ShouldBe(1);
         gardens.First().Id.ShouldBe(myGarden.Id);
         gardens.Any(g => g.Id == anotherGarden.Id).ShouldBeFalse();
     }
@@ -96,7 +96,7 @@ public class GardensApiIntegrationTest(
     }
     
     [Fact]
-    public async Task UpdateGarden_WhenUpdatingUnOwnedGarden_ShouldBeNotFound()
+    public async Task UpdateGarden_WhenNotOwnedGarden_ShouldBeNotFound()
     {
         Garden wrongOwner = null!;
         await ExecuteInScopeAsync(async ctx =>
@@ -112,11 +112,50 @@ public class GardensApiIntegrationTest(
     }
     
     [Fact]
-    public async Task UpdateGarden_WhenUpdatingUnknownGarden_ShouldBeNotFound()
+    public async Task UpdateGarden_WhenUnknownGarden_ShouldBeNotFound()
     {
         var update = new UpdateGardenDto { Name = "newName" };
         
         var response = await CreateClient().PutAsJsonAsync(RouteConstants.Gardens + "/" + Guid.NewGuid(), update);
+        
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+    
+    [Fact]
+    public async Task DeleteGarden_ShouldRemoveInDb()
+    {
+        Garden existing = null!;
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            existing = await ctx.PersistGardenAsync("MyGarden", DefaultCurrentUser);
+        });
+
+        var response = await CreateClient().DeleteAsync(RouteConstants.Gardens + "/" + existing.Id);
+        
+        response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        var gardens = CreateClient().GetAndReadList<GardenDto>(RouteConstants.Gardens, out _);
+        gardens.Select(g => g.Id).ShouldNotContain(existing.Id);
+    }
+    
+    [Fact]
+    public async Task DeleteGarden_WhenNotOwnedGarden_ShouldBeNotFound()
+    {
+        Garden wrongOwner = null!;
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            wrongOwner = await ctx.PersistGardenAsync("MyGarden", Guid.NewGuid());
+        });
+
+        var response = await CreateClient().DeleteAsync(RouteConstants.Gardens + "/" + wrongOwner.Id);
+        
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+    
+    [Fact]
+    public async Task DeleteGarden_WhenUnknownGarden_ShouldBeNotFound()
+    {
+        var response = await CreateClient().DeleteAsync(RouteConstants.Gardens + "/" + Guid.NewGuid());
         
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }

@@ -1,4 +1,4 @@
-using GreenGenius.Common.Domain.Security;
+using GreenGenius.Common.Data.Security;
 
 namespace GreenGenius.Api.Features.Gardens.Dtos;
 
