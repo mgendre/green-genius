@@ -13,6 +13,7 @@
     <Project Path="GreenGenius.App\GreenGenius.App.csproj" />
   </Folder>
   <Folder Name="/90_Tests/">
+    <Project Path="GreenGenius.Api.Tests/GreenGenius.Api.Tests.csproj" />
     <Project Path="GreenGenius.App.IntegrationTests\GreenGenius.App.IntegrationTests.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
