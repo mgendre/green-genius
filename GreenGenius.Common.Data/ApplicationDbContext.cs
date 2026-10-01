@@ -10,7 +10,7 @@ public class ApplicationDbContext(
 {
     public DbSet<Garden> Gardens { get; set; } = null!;
 
-    // required for re-evaluation
+    // EF re-evaluates a global query filter per query only when it reads a member of the DbContext instance
     public Guid CurrentUserId => currentUserService.GetCurrentUserId();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

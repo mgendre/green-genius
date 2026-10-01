@@ -2,6 +2,7 @@ using GreenGenius.Api.Features.Gardens.Dtos;
 using GreenGenius.Common.Data;
 using GreenGenius.Common.Data.Extensions;
 using GreenGenius.Infra.Hosting.Handlers;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 
@@ -21,6 +22,7 @@ public class UpdateGardenHandler(ApplicationDbContext dbContext) : IApiHandler
     }
 }
 
+[UsedImplicitly]
 public class UpdateGardenDto
 {
     public required string Name { get; init; }

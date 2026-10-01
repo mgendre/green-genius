@@ -9,10 +9,12 @@ namespace GreenGenius.Common.Data.Extensions;
 
 public static class DataExtensions
 {
+    private const string ConnectionStringName = "DefaultConnection";
+
     public static void ConfigurePersistence(this IHostApplicationBuilder builder)
     {
         builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(
-            builder.Configuration.GetConnectionString("DefaultConnection")
+            builder.Configuration.GetConnectionString(ConnectionStringName)
             )
         );
     }

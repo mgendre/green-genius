@@ -18,7 +18,6 @@ app.WithGardensApi();
 
 app.UseExceptionHandler();
 app.MapHealthChecks("/health");
-app.UseHttpsRedirection();
 
 await app.MigrateAsync();
 

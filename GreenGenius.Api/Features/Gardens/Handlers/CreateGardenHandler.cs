@@ -31,5 +31,5 @@ public class CreateGardenHandler(ApplicationDbContext dbContext, ICurrentUserSer
 [UsedImplicitly]
 public class CreateGardenDto
 {
-    public required string Name { get; set; }
+    public required string Name { get; init; }
 }
