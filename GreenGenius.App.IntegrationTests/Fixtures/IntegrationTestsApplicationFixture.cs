@@ -46,22 +46,24 @@ public class IntegrationTestsApplicationFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        if (_dbConnection is null)
+        if (_dbConnection is not null)
         {
-            await _dbContainer.StartAsync();
-            
-            var connectionString = _dbContainer.GetConnectionString();
-            var builder = new DbContextOptionsBuilder<ApplicationDbContext>().UseNpgsql(connectionString);
-            _dbConnection = new NpgsqlConnection(connectionString);
-            await _dbConnection.OpenAsync();
-            
-            var dbContext = new ApplicationDbContext(builder.Options, new CurrentUserMock());
-            await dbContext.Database.MigrateAsync();
-            
-            await CreateRespawnerAsync();
+            return;
         }
+
+        await _dbContainer.StartAsync();
+
+        var connectionString = _dbContainer.GetConnectionString();
+        var builder = new DbContextOptionsBuilder<ApplicationDbContext>().UseNpgsql(connectionString);
+        _dbConnection = new NpgsqlConnection(connectionString);
+        await _dbConnection.OpenAsync();
+
+        await using var dbContext = new ApplicationDbContext(builder.Options, new CurrentUserMock());
+        await dbContext.Database.MigrateAsync();
+
+        await CreateRespawnerAsync();
     }
-    
+
     private async Task CreateRespawnerAsync()
     {
         _respawner = await Respawner.CreateAsync(_dbConnection!, new RespawnerOptions

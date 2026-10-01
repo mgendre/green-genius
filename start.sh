@@ -2,6 +2,7 @@
 set -euo pipefail
 
 localEnvFile=".env.local"
+engine=$(command -v podman >/dev/null && echo podman || echo docker)
 appProject="GreenGenius.App/GreenGenius.App.csproj"
 
 if [[ ! -f "$localEnvFile" ]]; then
@@ -16,8 +17,8 @@ if [[ ! -f "$localEnvFile" ]]; then
     )
 
     dotnet user-secrets init --project "$appProject"
-    dotnet user-secrets set "ConnectionStrings:DefaultConnection" \
-        "Host=localhost;Database=green-genius;Username=greengenius;Password=$appPassword" --project "$appProject"
+    printf '{"ConnectionStrings:DefaultConnection":"Host=localhost;Database=green-genius;Username=greengenius;Password=%s"}' "$appPassword" \
+        | dotnet user-secrets set --project "$appProject"
 
     echo "Development environment set, passwords stored in $localEnvFile"
 fi
@@ -29,4 +30,4 @@ set -a
 source "$localEnvFile"
 set +a
 
-podman compose up -d
+"${engine}" compose up -d

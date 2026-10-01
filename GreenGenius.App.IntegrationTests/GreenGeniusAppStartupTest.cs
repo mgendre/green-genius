@@ -1,4 +1,5 @@
-﻿using System.Net;
+using System.Net;
+using GreenGenius.Api.Constants;
 using GreenGenius.App.IntegrationTests.Fixtures;
 using GreenGenius.App.IntegrationTests.Infra;
 using Microsoft.EntityFrameworkCore;
@@ -13,18 +14,21 @@ public class GreenGeniusAppStartupTest(
     private readonly IntegrationTestsApplicationFixture _integrationFixture = integrationFixture;
 
     [Fact]
-    public async Task Application_ShouldBeHealthy()
+    public async Task GetHealth_ShouldBeOk()
     {
-        var response = await CreateClient().GetAsync("/health");
+        var response = await CreateClient().GetAsync(RouteConstants.Health);
 
-        response.EnsureSuccessStatusCode();
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
     [Fact]
-    public async Task IntegrationTests_ShouldBeConfigured() // Helps troubleshoot integration tests configuration 
+    public async Task QueryGardens_WhenIntegrationConfigured_ShouldReachContainer()
     {
         _integrationFixture.IsPostgresContainerRunning().ShouldBeTrue();
-        await CreateDbContext().Gardens.ToListAsync();
+
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            await ctx.Gardens.ToListAsync();
+        });
     }
 }
