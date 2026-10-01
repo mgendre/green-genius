@@ -1,3 +1,4 @@
+import { provideTaiga } from '@taiga-ui/core';
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
@@ -9,6 +10,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(),
-    { provide: API_BASE_URL, useValue: '/api' }
-  ]
+    { provide: API_BASE_URL, useValue: '/api' },
+    provideTaiga(),
+  ],
 };
