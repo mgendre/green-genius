@@ -1,13 +1,16 @@
-using GreenGenius.Common.Domain;
-using GreenGenius.Infra.Database.Extensions;
+using GreenGenius.Api.Features.Gardens.Dtos;
+using GreenGenius.Common.Data;
+using GreenGenius.Common.Data.Extensions;
+using GreenGenius.Infra.Hosting.Handlers;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace GreenGenius.Api.Features.Gardens.Handlers;
 
-public class UpdateGardenHandler(ApplicationDbContext dbContext)
+public class UpdateGardenHandler(ApplicationDbContext dbContext) : IApiHandler
 {
-    public async Task<IResult> Handle(Guid id, UpdateGardenDto dto)
+    public async Task<Ok<GardenDto>> Handle(Guid id, UpdateGardenDto dto)
     {
         var result = await dbContext.Gardens.GetAsync(id);
 
@@ -15,10 +18,11 @@ public class UpdateGardenHandler(ApplicationDbContext dbContext)
         
         await dbContext.SaveChangesAsync();
         
-        return Results.Ok(result.ToDto());
+        return TypedResults.Ok(result.ToDto());
     }
 }
 
+[UsedImplicitly]
 public class UpdateGardenDto
 {
     public required string Name { get; init; }

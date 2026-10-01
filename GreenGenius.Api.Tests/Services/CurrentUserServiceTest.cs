@@ -1,4 +1,4 @@
-﻿using GreenGenius.Common.Domain.Services;
+﻿using GreenGenius.App.Security;
 using Shouldly;
 
 namespace GreenGenius.Api.Tests.Services;

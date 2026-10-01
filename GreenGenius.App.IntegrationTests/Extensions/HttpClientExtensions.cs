@@ -23,6 +23,18 @@ public static class HttpClientExtensions
             response = httpClient.GetAsync(requestUri).GetAwaiter().GetResult();
             return ReadFromJson<TR>(response);
         }
+        
+        public IList<TR> GetAndReadList<TR>(string requestUri, out HttpResponseMessage response) 
+        {
+            response = httpClient.GetAsync(requestUri).GetAwaiter().GetResult();
+            var list = ReadFromJson<IEnumerable<TR>>(response);
+            return list?.ToList() ?? [];
+        }
+        
+        public HttpResponseMessage Delete(string requestUri)
+        {
+            return httpClient.DeleteAsync(requestUri).GetAwaiter().GetResult();
+        }
     }
     
     private static TR? ReadFromJson<TR>(HttpResponseMessage response)

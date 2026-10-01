@@ -1,6 +1,6 @@
 using DotNet.Testcontainers.Containers;
 using GreenGenius.App.IntegrationTests.Mocks;
-using GreenGenius.Common.Domain;
+using GreenGenius.Common.Data;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -26,10 +26,14 @@ public class IntegrationTestsApplicationFixture : IAsyncLifetime
             return;
         }
 
-        // Assume Podman as container engine
-        var podmanSock = $"unix://{Environment.GetEnvironmentVariable("XDG_RUNTIME_DIR")}/podman/podman.sock";
-        Environment.SetEnvironmentVariable("DOCKER_HOST", podmanSock);
-        Environment.SetEnvironmentVariable("TESTCONTAINERS_RYUK_DISABLED", "true");
+        var podmanSock = $"{Environment.GetEnvironmentVariable("XDG_RUNTIME_DIR")}/podman/podman.sock";
+        if (!File.Exists(podmanSock))
+        {
+            return;
+        }
+
+        Environment.SetEnvironmentVariable("DOCKER_HOST", $"unix://{podmanSock}");
+        Environment.SetEnvironmentVariable("TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE", podmanSock);
     }
     
     private readonly PostgreSqlContainer _dbContainer = new PostgreSqlBuilder(PostgresContainer)

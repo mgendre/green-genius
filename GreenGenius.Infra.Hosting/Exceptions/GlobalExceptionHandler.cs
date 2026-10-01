@@ -1,3 +1,4 @@
+using GreenGenius.Common.Data.Exceptions;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 
@@ -7,7 +8,7 @@ public sealed class GlobalExceptionHandler(IProblemDetailsService problemDetails
 {
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        if (exception is not KeyNotFoundException)
+        if (exception is not DataNotFoundException)
         {
             return false;
         }

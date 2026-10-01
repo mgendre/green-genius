@@ -1,33 +1,42 @@
 # GreenGenius
 
+All commands are run from the repository root.
+
 ## Requirements
 
-Install dotnet tools:
+- .NET 10 SDK
+- Podman or Docker (with Podman, run `systemctl --user enable --now podman.socket`)
+- .Net tools:
 
 ```shell
 dotnet tool restore
 ```
 
-### Testcontainers and Podman
+## Start the local stack
 
-Special case for podman, you need to configure podman.socket
-
-```
-systemctl --user enable --now podman.socket
+```shell
+./start.sh
 ```
 
-## How to start
+On the first run, the script generates random passwords into `.env.local`.
 
-Just run `start.sh`.
+## Build and test
 
-## How to
+```shell
+dotnet build GreenGenius.slnx
+dotnet test GreenGenius.slnx
+```
 
-### Run EF Migrations
+## Run EF Migrations
 
-Run a migration in `Domain` with:
+Run a migration in `GreenGenius.Common.Data` with:
 
 ```shell
 dotnet ef migrations add <your-migration-name> \
-    -p GreenGenius.Common.Domain/GreenGenius.Common.Domain.csproj \
+    -p GreenGenius.Common.Data/GreenGenius.Common.Data.csproj \
     -s GreenGenius.App/GreenGenius.App.csproj
 ```
+
+## CI
+
+GitHub workflow is in `.github/workflows/ci.yaml`.

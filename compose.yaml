@@ -1,21 +1,37 @@
-﻿services:
+services:
   greengenius:
-    image: app-greengenius
+    image: greengenius:local
     build:
       context: .
       dockerfile: GreenGenius.App/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=green-genius;Username=greengenius;Password=${APP_DB_PASSWORD};GssEncryptionMode=Disable"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/localhost/8080 && printf \"GET /health HTTP/1.0\\r\\n\\r\\n\" >&3 && grep -q \" 200 \" <&3' || exit 1" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     networks:
       - green-genius-net
-      
+
   postgres:
     image: postgres:18.6
     container_name: db-postgres
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     env_file:
-      - .env
-      - .env.local
+      - path: .env
+        required: false
+      - path: .env.local
+        required: true
     volumes:
       - pg_volume:/var/lib/postgresql:rw
       - ./infra/postgres/postgres.conf:/etc/postgresql/postgresql.conf:ro

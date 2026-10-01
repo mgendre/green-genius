@@ -1,4 +1,4 @@
-using GreenGenius.Common.Domain.Services.Interfaces;
+using GreenGenius.Common.Data.Security;
 using Moq;
 
 namespace GreenGenius.App.IntegrationTests.Mocks;
