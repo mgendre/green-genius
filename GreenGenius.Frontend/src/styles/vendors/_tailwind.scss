@@ -1,0 +1,39 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Lato', 'Helvetica Neue', sans-serif;
+
+  --color-primary: #547131;
+  --color-primary-hover: color-mix(in srgb, var(--color-primary) 85%, var(--color-text));
+  --color-primary-soft: color-mix(in srgb, var(--color-primary) 15%, var(--color-surface));
+  --color-accent: #edc363;
+  --color-accent-soft: color-mix(in srgb, var(--color-accent) 25%, var(--color-surface));
+  --color-bg: #f5f1e8;
+  --color-surface: #ffffff;
+  --color-surface-hover: color-mix(in srgb, var(--color-text) 5%, var(--color-surface));
+  --color-border: color-mix(in srgb, var(--color-text) 20%, var(--color-surface));
+  --color-text: #3f3929;
+  --color-text-muted: color-mix(in srgb, var(--color-text) 70%, var(--color-surface));
+  --color-success: #a2a915;
+  --color-danger: #dc2626;
+  --color-warning: var(--color-accent);
+  --color-info: #6c92b6;
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 32px;
+
+  --radius-sm: 6px;
+  --radius-base: 8px;
+  --radius-lg: 12px;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-base: 0 2px 8px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04);
+  --shadow-focus: 0 0 0 3px color-mix(in srgb, var(--color-primary) 35%, transparent);
+
+  --z-header: 100;
+
+  --container-shell: 100rem;
+  --container-reading: 80rem;
+}

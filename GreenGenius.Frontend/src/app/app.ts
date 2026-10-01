@@ -1,9 +1,10 @@
+import { TuiRoot } from '@taiga-ui/core';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Client } from './api/api-client.generated';
 
 @Component({
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, TuiRoot],
   selector: 'app-root',
   styleUrl: './app.scss',
   templateUrl: './app.html',
