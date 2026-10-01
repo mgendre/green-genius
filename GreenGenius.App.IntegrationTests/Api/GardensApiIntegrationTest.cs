@@ -17,25 +17,24 @@ public class GardensApiIntegrationTest(
     IntegrationTestsApplicationFixture integrationFixture)
     : AbstractApiIntegrationTest(integrationFixture)
 {
-    
     [Fact]
     public async Task CreateGarden_ShouldInsert()
     {
         const string name = "AnotherGarden";
-        var result = CreateClient().PostAndRead<GardenDto, CreateGardenDto>(
-            RouteConstants.Gardens, NewCreateGardenDto(name), out var response);
-        
-        response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        result!.Id.ShouldNotBe(Guid.Empty);
-        result.Name.ShouldBe(name);
-        
+        var result = await CreateClient().PostAndRead<GardenDto, CreateGardenDto>(
+            RouteConstants.Gardens, NewCreateGardenDto(name));
+
+        result.Response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        result.Value!.Id.ShouldNotBe(Guid.Empty);
+        result.Value.Name.ShouldBe(name);
+
         await ExecuteInScopeAsync(async ctx =>
         {
             (await ctx.Gardens.AnyAsync(g => g.Name == name)).ShouldBeTrue();
         });
     }
-    
+
     [Fact]
     public async Task ListGardens_ShouldSortByName()
     {
@@ -46,25 +45,19 @@ public class GardensApiIntegrationTest(
             await ctx.PersistGardenAsync("BName", DefaultCurrentUser);
         });
 
-        var gardens = CreateClient().GetAndReadList<GardenDto>(RouteConstants.Gardens, out _);
-        
+        var gardens = await CreateClient().GetAndReadList<GardenDto>(RouteConstants.Gardens);
+
         gardens.Count.ShouldBe(3);
         gardens.Select(g => g.Name).ToList().ShouldBeInOrder(SortDirection.Ascending);
     }
-    
-    [Fact]
-    public async Task ListGardens_ShouldOnlyListMyGardens()
-    {
-        Garden myGarden = null!;
-        Garden anotherGarden = null!;
-        
-        await ExecuteInScopeAsync(async ctx =>
-        {
-            myGarden = await ctx.PersistGardenAsync("MyGarden", DefaultCurrentUser);
-            anotherGarden = await ctx.PersistGardenAsync("AnotherGarden", Guid.NewGuid());
-        });
 
-        var gardens = CreateClient().GetAndReadList<GardenDto>(RouteConstants.Gardens, out _);
+    [Fact]
+    public async Task ListGardens_WhenGardensOfOtherOwners_ShouldOnlyListMyGardens()
+    {
+        var myGarden = await PersistGardenAsync(DefaultCurrentUser);
+        var anotherGarden = await PersistGardenAsync(Guid.NewGuid());
+
+        var gardens = await CreateClient().GetAndReadList<GardenDto>(RouteConstants.Gardens);
 
         gardens.Count.ShouldBe(1);
         gardens.First().Id.ShouldBe(myGarden.Id);
@@ -72,91 +65,87 @@ public class GardensApiIntegrationTest(
     }
 
     [Fact]
-    public async Task UpdateGarden_ShouldPatchExistingGardenInDb()
+    public async Task UpdateGarden_ShouldUpdateExistingGardenInDb()
     {
-        Garden existing = null!;
-        await ExecuteInScopeAsync(async ctx =>
-        {
-            existing = await ctx.PersistGardenAsync("MyGarden", DefaultCurrentUser);
-        });
-
+        var existing = await PersistGardenAsync(DefaultCurrentUser);
         var update = new UpdateGardenDto { Name = "newName" };
-        
-        var response = CreateClient().PutAndRead<GardenDto, UpdateGardenDto>(
-            RouteConstants.Gardens + "/" + existing.Id, update, out _);
-        
-        response!.Name.ShouldBe("newName");
-        
+
+        var result = await CreateClient().PutAndRead<GardenDto, UpdateGardenDto>(GetGardenUrl(existing.Id), update);
+
+        result.Value!.Name.ShouldBe("newName");
+
         await ExecuteInScopeAsync(async ctx =>
         {
             var updated = await ctx.Gardens.GetAsync(existing.Id);
             updated.Name.ShouldBe("newName");
         });
     }
-    
+
     [Fact]
     public async Task UpdateGarden_WhenNotOwnedGarden_ShouldBeNotFound()
     {
-        Garden wrongOwner = null!;
-        await ExecuteInScopeAsync(async ctx =>
-        {
-            wrongOwner = await ctx.PersistGardenAsync("MyGarden", Guid.NewGuid());
-        });
-
+        var wrongOwner = await PersistGardenAsync(Guid.NewGuid());
         var update = new UpdateGardenDto { Name = "newName" };
-        
-        var response = await CreateClient().PutAsJsonAsync(RouteConstants.Gardens + "/" + wrongOwner.Id, update);
-        
+
+        var response = await CreateClient().PutAsJsonAsync(GetGardenUrl(wrongOwner.Id), update);
+
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
-    
+
     [Fact]
     public async Task UpdateGarden_WhenUnknownGarden_ShouldBeNotFound()
     {
         var update = new UpdateGardenDto { Name = "newName" };
-        
-        var response = await CreateClient().PutAsJsonAsync(RouteConstants.Gardens + "/" + Guid.NewGuid(), update);
-        
+
+        var response = await CreateClient().PutAsJsonAsync(GetGardenUrl(Guid.NewGuid()), update);
+
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
-    
+
     [Fact]
     public async Task DeleteGarden_ShouldRemoveInDb()
     {
-        Garden existing = null!;
-        await ExecuteInScopeAsync(async ctx =>
-        {
-            existing = await ctx.PersistGardenAsync("MyGarden", DefaultCurrentUser);
-        });
+        var existing = await PersistGardenAsync(DefaultCurrentUser);
 
-        var response = await CreateClient().DeleteAsync(RouteConstants.Gardens + "/" + existing.Id);
-        
+        var response = await CreateClient().DeleteAsync(GetGardenUrl(existing.Id));
+
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
-        var gardens = CreateClient().GetAndReadList<GardenDto>(RouteConstants.Gardens, out _);
+        var gardens = await CreateClient().GetAndReadList<GardenDto>(RouteConstants.Gardens);
         gardens.Select(g => g.Id).ShouldNotContain(existing.Id);
     }
-    
+
     [Fact]
     public async Task DeleteGarden_WhenNotOwnedGarden_ShouldBeNotFound()
     {
-        Garden wrongOwner = null!;
-        await ExecuteInScopeAsync(async ctx =>
-        {
-            wrongOwner = await ctx.PersistGardenAsync("MyGarden", Guid.NewGuid());
-        });
+        var wrongOwner = await PersistGardenAsync(Guid.NewGuid());
 
-        var response = await CreateClient().DeleteAsync(RouteConstants.Gardens + "/" + wrongOwner.Id);
-        
+        var response = await CreateClient().DeleteAsync(GetGardenUrl(wrongOwner.Id));
+
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
-    
+
     [Fact]
     public async Task DeleteGarden_WhenUnknownGarden_ShouldBeNotFound()
     {
-        var response = await CreateClient().DeleteAsync(RouteConstants.Gardens + "/" + Guid.NewGuid());
-        
+        var response = await CreateClient().DeleteAsync(GetGardenUrl(Guid.NewGuid()));
+
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    private static string GetGardenUrl(Guid id)
+    {
+        return RouteConstants.Gardens + "/" + id;
+    }
+
+    private async Task<Garden> PersistGardenAsync(Guid owner)
+    {
+        Garden garden = null!;
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            garden = await ctx.PersistGardenAsync("MyGarden", owner);
+        });
+        return garden;
     }
 
     private static CreateGardenDto NewCreateGardenDto(string name = "Garden")

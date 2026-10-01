@@ -1,6 +1,4 @@
-using GreenGenius.Common.Data.Security;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,12 +22,5 @@ public static class DataExtensions
         using var scope = app.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         await db.Database.MigrateAsync();
-    }
-
-    public static void ConfigureOwnerIdQueryFilter<T>(
-        this EntityTypeBuilder<T> builder, 
-        ApplicationDbContext dbContext) where T : class, IHasOwner
-    {
-        builder.HasQueryFilter(entity => entity.OwnerId == dbContext.CurrentUserId);
     }
 }

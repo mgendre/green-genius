@@ -13,7 +13,11 @@ COPY ["GreenGenius.Common.Data/GreenGenius.Common.Data.csproj", "GreenGenius.Com
 COPY ["GreenGenius.Infra.Hosting/GreenGenius.Infra.Hosting.csproj", "GreenGenius.Infra.Hosting/"]
 RUN dotnet restore "GreenGenius.App/GreenGenius.App.csproj"
 COPY . .
-RUN dotnet publish "GreenGenius.App/GreenGenius.App.csproj" -c "$BUILD_CONFIGURATION" --no-restore -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "GreenGenius.App/GreenGenius.App.csproj" \
+    -c "$BUILD_CONFIGURATION" \
+    --no-restore \
+    -o /app/publish \
+    /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

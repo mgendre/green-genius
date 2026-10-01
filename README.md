@@ -18,7 +18,8 @@ dotnet tool restore
 ./start.sh
 ```
 
-On the first run, the script generates random passwords into `.env.local`.
+Support both Docker and Podman.
+On the first run, it generates random passwords into `.env.local`.
 
 ## Build and test
 
@@ -27,9 +28,9 @@ dotnet build GreenGenius.slnx
 dotnet test GreenGenius.slnx
 ```
 
-## Run EF Migrations
+## EF migrations
 
-Run a migration in `GreenGenius.Common.Data` with:
+Add a migration in `GreenGenius.Common.Data` with:
 
 ```shell
 dotnet ef migrations add <your-migration-name> \

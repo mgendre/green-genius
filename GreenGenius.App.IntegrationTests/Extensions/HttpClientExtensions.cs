@@ -6,48 +6,36 @@ public static class HttpClientExtensions
 {
     extension(HttpClient httpClient)
     {
-        public TR? PostAndRead<TR, T>(string requestUri, T value, out HttpResponseMessage response) 
+        public async Task<ApiResponse<TR>> PostAndRead<TR, T>(string requestUri, T value)
         {
-            response = httpClient.PostAsJsonAsync(requestUri, value).GetAwaiter().GetResult();
-            return ReadFromJson<TR>(response);
-        }
-        
-        public TR? PutAndRead<TR, T>(string requestUri, T value, out HttpResponseMessage response) 
-        {
-            response = httpClient.PutAsJsonAsync(requestUri, value).GetAwaiter().GetResult();
-            return ReadFromJson<TR>(response);
+            var response = await httpClient.PostAsJsonAsync(requestUri, value);
+            return new ApiResponse<TR>(response, await ReadFromJson<TR>(response));
         }
 
-        public TR? GetAndRead<TR>(string requestUri, out HttpResponseMessage response) 
+        public async Task<ApiResponse<TR>> PutAndRead<TR, T>(string requestUri, T value)
         {
-            response = httpClient.GetAsync(requestUri).GetAwaiter().GetResult();
-            return ReadFromJson<TR>(response);
+            var response = await httpClient.PutAsJsonAsync(requestUri, value);
+            return new ApiResponse<TR>(response, await ReadFromJson<TR>(response));
         }
-        
-        public IList<TR> GetAndReadList<TR>(string requestUri, out HttpResponseMessage response) 
+
+        public async Task<IList<TR>> GetAndReadList<TR>(string requestUri)
         {
-            response = httpClient.GetAsync(requestUri).GetAwaiter().GetResult();
-            var list = ReadFromJson<IEnumerable<TR>>(response);
+            var response = await httpClient.GetAsync(requestUri);
+            var list = await ReadFromJson<IEnumerable<TR>>(response);
             return list?.ToList() ?? [];
         }
-        
-        public HttpResponseMessage Delete(string requestUri)
-        {
-            return httpClient.DeleteAsync(requestUri).GetAwaiter().GetResult();
-        }
     }
-    
-    private static TR? ReadFromJson<TR>(HttpResponseMessage response)
+
+    private static async Task<TR?> ReadFromJson<TR>(HttpResponseMessage response)
     {
         try
         {
-            return response.Content.ReadFromJsonAsync<TR>().GetAwaiter().GetResult();
+            return await response.Content.ReadFromJsonAsync<TR>();
         }
         catch (Exception e)
         {
-            var stringContent = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            var stringContent = await response.Content.ReadAsStringAsync();
             throw new InvalidOperationException("Could not parse json, content: " + stringContent, e);
         }
     }
 }
-

@@ -5,7 +5,6 @@ using GreenGenius.Common.Data;
 using GreenGenius.Common.Data.Security;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GreenGenius.App.IntegrationTests.Infra;
@@ -16,15 +15,12 @@ public abstract class AbstractApiIntegrationTest(
     : WebApplicationFactory<Program>,
     IAsyncLifetime
 {
-    protected Guid DefaultCurrentUser = Guid.NewGuid();
-    
+    protected readonly Guid DefaultCurrentUser = Guid.NewGuid();
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureServices(services =>
-        {
-            ReplacePgSql(services);
-            UseMocks(services);
-        });
+        builder.UseSetting("ConnectionStrings:DefaultConnection", integrationFixture.GetPostgresContainerConnectionString());
+        builder.ConfigureServices(UseMocks);
     }
 
     private void UseMocks(IServiceCollection services)
@@ -32,30 +28,6 @@ public abstract class AbstractApiIntegrationTest(
         var currentUserMock = new CurrentUserMock();
         currentUserMock.SetCurrentUser(DefaultCurrentUser);
         services.Replace(typeof(ICurrentUserService), currentUserMock);
-    }
-
-
-    private void ReplacePgSql(IServiceCollection services)
-    {
-        var descriptor = services.SingleOrDefault(d => 
-            d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
-
-        if (descriptor is not null)
-        {
-            services.Remove(descriptor);
-
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(integrationFixture.GetPostgresContainerConnectionString()));
-        }
-        else
-        {
-            throw new InvalidOperationException("Could not replace DbContext because it was not found");
-        }
-    }
-
-    protected ApplicationDbContext CreateDbContext()
-    {
-        return Services.CreateScope().ServiceProvider.GetRequiredService<ApplicationDbContext>();
     }
 
     protected async Task ExecuteInScopeAsync(Func<ApplicationDbContext, Task> action)
@@ -70,7 +42,7 @@ public abstract class AbstractApiIntegrationTest(
         return integrationFixture.ResetDbAsync();
     }
 
-    public new Task DisposeAsync()
+    Task IAsyncLifetime.DisposeAsync()
     {
         return Task.CompletedTask;
     }
