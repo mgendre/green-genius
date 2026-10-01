@@ -19,6 +19,9 @@ app.UseExceptionHandler();
 app.WithGardensApi();
 app.MapHealthChecks(RouteConstants.Health);
 
-await app.MigrateAsync();
+if (!app.Environment.IsOpenApiGeneration())
+{
+    await app.MigrateAsync();
+}
 
 await app.RunAsync();

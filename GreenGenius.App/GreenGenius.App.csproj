@@ -3,10 +3,26 @@
     <PropertyGroup>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
       <UserSecretsId>a98688d9-cb40-4424-8409-1157ee90ddaf</UserSecretsId>
+      <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
+      <OpenApiDocumentsDirectory>$(MSBuildProjectDirectory)/openapi</OpenApiDocumentsDirectory>
+      <FrontendDirectory>$(MSBuildProjectDirectory)/../GreenGenius.Frontend</FrontendDirectory>
   </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug' And Exists('$(FrontendDirectory)/node_modules')">
+        <OpenApiGenerateDocuments>true</OpenApiGenerateDocuments>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Remove="openapi/**" />
+        <None Include="openapi/**" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
+        <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.12">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -16,5 +32,9 @@
     <ItemGroup>
       <ProjectReference Include="..\GreenGenius.Api\GreenGenius.Api.csproj" />
     </ItemGroup>
+
+    <Target Name="GenerateTypeScriptClient" AfterTargets="GenerateOpenApiDocuments" Condition="'$(OpenApiGenerateDocuments)' == 'true'">
+        <Exec Command="npm run api -- /variables:Input=$(OpenApiDocumentsDirectory)/$(MSBuildProjectName).json" WorkingDirectory="$(FrontendDirectory)" />
+    </Target>
 
 </Project>

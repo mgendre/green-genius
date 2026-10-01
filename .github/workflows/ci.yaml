@@ -60,6 +60,7 @@ jobs:
           /d:sonar.token="${SONAR_TOKEN}"
           /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
           /d:sonar.exclusions="**/Migrations/**,**/*generated.*"
+          /d:sonar.coverage.exclusions="GreenGenius.Frontend/**"
 
       - name: Build
         run: dotnet build --no-restore --no-incremental

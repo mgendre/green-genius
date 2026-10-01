@@ -15,7 +15,7 @@
     <Project Path="GreenGenius.Api.Tests/GreenGenius.Api.Tests.csproj" />
     <Project Path="GreenGenius.App.IntegrationTests\GreenGenius.App.IntegrationTests.csproj" />
   </Folder>
-  <Folder Name="/Solution Items/">
+  <Folder Name="/00_Solution_Items/">
     <File Path="compose.yaml" />
     <File Path="README.md" />
     <File Path=".gitignore" />
@@ -23,5 +23,6 @@
     <File Path="start.sh" />
     <File Path="dotnet-tools.json" />
     <File Path=".github" />
+    <File Path="GreenGenius.Frontend/" />
   </Folder>
 </Solution>
