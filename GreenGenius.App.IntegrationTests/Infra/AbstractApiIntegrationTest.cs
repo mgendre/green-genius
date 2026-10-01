@@ -10,10 +10,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace GreenGenius.App.IntegrationTests.Infra;
 
+[Collection(IntegrationTestsCollection.Name)]
 public abstract class AbstractApiIntegrationTest(
         IntegrationTestsApplicationFixture integrationFixture)
     : WebApplicationFactory<Program>,
-    IClassFixture<IntegrationTestsApplicationFixture>, IAsyncLifetime
+    IAsyncLifetime
 {
     protected Guid DefaultCurrentUser = Guid.NewGuid();
     
