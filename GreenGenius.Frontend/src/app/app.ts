@@ -1,19 +1,13 @@
-import { TuiRoot } from '@taiga-ui/core';
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { Client } from './api/api-client.generated';
+import { Component } from '@angular/core';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideSprout } from '@ng-icons/lucide';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { TranslateDirective, TranslatePipe } from '@ngx-translate/core';
 
 @Component({
-  imports: [RouterOutlet, TuiRoot],
+  imports: [NgIcon, RouterLink, RouterLinkActive, RouterOutlet, TranslateDirective, TranslatePipe],
+  providers: [provideIcons({ lucideSprout })],
   selector: 'app-root',
-  styleUrl: './app.scss',
   templateUrl: './app.html',
 })
-export class App implements OnInit {
-  protected readonly title = signal('GreenGenius.Frontend');
-  private readonly client = inject(Client);
-
-  ngOnInit(): void {
-    this.client.listGardens().subscribe(gardens => console.log(gardens));
-  }
-}
+export class App {}

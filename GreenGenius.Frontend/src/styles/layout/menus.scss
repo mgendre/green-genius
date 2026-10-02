@@ -1,0 +1,31 @@
+.app-main-menu {
+  @apply flex items-baseline gap-lg bg-primary px-lg py-sm;
+}
+
+.app-brand {
+  @apply flex items-baseline gap-sm;
+}
+
+.app-main-nav {
+  @apply flex gap-md;
+}
+
+.app-logo {
+  @apply self-center text-primary-foreground;
+}
+
+.app-title {
+  @apply font-display text-xl tracking-widest text-primary-foreground;
+}
+
+.app-main-menu-link {
+  @apply relative p-sm tracking-wide text-primary-foreground transition-colors hover:text-accent;
+
+  &::after {
+    @apply absolute inset-x-sm -bottom-xs h-px scale-x-0 bg-accent transition-transform;
+  }
+
+  &.active::after {
+    @apply scale-x-100;
+  }
+}
