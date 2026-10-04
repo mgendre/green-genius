@@ -1,5 +1,6 @@
 using GreenGenius.Api.Constants;
 using GreenGenius.Api.Features.Gardens;
+using GreenGenius.Api.Features.Plants;
 using GreenGenius.App.Extensions;
 using GreenGenius.Common.Data.Extensions;
 
@@ -17,6 +18,7 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandler();
 
 app.WithGardensApi();
+app.WithPlantsApi();
 app.MapHealthChecks(RouteConstants.Health);
 
 if (!app.Environment.IsOpenApiGeneration())

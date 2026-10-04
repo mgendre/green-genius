@@ -1,5 +1,6 @@
 using GreenGenius.Common.Data;
 using GreenGenius.Common.Data.Entities;
+using GreenGenius.Common.Data.Enums;
 
 namespace GreenGenius.App.IntegrationTests.Extensions;
 
@@ -19,5 +20,46 @@ public static class DbContextTestExtensions
         await dbContext.SaveChangesAsync();
 
         return garden;
+    }
+
+    public static async Task<Plant> PersistPlantAsync(
+        this ApplicationDbContext dbContext,
+        string nameFr,
+        PlantFamily family = PlantFamily.Solanaceae,
+        PlantLifeCycle lifeCycle = PlantLifeCycle.Annual)
+    {
+        var id = Guid.NewGuid();
+        var plant = new Plant
+        {
+            Id = id,
+            NameFr = nameFr,
+            Family = family,
+            LifeCycle = lifeCycle,
+            Needs = new PlantNeeds
+            {
+                PlantId = id,
+                Sunlight = SunlightLevel.Medium,
+                WaterNeed = WaterNeedLevel.Medium,
+                RootDepth = RootDepthLevel.Medium,
+                SpacingRowCm = 50,
+                SpacingPlantCm = 30,
+                HeightCm = 100,
+                SpreadCm = 80
+            },
+            Traits = new PlantTraits
+            {
+                PlantId = id,
+                NitrogenFixer = false,
+                DynamicAccumulator = false,
+                PollinatorFriendly = false,
+                DroughtTolerant = false
+            }
+        };
+
+        dbContext.Add(plant);
+
+        await dbContext.SaveChangesAsync();
+
+        return plant;
     }
 }
