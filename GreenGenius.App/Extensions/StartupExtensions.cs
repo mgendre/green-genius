@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using GreenGenius.Api.Features.Gardens;
 using GreenGenius.App.Security;
 using GreenGenius.Common.Data.Extensions;
@@ -19,5 +20,15 @@ public static class StartupExtensions
         
         builder.Services.AddHealthChecks();
         builder.Services.AddOpenApi();
+
+        builder.ConfigureJsonOptions();
+    }
+
+    private static void ConfigureJsonOptions(this WebApplicationBuilder builder)
+    {
+        builder.Services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
     }
 }

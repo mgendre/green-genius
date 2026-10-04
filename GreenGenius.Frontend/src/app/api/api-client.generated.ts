@@ -249,6 +249,115 @@ export class Client {
         }
         return _observableOf(null as any);
     }
+
+    /**
+     * @return OK
+     */
+    listPlants(): Observable<PlantSummaryDto[]> {
+        let url_ = this.baseUrl + "/plants";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processListPlants(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processListPlants(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PlantSummaryDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PlantSummaryDto[]>;
+        }));
+    }
+
+    protected processListPlants(response: HttpResponseBase): Observable<PlantSummaryDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PlantSummaryDto[];
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    getPlant(id: string): Observable<PlantDto> {
+        let url_ = this.baseUrl + "/plants/{id}";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPlant(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPlant(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PlantDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PlantDto>;
+        }));
+    }
+
+    protected processGetPlant(response: HttpResponseBase): Observable<PlantDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PlantDto;
+            return _observableOf(result200);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result404: any = null;
+            result404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 export interface CreateGardenDto {
@@ -264,6 +373,75 @@ export interface GardenDto {
     [key: string]: any;
 }
 
+export interface PlantDto {
+    id?: string;
+    nameFr: string;
+    nameLatin?: string | undefined;
+    descriptionFr?: string | undefined;
+    family?: PlantFamily;
+    lifeCycle?: PlantLifeCycle;
+    daysToMaturity?: number | undefined;
+    temperatureMinC?: number | undefined;
+    needs: PlantNeedsDto;
+    traits: PlantTraitsDto;
+
+    [key: string]: any;
+}
+
+export enum PlantFamily {
+    Solanaceae = "Solanaceae",
+    Brassicaceae = "Brassicaceae",
+    Fabaceae = "Fabaceae",
+    Apiaceae = "Apiaceae",
+    Cucurbitaceae = "Cucurbitaceae",
+    Amaryllidaceae = "Amaryllidaceae",
+    Asteraceae = "Asteraceae",
+    Amaranthaceae = "Amaranthaceae",
+    Poaceae = "Poaceae",
+    Lamiaceae = "Lamiaceae",
+    Rosaceae = "Rosaceae",
+    Polygonaceae = "Polygonaceae",
+    Other = "Other",
+}
+
+export enum PlantLifeCycle {
+    Annual = "Annual",
+    Biennial = "Biennial",
+    Perennial = "Perennial",
+}
+
+export interface PlantNeedsDto {
+    sunlight?: SunlightLevel;
+    waterNeed?: WaterNeedLevel;
+    rootDepth?: RootDepthLevel;
+    soilpHMin?: number | undefined;
+    soilpHMax?: number | undefined;
+    spacingRowCm?: number;
+    spacingPlantCm?: number;
+    heightCm?: number;
+    spreadCm?: number;
+
+    [key: string]: any;
+}
+
+export interface PlantSummaryDto {
+    id?: string;
+    nameFr: string;
+    nameLatin?: string | undefined;
+    family: string;
+
+    [key: string]: any;
+}
+
+export interface PlantTraitsDto {
+    nitrogenFixer?: boolean;
+    dynamicAccumulator?: boolean;
+    pollinatorFriendly?: boolean;
+    droughtTolerant?: boolean;
+
+    [key: string]: any;
+}
+
 export interface ProblemDetails {
     type?: string | undefined;
     title?: string | undefined;
@@ -274,10 +452,28 @@ export interface ProblemDetails {
     [key: string]: any;
 }
 
+export enum RootDepthLevel {
+    Shallow = "Shallow",
+    Medium = "Medium",
+    Deep = "Deep",
+}
+
+export enum SunlightLevel {
+    Low = "Low",
+    Medium = "Medium",
+    High = "High",
+}
+
 export interface UpdateGardenDto {
     name: string;
 
     [key: string]: any;
+}
+
+export enum WaterNeedLevel {
+    Low = "Low",
+    Medium = "Medium",
+    High = "High",
 }
 
 export class SwaggerException extends Error {

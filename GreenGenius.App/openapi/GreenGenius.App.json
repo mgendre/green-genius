@@ -138,6 +138,70 @@
           }
         }
       }
+    },
+    "/plants": {
+      "get": {
+        "tags": [
+          "GreenGenius.App"
+        ],
+        "operationId": "ListPlants",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PlantSummaryDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/plants/{id}": {
+      "get": {
+        "tags": [
+          "GreenGenius.App"
+        ],
+        "operationId": "GetPlant",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlantDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -165,6 +229,195 @@
           },
           "name": {
             "type": "string"
+          }
+        }
+      },
+      "PlantDto": {
+        "required": [
+          "nameFr",
+          "needs",
+          "traits"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nameFr": {
+            "type": "string"
+          },
+          "nameLatin": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionFr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "family": {
+            "$ref": "#/components/schemas/PlantFamily"
+          },
+          "lifeCycle": {
+            "$ref": "#/components/schemas/PlantLifeCycle"
+          },
+          "daysToMaturity": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "temperatureMinC": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "null",
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "needs": {
+            "$ref": "#/components/schemas/PlantNeedsDto"
+          },
+          "traits": {
+            "$ref": "#/components/schemas/PlantTraitsDto"
+          }
+        }
+      },
+      "PlantFamily": {
+        "enum": [
+          "Solanaceae",
+          "Brassicaceae",
+          "Fabaceae",
+          "Apiaceae",
+          "Cucurbitaceae",
+          "Amaryllidaceae",
+          "Asteraceae",
+          "Amaranthaceae",
+          "Poaceae",
+          "Lamiaceae",
+          "Rosaceae",
+          "Polygonaceae",
+          "Other"
+        ]
+      },
+      "PlantLifeCycle": {
+        "enum": [
+          "Annual",
+          "Biennial",
+          "Perennial"
+        ]
+      },
+      "PlantNeedsDto": {
+        "type": "object",
+        "properties": {
+          "sunlight": {
+            "$ref": "#/components/schemas/SunlightLevel"
+          },
+          "waterNeed": {
+            "$ref": "#/components/schemas/WaterNeedLevel"
+          },
+          "rootDepth": {
+            "$ref": "#/components/schemas/RootDepthLevel"
+          },
+          "soilpHMin": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "soilpHMax": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
+            "type": [
+              "null",
+              "number",
+              "string"
+            ],
+            "format": "double"
+          },
+          "spacingRowCm": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "spacingPlantCm": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "heightCm": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          },
+          "spreadCm": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "type": [
+              "integer",
+              "string"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "PlantSummaryDto": {
+        "required": [
+          "nameFr",
+          "family"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nameFr": {
+            "type": "string"
+          },
+          "nameLatin": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "family": {
+            "type": "string"
+          }
+        }
+      },
+      "PlantTraitsDto": {
+        "type": "object",
+        "properties": {
+          "nitrogenFixer": {
+            "type": "boolean"
+          },
+          "dynamicAccumulator": {
+            "type": "boolean"
+          },
+          "pollinatorFriendly": {
+            "type": "boolean"
+          },
+          "droughtTolerant": {
+            "type": "boolean"
           }
         }
       },
@@ -206,6 +459,20 @@
           }
         }
       },
+      "RootDepthLevel": {
+        "enum": [
+          "Shallow",
+          "Medium",
+          "Deep"
+        ]
+      },
+      "SunlightLevel": {
+        "enum": [
+          "Low",
+          "Medium",
+          "High"
+        ]
+      },
       "UpdateGardenDto": {
         "required": [
           "name"
@@ -216,6 +483,13 @@
             "type": "string"
           }
         }
+      },
+      "WaterNeedLevel": {
+        "enum": [
+          "Low",
+          "Medium",
+          "High"
+        ]
       }
     }
   },
