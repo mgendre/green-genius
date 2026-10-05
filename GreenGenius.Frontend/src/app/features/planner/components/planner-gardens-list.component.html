@@ -1,0 +1,33 @@
+<hlm-card class="w-full">
+  <hlm-card-header>
+    <h2 hlmCardTitle>{{ 'gardens.title' | translate }}</h2>
+  </hlm-card-header>
+
+  @if (gardensStore.loaded()) {
+    @if (gardensStore.loaded() && gardensStore.gardens().length === 0) {
+      <p class="m-4" hlmCardDescription>{{ 'gardens.empty' | translate }}</p>
+    } @else {
+      <div hlmCardContent>
+        <ul class="garden-list">
+          @for (garden of gardensStore.gardens(); track garden.id) {
+            @let selected = plannerStore.selectedGardenId() === garden.id;
+            <li>
+              <button
+                type="button"
+                hlmBtn
+                [variant]="selected ? 'default' : 'ghost'"
+                [attr.aria-current]="selected ? 'true' : null"
+                (click)="plannerStore.selectGarden(garden.id)"
+              >
+                {{ garden.name }}
+              </button>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  }
+  <hlm-card-footer class="justify-end gap-2 pt-(--card-spacing)">
+      <button hlmBtn (click)="addGarden()">{{ 'gardens.list.add' | translate }}</button>
+  </hlm-card-footer>
+</hlm-card>

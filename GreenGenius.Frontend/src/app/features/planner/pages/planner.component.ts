@@ -1,14 +1,10 @@
-import { Component, inject } from '@angular/core';
-import { TranslateDirective } from '@ngx-translate/core';
-import { GardensStore } from '../../../shared/stores/gardens.store';
-import { PlannerStore } from '../planner.store';
+import { Component } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
+import { PlannerGardensListComponent } from '../components/planner-gardens-list.component';
 
 @Component({
-  imports: [TranslateDirective],
+  imports: [TranslatePipe, PlannerGardensListComponent],
   selector: 'app-planner',
   templateUrl: './planner.html',
 })
-export class PlannerComponent {
-  readonly gardensStore = inject(GardensStore);
-  readonly plannerStore = inject(PlannerStore);
-}
+export class PlannerComponent {}

@@ -1,5 +1,9 @@
 {
   "app.title": "GreenGenius",
+  "gardens.empty": "Aucun jardin pour le moment",
+  "gardens.list.add": "Ajouter un jardin",
+  "gardens.loading": "Chargement des jardins…",
+  "gardens.title": "Mes jardins",
   "menu.herbarium": "Herbier",
   "menu.home": "Accueil",
   "menu.label": "Navigation principale",

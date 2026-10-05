@@ -14,7 +14,9 @@
     "target": "ES2022",
     "module": "preserve",
     "paths": {
-      "@spartan-ng/helm/utils": ["./src/app/shared/spartan/helm/utils/src/index.ts"]
+      "@spartan-ng/helm/utils": ["./src/app/shared/spartan/helm/utils/src/index.ts"],
+      "@spartan-ng/helm/button": ["./src/app/shared/spartan/helm/button/src/index.ts"],
+      "@spartan-ng/helm/card": ["./src/app/shared/spartan/helm/card/src/index.ts"]
     }
   },
   "angularCompilerOptions": {
