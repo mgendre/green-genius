@@ -1,3 +1,5 @@
 h1 {
-  @apply font-display;
+  @apply font-sans font-semibold text-xl text-center;
+  @apply p-3;
+  @apply border-solid border-b-1;
 }

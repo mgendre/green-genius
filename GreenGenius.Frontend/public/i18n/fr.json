@@ -1,6 +1,8 @@
 {
   "app.title": "GreenGenius",
   "menu.herbarium": "Herbier",
+  "menu.home": "Accueil",
   "menu.label": "Navigation principale",
-  "menu.plots": "Mes parcelles"
+  "menu.planner": "Planificateur",
+  "planner.title": "Planificateur"
 }

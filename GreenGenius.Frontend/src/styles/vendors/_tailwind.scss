@@ -1,11 +1,9 @@
 @import 'tailwindcss';
 @import '@spartan-ng/brain/hlm-tailwind-preset.css';
-@import '@fontsource-variable/fraunces/index.css';
 @import '@fontsource-variable/nunito/index.css';
 
 @theme {
   --font-sans: 'Nunito Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Fraunces Variable', ui-serif, Georgia, serif;
 
   --color-background: var(--color-surface);
   --color-foreground: var(--color-text);

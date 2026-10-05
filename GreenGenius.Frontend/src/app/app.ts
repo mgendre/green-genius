@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideSprout } from '@ng-icons/lucide';
+import { lucideBookOpen, lucideLayout, lucideSprout } from '@ng-icons/lucide';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslateDirective, TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   imports: [NgIcon, RouterLink, RouterLinkActive, RouterOutlet, TranslateDirective, TranslatePipe],
-  providers: [provideIcons({ lucideSprout })],
+  providers: [provideIcons({ lucideBookOpen, lucideLayout, lucideSprout })],
   selector: 'app-root',
   templateUrl: './app.html',
 })

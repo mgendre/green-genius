@@ -1,11 +1,19 @@
 <header class="app-main-menu">
   <div class="app-brand">
-    <ng-icon class="app-logo" name="lucideSprout" aria-hidden="true" size="1.5rem" />
-    <span class="app-title" translate>app.title</span>
+    <a routerLink="/" [attr.aria-label]="'menu.home' | translate">
+      <ng-icon class="app-logo" name="lucideSprout" aria-hidden="true" size="1.5rem" />
+    </a>
+    <a class="app-title" routerLink="/" translate>app.title</a>
   </div>
   <nav class="app-main-nav" [attr.aria-label]="'menu.label' | translate">
-    <a class="app-main-menu-link" routerLink="/plots" routerLinkActive="active" translate>menu.plots</a>
-    <a class="app-main-menu-link" routerLink="/herbarium" routerLinkActive="active" translate>menu.herbarium</a>
+    <a class="app-main-menu-link flex items-center gap-2" routerLink="/planner" routerLinkActive="active">
+      <ng-icon name="lucideLayout" aria-hidden="true" />
+      <span translate>menu.planner</span>
+    </a>
+    <a class="app-main-menu-link flex items-center gap-2" routerLink="/herbarium" routerLinkActive="active">
+      <ng-icon name="lucideBookOpen" aria-hidden="true" />
+      <span translate>menu.herbarium</span>
+    </a>
   </nav>
 </header>
 <router-outlet/>
