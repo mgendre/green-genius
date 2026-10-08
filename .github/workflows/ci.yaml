@@ -19,6 +19,8 @@ jobs:
   build-test-analyze:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      DOTNET_COVERAGE_TELEMETRY_OPTOUT: '1'
 
     steps:
       - name: Checkout

@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "check": "node scripts/check.mjs",
+    "ui": "ng g @spartan-ng/cli:ui",
     "watch": "ng build --watch --configuration development",
     "api": "nswag run nswag.json"
   },
@@ -27,6 +29,7 @@
     "@ngx-translate/http-loader": "^18.0.0",
     "@spartan-ng/brain": "^1.5.0",
     "@tailwindcss/postcss": "^4.3.3",
+    "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "postcss": "^8.5.28",
     "rxjs": "~7.8.0",

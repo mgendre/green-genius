@@ -1,0 +1,29 @@
+.app-card-list {
+  div[hlmCardContent] {
+    @apply px-0;
+  }
+
+  .app-list-element {
+    @apply p-2 cursor-pointer border-t border-border hover:bg-primary-soft;
+
+    &.active {
+      @apply bg-primary text-primary-foreground;
+
+      button {
+        color: var(--color-foreground);
+      }
+    }
+
+    .app-garden-edit {
+      @apply ml-auto;
+
+      &:hover {
+        @apply bg-primary-soft;
+      }
+    }
+  }
+
+  ul > li:last-child .app-list-element {
+    @apply border-t-0;
+  }
+}

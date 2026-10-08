@@ -1,0 +1,14 @@
+<form [formRoot]="gardenForm">
+  <hlm-field>
+    <label hlmFieldLabel for="garden-name">{{ 'gardens.form.name.label' | translate }}</label>
+    <input hlmInput id="garden-name" type="text" [formField]="gardenForm.name" />
+    @if (gardenForm.name().touched() && gardenForm.name().invalid()) {
+      <hlm-field-error>{{ gardenForm.name().errors()[0].message ?? '' | translate }}</hlm-field-error>
+    }
+  </hlm-field>
+
+  <hlm-dialog-footer class="gap-2">
+    <button hlmBtn variant="outline" type="button" (click)="cancelled.emit()">{{ 'common.cancel' | translate }}</button>
+    <button hlmBtn type="submit" [disabled]="gardenForm().submitting()">{{ 'gardens.form.save' | translate }}</button>
+  </hlm-dialog-footer>
+</form>

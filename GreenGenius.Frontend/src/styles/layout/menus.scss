@@ -1,9 +1,9 @@
 .app-main-menu {
-  @apply flex items-baseline gap-lg bg-primary px-lg py-sm;
+  @apply flex items-baseline gap-lg bg-primary px-md py-sm shadow-base;
 }
 
 .app-brand {
-  @apply flex items-baseline gap-sm;
+  @apply flex items-center gap-sm font-bold;
 }
 
 .app-main-nav {
@@ -15,7 +15,7 @@
 }
 
 .app-title {
-  @apply font-display text-xl tracking-widest text-primary-foreground;
+  @apply font-sans text-xl tracking-widest text-primary-foreground;
 }
 
 .app-main-menu-link {

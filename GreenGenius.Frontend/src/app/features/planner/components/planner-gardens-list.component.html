@@ -1,0 +1,71 @@
+<hlm-card class="w-full app-card-list">
+  <hlm-card-header>
+    <h2 hlmCardTitle>{{ 'gardens.title' | translate }}</h2>
+  </hlm-card-header>
+
+  @if (gardensStore.loaded()) {
+    @if (gardensStore.gardens().length === 0) {
+      <p class="m-4" hlmCardDescription>{{ 'gardens.empty' | translate }}</p>
+    } @else {
+      <div hlmCardContent>
+        <ul>
+          @for (garden of gardensStore.gardens(); track garden.id) {
+            @let selected = plannerStore.selectedGardenId() === garden.id;
+            <li>
+              <div class="app-list-element flex items-center gap-2"
+                    (click)="plannerStore.selectGarden(garden.id)"
+                    [class.active]="selected">
+                <span class="app-list-element__title">{{ garden.name }}</span>
+                <button hlmBtn
+                        type="button"
+                        [variant]="'outline'"
+                        size="icon-sm"
+                        class="app-garden-edit ml-auto"
+                         [attr.aria-label]="'common.actions.edit' | translate"
+                        (click)="editGarden(garden)">
+                  <ng-icon name="lucidePencil" aria-hidden="true" />
+                </button>
+                <button hlmBtn
+                        type="button"
+                        [variant]="'outline'"
+                        size="icon-sm"
+                        class="app-garden-delete"
+                         [attr.aria-label]="'common.actions.delete' | translate"
+                        (click)="openDeleteDialog(garden)">
+                  <ng-icon name="lucideTrash" aria-hidden="true" />
+                </button>
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  }
+
+  <hlm-card-footer class="justify-end gap-2 pt-(--card-spacing)">
+    <button hlmBtn (click)="addGarden()">{{ 'gardens.list.add' | translate }}</button>
+  </hlm-card-footer>
+</hlm-card>
+
+<hlm-dialog [state]="dialogState()" (closed)="closeEditDialog()">
+  <hlm-dialog-content *hlmDialogPortal class="sm:w-xl sm:max-w-2xl!">
+    <hlm-dialog-header>
+      <h3 hlmDialogTitle>{{ (editing() ? 'gardens.form.title.edit' : 'gardens.form.title.create') | translate }}</h3>
+      <p hlmDialogDescription></p>
+    </hlm-dialog-header>
+    <app-garden-form [garden]="editedGarden()" (saved)="closeEditDialog()" (cancelled)="closeEditDialog()" />
+  </hlm-dialog-content>
+</hlm-dialog>
+
+<hlm-alert-dialog [state]="deleteDialogState()" (closed)="closeDeleteDialog()">
+  <hlm-alert-dialog-content *hlmAlertDialogPortal>
+    <hlm-alert-dialog-header>
+      <h3 hlmAlertDialogTitle>{{ 'gardens.delete.title' | translate }}</h3>
+      <p hlmAlertDialogDescription>{{ 'gardens.delete.body' | translate: deletingGarden() }}</p>
+    </hlm-alert-dialog-header>
+    <hlm-alert-dialog-footer>
+      <button hlmAlertDialogCancel type="button" (click)="closeDeleteDialog()">{{ 'common.cancel' | translate }}</button>
+      <button hlmAlertDialogAction variant="destructive" type="button" (click)="confirmDeleteGarden()" [disabled]="gardensStore.loading()">{{ 'gardens.delete.action' | translate }}</button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>

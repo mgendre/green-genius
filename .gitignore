@@ -67,3 +67,7 @@ CLAUDE.md
 .opencode
 opencode.json
 
+/node_modules
+
+# Dispatcher work plans
+.plans/
