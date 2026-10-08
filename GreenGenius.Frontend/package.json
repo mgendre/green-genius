@@ -5,6 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "check": "node scripts/check.mjs",
+    "ui": "ng g @spartan-ng/cli:ui",
     "watch": "ng build --watch --configuration development",
     "api": "nswag run nswag.json"
   },
