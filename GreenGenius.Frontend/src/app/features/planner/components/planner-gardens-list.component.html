@@ -48,7 +48,7 @@
 </hlm-card>
 
 <hlm-dialog [state]="dialogState()" (closed)="closeEditDialog()">
-  <hlm-dialog-content *hlmDialogPortal class="sm:max-w-2xl!">
+  <hlm-dialog-content *hlmDialogPortal class="sm:w-xl sm:max-w-2xl!">
     <hlm-dialog-header>
       <h3 hlmDialogTitle>{{ (editing() ? 'gardens.form.title.edit' : 'gardens.form.title.create') | translate }}</h3>
       <p hlmDialogDescription></p>
