@@ -10,7 +10,7 @@ public static class PlantsExtensions
     {
         Id = plant.Id,
         NameFr = plant.NameFr,
-        NameLatin = plant.NameLatin,
+        BinomialName = plant.BinomialName,
         Family = plant.Family.ToString()
     };
 
@@ -18,7 +18,7 @@ public static class PlantsExtensions
     {
         Id = plant.Id,
         NameFr = plant.NameFr,
-        NameLatin = plant.NameLatin,
+        BinomialName = plant.BinomialName,
         DescriptionFr = plant.DescriptionFr,
         Family = plant.Family,
         LifeCycle = plant.LifeCycle,
@@ -29,8 +29,8 @@ public static class PlantsExtensions
             Sunlight = plant.Needs.Sunlight,
             WaterNeed = plant.Needs.WaterNeed,
             RootDepth = plant.Needs.RootDepth,
-            SoilpHMin = plant.Needs.SoilpHMin,
-            SoilpHMax = plant.Needs.SoilpHMax,
+            SoilPhMin = plant.Needs.SoilPhMin,
+            SoilPhMax = plant.Needs.SoilPhMax,
             SpacingRowCm = plant.Needs.SpacingRowCm,
             SpacingPlantCm = plant.Needs.SpacingPlantCm,
             HeightCm = plant.Needs.HeightCm,

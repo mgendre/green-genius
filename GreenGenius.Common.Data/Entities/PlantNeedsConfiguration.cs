@@ -25,10 +25,10 @@ public sealed class PlantNeedsConfiguration : IEntityTypeConfiguration<PlantNeed
             .HasConversion<string>()
             .HasMaxLength(EntitiesConstants.ShortTextMaxLength);
 
-        builder.Property(needs => needs.SoilpHMin)
+        builder.Property(needs => needs.SoilPhMin)
             .HasPrecision(3, 1);
 
-        builder.Property(needs => needs.SoilpHMax)
+        builder.Property(needs => needs.SoilPhMax)
             .HasPrecision(3, 1);
     }
 }

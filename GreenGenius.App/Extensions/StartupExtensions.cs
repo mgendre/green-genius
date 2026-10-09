@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using GreenGenius.Api.Features.Gardens;
 using GreenGenius.App.Security;
+using GreenGenius.App.Services;
 using GreenGenius.Common.Data.Extensions;
 using GreenGenius.Common.Data.Security;
 using GreenGenius.Infra.Hosting.Extensions;
@@ -17,6 +18,7 @@ public static class StartupExtensions
         builder.ConfigurePersistence();
         
         builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+        builder.Services.AddScoped<PlantImporter>();
         
         builder.Services.AddHealthChecks();
         builder.Services.AddOpenApi();

@@ -6,23 +6,38 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GreenGenius.Common.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddPlantAndPlantNeeds : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "gardens",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_gardens", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "plants",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     NameFr = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
-                    NameLatin = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: true),
+                    Key = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: true),
                     DescriptionFr = table.Column<string>(type: "character varying(4000)", maxLength: 4000, nullable: true),
+                    BinomialName = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: true),
                     Family = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     LifeCycle = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     DaysToMaturity = table.Column<int>(type: "integer", nullable: true),
-                    TemperatureMinC = table.Column<int>(type: "integer", nullable: true)
+                    TemperatureMinC = table.Column<int>(type: "integer", nullable: true),
+                    Version = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -37,8 +52,8 @@ namespace GreenGenius.Common.Data.Migrations
                     Sunlight = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     WaterNeed = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     RootDepth = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    SoilpHMin = table.Column<decimal>(type: "numeric(3,1)", precision: 3, scale: 1, nullable: true),
-                    SoilpHMax = table.Column<decimal>(type: "numeric(3,1)", precision: 3, scale: 1, nullable: true),
+                    SoilPhMin = table.Column<decimal>(type: "numeric(3,1)", precision: 3, scale: 1, nullable: true),
+                    SoilPhMax = table.Column<decimal>(type: "numeric(3,1)", precision: 3, scale: 1, nullable: true),
                     SpacingRowCm = table.Column<int>(type: "integer", nullable: false),
                     SpacingPlantCm = table.Column<int>(type: "integer", nullable: false),
                     HeightCm = table.Column<int>(type: "integer", nullable: false),
@@ -75,11 +90,25 @@ namespace GreenGenius.Common.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_gardens_OwnerId_Name",
+                table: "gardens",
+                columns: new[] { "OwnerId", "Name" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_plants_Key",
+                table: "plants",
+                column: "Key",
+                unique: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "gardens");
+
             migrationBuilder.DropTable(
                 name: "plant_needs");
 

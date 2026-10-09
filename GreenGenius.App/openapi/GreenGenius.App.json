@@ -247,7 +247,7 @@
           "nameFr": {
             "type": "string"
           },
-          "nameLatin": {
+          "binomialName": {
             "type": [
               "null",
               "string"
@@ -327,7 +327,7 @@
           "rootDepth": {
             "$ref": "#/components/schemas/RootDepthLevel"
           },
-          "soilpHMin": {
+          "soilPhMin": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
             "type": [
               "null",
@@ -336,7 +336,7 @@
             ],
             "format": "double"
           },
-          "soilpHMax": {
+          "soilPhMax": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
             "type": [
               "null",
@@ -393,7 +393,7 @@
           "nameFr": {
             "type": "string"
           },
-          "nameLatin": {
+          "binomialName": {
             "type": [
               "null",
               "string"

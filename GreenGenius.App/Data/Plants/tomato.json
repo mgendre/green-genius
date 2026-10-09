@@ -1,0 +1,27 @@
+{
+  "NameFr": "Tomate",
+  "DescriptionFr": "Plante nécessitant beaucoup d'eau et de chaleur",
+  "BinomialName": "Solanum lycopersicum",
+  "Family": "Solanaceae",
+  "LifeCycle": "Annual",
+  "Version": 1,
+  "DaysToMaturity": null,
+  "TemperatureMinC": null,
+  "Needs": {
+    "Sunlight": "High",
+    "WaterNeed": "High",
+    "RootDepth": "Deep",
+    "SoilPhMin": null,
+    "SoilPhMax": null,
+    "SpacingRowCm": 100,
+    "SpacingPlantCm": 50,
+    "HeightCm": 120,
+    "SpreadCm": 50
+  },
+  "Traits": {
+    "NitrogenFixer": false,
+    "DynamicAccumulator": false,
+    "PollinatorFriendly": true,
+    "DroughtTolerant": false
+  }
+}

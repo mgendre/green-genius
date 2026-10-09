@@ -15,6 +15,9 @@
     <ItemGroup>
         <Content Remove="openapi/**" />
         <None Include="openapi/**" />
+        <Content Update="Data/Plants/**">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>

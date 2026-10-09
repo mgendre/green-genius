@@ -8,11 +8,11 @@ public class PlantNeeds
     public SunlightLevel Sunlight { get; set; }
     public WaterNeedLevel WaterNeed { get; set; }
     public RootDepthLevel RootDepth { get; set; }
-    public decimal? SoilpHMin { get; set; }
-    public decimal? SoilpHMax { get; set; }
+    public decimal? SoilPhMin { get; set; }
+    public decimal? SoilPhMax { get; set; }
     public int SpacingRowCm { get; set; }
     public int SpacingPlantCm { get; set; }
     public int HeightCm { get; set; }
     public int SpreadCm { get; set; }
-    public Plant Plant { get; set; } = null!;
+    public Plant Plant { get; init; } = null!;
 }
