@@ -18,11 +18,16 @@ public sealed class PlantConfiguration : IEntityTypeConfiguration<Plant>
             .IsRequired()
             .HasMaxLength(EntitiesConstants.MediumTextMaxLength);
 
-        builder.Property(plant => plant.NameLatin)
+        builder.Property(plant => plant.Key)
             .HasMaxLength(EntitiesConstants.MediumTextMaxLength);
+        builder.HasIndex(plant => plant.Key)
+            .IsUnique();
 
         builder.Property(plant => plant.DescriptionFr)
             .HasMaxLength(EntitiesConstants.LongTextMaxLength);
+
+        builder.Property(plant => plant.BinomialName)
+            .HasMaxLength(EntitiesConstants.MediumTextMaxLength);
 
         builder.Property(plant => plant.Family)
             .HasConversion<string>()

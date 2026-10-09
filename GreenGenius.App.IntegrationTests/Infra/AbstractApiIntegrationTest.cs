@@ -20,6 +20,7 @@ public abstract class AbstractApiIntegrationTest(
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseSetting("ConnectionStrings:DefaultConnection", integrationFixture.GetPostgresContainerConnectionString());
+        builder.UseSetting("PlantsImporterEnabled", "false");
         builder.ConfigureServices(UseMocks);
     }
 

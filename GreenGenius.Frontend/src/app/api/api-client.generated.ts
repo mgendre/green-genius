@@ -376,7 +376,7 @@ export interface GardenDto {
 export interface PlantDto {
     id?: string;
     nameFr: string;
-    nameLatin?: string | undefined;
+    binomialName?: string | undefined;
     descriptionFr?: string | undefined;
     family?: PlantFamily;
     lifeCycle?: PlantLifeCycle;
@@ -414,8 +414,8 @@ export interface PlantNeedsDto {
     sunlight?: SunlightLevel;
     waterNeed?: WaterNeedLevel;
     rootDepth?: RootDepthLevel;
-    soilpHMin?: number | undefined;
-    soilpHMax?: number | undefined;
+    soilPhMin?: number | undefined;
+    soilPhMax?: number | undefined;
     spacingRowCm?: number;
     spacingPlantCm?: number;
     heightCm?: number;
@@ -427,7 +427,7 @@ export interface PlantNeedsDto {
 export interface PlantSummaryDto {
     id?: string;
     nameFr: string;
-    nameLatin?: string | undefined;
+    binomialName?: string | undefined;
     family: string;
 
     [key: string]: any;

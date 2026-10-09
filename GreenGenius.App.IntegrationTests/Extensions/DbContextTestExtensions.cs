@@ -26,13 +26,15 @@ public static class DbContextTestExtensions
         this ApplicationDbContext dbContext,
         string nameFr,
         PlantFamily family = PlantFamily.Solanaceae,
-        PlantLifeCycle lifeCycle = PlantLifeCycle.Annual)
+        PlantLifeCycle lifeCycle = PlantLifeCycle.Annual,
+        string? binomialName = null)
     {
         var id = Guid.NewGuid();
         var plant = new Plant
         {
             Id = id,
             NameFr = nameFr,
+            BinomialName = binomialName,
             Family = family,
             LifeCycle = lifeCycle,
             Needs = new PlantNeeds
@@ -41,6 +43,8 @@ public static class DbContextTestExtensions
                 Sunlight = SunlightLevel.Medium,
                 WaterNeed = WaterNeedLevel.Medium,
                 RootDepth = RootDepthLevel.Medium,
+                SoilPhMin = 6.0m,
+                SoilPhMax = 7.0m,
                 SpacingRowCm = 50,
                 SpacingPlantCm = 30,
                 HeightCm = 100,

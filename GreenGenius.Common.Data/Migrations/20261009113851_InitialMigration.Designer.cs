@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GreenGenius.Common.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20261004193626_AddPlantAndPlantNeeds")]
-    partial class AddPlantAndPlantNeeds
+    [Migration("20261009113851_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,10 @@ namespace GreenGenius.Common.Data.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("BinomialName")
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
                     b.Property<int?>("DaysToMaturity")
                         .HasColumnType("integer");
 
@@ -62,6 +66,10 @@ namespace GreenGenius.Common.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<string>("Key")
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
                     b.Property<string>("LifeCycle")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -72,14 +80,16 @@ namespace GreenGenius.Common.Data.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("character varying(250)");
 
-                    b.Property<string>("NameLatin")
-                        .HasMaxLength(250)
-                        .HasColumnType("character varying(250)");
-
                     b.Property<int?>("TemperatureMinC")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Version")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
 
                     b.ToTable("plants", (string)null);
                 });
@@ -97,11 +107,11 @@ namespace GreenGenius.Common.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<decimal?>("SoilpHMax")
+                    b.Property<decimal?>("SoilPhMax")
                         .HasPrecision(3, 1)
                         .HasColumnType("numeric(3,1)");
 
-                    b.Property<decimal?>("SoilpHMin")
+                    b.Property<decimal?>("SoilPhMin")
                         .HasPrecision(3, 1)
                         .HasColumnType("numeric(3,1)");
 
