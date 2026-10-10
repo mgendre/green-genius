@@ -1,0 +1,9 @@
+<app-encyclopedia-search (selected)="onPlantSelected($event)" />
+
+@if (id() === undefined) {
+  <p>{{ 'encyclopedia.page.empty' | translate }}</p>
+} @else {
+  <div class="card-encyclopedia">
+    <app-plant-identity [id]="id()" />
+  </div>
+}

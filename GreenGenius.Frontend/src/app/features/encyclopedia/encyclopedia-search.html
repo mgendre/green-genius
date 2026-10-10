@@ -1,0 +1,12 @@
+<label hlmLabel for="encyclopedia-search">{{ 'encyclopedia.search.label' | translate }}</label>
+<hlm-combobox [itemToString]="searchedText" (valueChange)="select($event)">
+  <hlm-combobox-input inputId="encyclopedia-search" />
+  <hlm-combobox-content *hlmComboboxPortal>
+    <hlm-combobox-empty>{{ 'encyclopedia.search.empty' | translate }}</hlm-combobox-empty>
+    <div hlmComboboxList>
+      @for (plant of plants(); track plant.id) {
+        <hlm-combobox-item [value]="plant">{{ plant.nameFr }}</hlm-combobox-item>
+      }
+    </div>
+  </hlm-combobox-content>
+</hlm-combobox>

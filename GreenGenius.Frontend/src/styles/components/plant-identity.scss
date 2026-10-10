@@ -1,0 +1,35 @@
+.card-encyclopedia {
+  @apply border border-border rounded-base bg-background p-lg;
+}
+
+.plant-identity {
+  @apply w-full;
+
+  &-header {
+    @apply mb-md;
+  }
+
+  &-title {
+    @apply text-2xl font-semibold;
+  }
+
+  &-binomial {
+    @apply italic text-muted-foreground;
+  }
+
+  &-details {
+    @apply grid gap-sm;
+  }
+
+  &-row {
+    @apply grid grid-cols-[max-content_1fr] gap-x-sm;
+  }
+
+  &-row > dt {
+    @apply font-medium text-muted-foreground;
+  }
+
+  &-row > dd {
+    @apply m-0;
+  }
+}

@@ -1,0 +1,46 @@
+@let current = plant();
+@if (current !== null && current !== undefined) {
+  <div class="plant-identity">
+    @if (loading()) {
+      <p>{{ 'plants.identity.loading' | translate }}</p>
+    } @else {
+      <div class="plant-identity-header">
+        <h2 class="plant-identity-title">{{ current.nameFr }}</h2>
+        @if (current.binomialName) {
+          <p class="plant-identity-binomial">{{ current.binomialName }}</p>
+        }
+      </div>
+
+      <dl class="plant-identity-details">
+        @for (row of identityRows(); track row.labelKey) {
+          <div class="plant-identity-row">
+            <dt>{{ row.labelKey | translate }}</dt>
+            @if (row.badge) {
+              <dd>
+                <span class="badge" [class]="'badge-' + row.badge.kind" [attr.title]="row.labelKey | translate">
+                  @for (i of dropIndices(row.badge.count); track i) {
+                  <ng-icon [name]="row.badge.iconKey" aria-hidden="true" />
+                }
+                  {{ row.badge.textKey | translate }}
+                </span>
+              </dd>
+            } @else if (row.valueKey) {
+              <dd>{{ row.valueKey | translate: { value: row.value } }}</dd>
+            } @else {
+              <dd>{{ row.value }}</dd>
+            }
+          </div>
+        }
+
+        @if (current.descriptionFr) {
+          <div class="plant-identity-row">
+            <dt>{{ 'plants.description' | translate }}</dt>
+            <dd>{{ current.descriptionFr }}</dd>
+          </div>
+        }
+      </dl>
+    }
+  </div>
+} @else {
+  <p>{{ 'plants.identity.not-found' | translate }}</p>
+}

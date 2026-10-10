@@ -1,0 +1,19 @@
+.badge {
+  @apply inline-flex items-center gap-x-1 rounded-full px-sm py-xs font-medium text-foreground;
+
+  &-sunlight {
+    border: 1px solid color-mix(in srgb, var(--color-sunlight) 40%, transparent);
+    background-color: color-mix(in srgb, var(--color-sunlight) 15%, transparent);
+  }
+
+  &-water-need {
+    color: var(--color-primary-foreground);
+    border: 1px solid color-mix(in srgb, var(--color-water) 40%, transparent);
+    background-color: color-mix(in srgb, var(--color-water) 15%, transparent);
+  }
+
+  &-root-depth {
+    border: 1px solid color-mix(in srgb, var(--color-soil) 40%, transparent);
+    background-color: color-mix(in srgb, var(--color-soil) 15%, transparent);
+  }
+}

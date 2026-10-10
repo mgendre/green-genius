@@ -2,6 +2,10 @@
   @apply flex items-baseline gap-lg bg-primary px-md py-sm shadow-base;
 }
 
+.app-content {
+  @apply mx-auto w-full max-w-[68.75rem] p-md;
+}
+
 .app-brand {
   @apply flex items-center gap-sm font-bold;
 }

@@ -40,6 +40,15 @@ export class PlannerGardensListComponent {
     this.openEditDialog(undefined);
   }
 
+  onGardenKeydown(event: KeyboardEvent, gardenId: string | undefined): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      if (gardenId) {
+        this.plannerStore.selectGarden(gardenId);
+      }
+    }
+  }
+
   editGarden(garden: GardenDto): void {
     this.openEditDialog(garden);
   }

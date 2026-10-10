@@ -20,7 +20,10 @@
       "@spartan-ng/helm/label": ["./src/app/shared/spartan/helm/label/src/index.ts"],
       "@spartan-ng/helm/separator": ["./src/app/shared/spartan/helm/separator/src/index.ts"],
       "@spartan-ng/helm/input": ["./src/app/shared/spartan/helm/input/src/index.ts"],
-      "@spartan-ng/helm/alert-dialog": ["./src/app/shared/spartan/helm/alert-dialog/src/index.ts"]
+      "@spartan-ng/helm/alert-dialog": ["./src/app/shared/spartan/helm/alert-dialog/src/index.ts"],
+      "@spartan-ng/helm/combobox": ["./src/app/shared/spartan/helm/combobox/src/index.ts"],
+      "@spartan-ng/helm/input-group": ["./src/app/shared/spartan/helm/input-group/src/index.ts"],
+      "@spartan-ng/helm/textarea": ["./src/app/shared/spartan/helm/textarea/src/index.ts"]
     }
   },
   "angularCompilerOptions": {
