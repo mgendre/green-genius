@@ -1,0 +1,24 @@
+<div class="identities">
+  <dt class="identities-title">{{ title() | translate }}</dt>
+  <dd>
+    @for (item of items(); track item.labelKey) {
+      <div class="identities-row">
+        @if (!item.badge) {
+          <span class="identities-label">{{ item.labelKey | translate }}</span>
+        }
+        @if (item.badge) {
+          <span class="badge badge-inline" [class]="'badge-' + item.badge.kind" [attr.title]="item.badge.title | translate">
+            @for (i of dropIndices(item.badge.count); track i) {
+              <ng-icon [name]="item.badge.iconKey" aria-hidden="true" />
+            }
+            {{ item.badge.textKey | translate: item.badge.params }}
+          </span>
+        } @else if (item.valueKey) {
+          <span class="identities-value">{{ item.valueKey | translate: { value: item.value } }}</span>
+        } @else {
+          <span class="identities-value">{{ item.value }}</span>
+        }
+      </div>
+    }
+  </dd>
+</div>

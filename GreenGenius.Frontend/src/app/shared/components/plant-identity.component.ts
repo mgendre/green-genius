@@ -3,9 +3,12 @@ import { NgIcon } from '@ng-icons/core';
 import { firstValueFrom } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Client, PlantDto, PlantFamily, PlantLifeCycle, RootDepthLevel, SunlightLevel, WaterNeedLevel } from '../../api/api-client.generated';
+import { IdentitiesComponent, Row } from './identities.component';
+import { NeedsComponent } from './needs.component';
+import { DimensionsComponent } from './dimensions.component';
 
 @Component({
-  imports: [NgIcon, TranslatePipe],
+  imports: [TranslatePipe, IdentitiesComponent, NeedsComponent, DimensionsComponent],
   selector: 'app-plant-identity',
   templateUrl: './plant-identity.html',
 })
@@ -44,68 +47,104 @@ export class PlantIdentityComponent implements OnInit {
     });
   }
 
-  readonly identityRows = computed<Array<{ labelKey: string; valueKey?: string; value?: string; badge?: Badge }>>(() => {
+  readonly identityRows = computed<Array<{ labelKey: string; valueKey?: string; value?: string; badge?: Badge; sectionKey?: string }>>(() => {
     const plant = this.plant();
     if (plant === null || plant === undefined) return [];
 
-    const rows: Array<{ labelKey: string; valueKey?: string; value?: string; badge?: Badge }> = [];
+    const rows: Array<{ labelKey: string; valueKey?: string; value?: string; badge?: Badge; sectionKey?: string }> = [];
 
     if (plant.family) {
-      rows.push({ labelKey: 'plants.family.label', valueKey: FAMILY_LABELS[plant.family] });
+      rows.push({ labelKey: 'plants.family.label', valueKey: FAMILY_LABELS[plant.family], sectionKey: 'plants.section.identity' });
     }
     if (plant.lifeCycle) {
-      rows.push({ labelKey: 'plants.life-cycle.label', valueKey: LIFE_CYCLE_LABELS[plant.lifeCycle] });
+      rows.push({ labelKey: 'plants.life-cycle.label', valueKey: LIFE_CYCLE_LABELS[plant.lifeCycle], sectionKey: 'plants.section.identity' });
     }
-    if (plant.needs?.sunlight) {
-      rows.push({
-        labelKey: 'plants.needs.sunlight.label',
-        badge: { kind: 'sunlight', iconKey: SUNLIGHT_ICONS[plant.needs.sunlight], textKey: SUNLIGHT_LABELS[plant.needs.sunlight] },
-      });
-    }
-    if (plant.needs?.waterNeed) {
-      rows.push({
-        labelKey: 'plants.needs.water-need.label',
-        badge: { kind: 'water-need', iconKey: WATER_NEED_ICONS[plant.needs.waterNeed], textKey: WATER_NEED_LABELS[plant.needs.waterNeed], count: WATER_NEED_LEVELS[plant.needs.waterNeed] },
-      });
-    }
-    if (plant.needs?.rootDepth) {
-      rows.push({
-        labelKey: 'plants.needs.root-depth.label',
-        badge: { kind: 'root-depth', iconKey: ROOT_DEPTH_ICONS[plant.needs.rootDepth], textKey: ROOT_DEPTH_LABELS[plant.needs.rootDepth] },
-      });
-    }
-    const soilPhMin = plant.needs?.soilPhMin;
-    const soilPhMax = plant.needs?.soilPhMax;
-    rows.push({
-      labelKey: 'plants.needs.soil-ph',
-      valueKey: soilPhMin === undefined || soilPhMax === undefined || soilPhMin === null || soilPhMax === null ? NOT_SET_KEY : undefined,
-      value: soilPhMin === undefined || soilPhMax === undefined || soilPhMin === null || soilPhMax === null ? undefined : `${soilPhMin}–${soilPhMax}`,
-    });
     const days = plant.daysToMaturity;
     rows.push({
       labelKey: 'plants.days-to-maturity',
       valueKey: days === undefined || days === null ? NOT_SET_KEY : 'plants.unit.days',
       value: days === undefined || days === null ? undefined : String(days),
+      sectionKey: 'plants.section.identity',
     });
+    if (plant.needs?.sunlight) {
+      rows.push({
+        labelKey: 'plants.needs.sunlight.label',
+        badge: { kind: 'sunlight', iconKey: SUNLIGHT_ICONS[plant.needs.sunlight], textKey: SUNLIGHT_LABELS[plant.needs.sunlight], title: 'plants.needs.sunlight.label' },
+        sectionKey: 'plants.section.needs',
+      });
+    }
+    if (plant.needs?.waterNeed) {
+      rows.push({
+        labelKey: 'plants.needs.water-need.label',
+        badge: { kind: 'water-need', iconKey: WATER_NEED_ICONS[plant.needs.waterNeed], textKey: WATER_NEED_LABELS[plant.needs.waterNeed], title: 'plants.needs.water-need.label', count: WATER_NEED_LEVELS[plant.needs.waterNeed] },
+        sectionKey: 'plants.section.needs',
+      });
+    }
+    if (plant.needs?.rootDepth) {
+      rows.push({
+        labelKey: 'plants.needs.root-depth.label',
+        badge: { kind: 'root-depth', iconKey: ROOT_DEPTH_ICONS[plant.needs.rootDepth], textKey: ROOT_DEPTH_LABELS[plant.needs.rootDepth], title: 'plants.needs.root-depth.label' },
+        sectionKey: 'plants.section.needs',
+      });
+    }
+    const soilPhMin = plant.needs?.soilPhMin;
+    const soilPhMax = plant.needs?.soilPhMax;
+    if (soilPhMin !== undefined && soilPhMin !== null && soilPhMax !== undefined && soilPhMax !== null) {
+      rows.push({
+        labelKey: 'plants.needs.soil-ph.badge',
+        badge: {
+          kind: 'soil-ph',
+          iconKey: 'lucideFlaskConical',
+          textKey: 'plants.needs.soil-ph.badge',
+          title: 'plants.needs.soil-ph',
+          params: { min: String(soilPhMin), max: String(soilPhMax) },
+        },
+        sectionKey: 'plants.section.needs',
+      });
+    }
     if (plant.needs?.spacingRowCm !== undefined && plant.needs?.spacingRowCm !== null) {
-      rows.push({ labelKey: 'plants.needs.spacing-row', valueKey: 'plants.unit.cm', value: String(plant.needs.spacingRowCm) });
+      rows.push({ labelKey: 'plants.needs.spacing-row', valueKey: 'plants.unit.cm', value: String(plant.needs.spacingRowCm), sectionKey: 'plants.section.dimensions' });
     }
     if (plant.needs?.spacingPlantCm !== undefined && plant.needs?.spacingPlantCm !== null) {
-      rows.push({ labelKey: 'plants.needs.spacing-plant', valueKey: 'plants.unit.cm', value: String(plant.needs.spacingPlantCm) });
+      rows.push({ labelKey: 'plants.needs.spacing-plant', valueKey: 'plants.unit.cm', value: String(plant.needs.spacingPlantCm), sectionKey: 'plants.section.dimensions' });
     }
     if (plant.needs?.heightCm !== undefined && plant.needs?.heightCm !== null) {
-      rows.push({ labelKey: 'plants.needs.height', valueKey: 'plants.unit.cm', value: String(plant.needs.heightCm) });
+      rows.push({ labelKey: 'plants.needs.height', valueKey: 'plants.unit.cm', value: String(plant.needs.heightCm), sectionKey: 'plants.section.dimensions' });
     }
     if (plant.needs?.spreadCm !== undefined && plant.needs?.spreadCm !== null) {
-      rows.push({ labelKey: 'plants.needs.spread', valueKey: 'plants.unit.cm', value: String(plant.needs.spreadCm) });
+      rows.push({ labelKey: 'plants.needs.spread', valueKey: 'plants.unit.cm', value: String(plant.needs.spreadCm), sectionKey: 'plants.section.dimensions' });
     }
-    rows.push({ labelKey: 'plants.traits.nitrogen-fixer', valueKey: plant.traits?.nitrogenFixer ? YES_KEY : NO_KEY });
-    rows.push({ labelKey: 'plants.traits.dynamic-accumulator', valueKey: plant.traits?.dynamicAccumulator ? YES_KEY : NO_KEY });
-    rows.push({ labelKey: 'plants.traits.pollinator-friendly', valueKey: plant.traits?.pollinatorFriendly ? YES_KEY : NO_KEY });
-    rows.push({ labelKey: 'plants.traits.drought-tolerant', valueKey: plant.traits?.droughtTolerant ? YES_KEY : NO_KEY });
+    if (plant.traits?.nitrogenFixer) {
+      rows.push({ labelKey: 'plants.traits.nitrogen-fixer', badge: { kind: 'trait', iconKey: 'lucideCheck', textKey: 'plants.traits.nitrogen-fixer', title: 'plants.traits.nitrogen-fixer' }, sectionKey: 'plants.section.strengths' });
+    }
+    if (plant.traits?.dynamicAccumulator) {
+      rows.push({ labelKey: 'plants.traits.dynamic-accumulator', badge: { kind: 'trait', iconKey: 'lucideCheck', textKey: 'plants.traits.dynamic-accumulator', title: 'plants.traits.dynamic-accumulator' }, sectionKey: 'plants.section.strengths' });
+    }
+    if (plant.traits?.pollinatorFriendly) {
+      rows.push({ labelKey: 'plants.traits.pollinator-friendly', badge: { kind: 'trait', iconKey: 'lucideCheck', textKey: 'plants.traits.pollinator-friendly', title: 'plants.traits.pollinator-friendly' }, sectionKey: 'plants.section.strengths' });
+    }
+    if (plant.traits?.droughtTolerant) {
+      rows.push({ labelKey: 'plants.traits.drought-tolerant', badge: { kind: 'trait', iconKey: 'lucideCheck', textKey: 'plants.traits.drought-tolerant', title: 'plants.traits.drought-tolerant' }, sectionKey: 'plants.section.strengths' });
+    }
 
     return rows;
   });
+
+  readonly identitySection = computed<Row[]>(() =>
+    this.identityRows().filter((row) => row.sectionKey === 'plants.section.identity'),
+  );
+
+  readonly needsSection = computed<Row[]>(() =>
+    this.identityRows().filter((row) => row.sectionKey === 'plants.section.needs'),
+  );
+
+  readonly dimensionsSection = computed<Row[]>(() =>
+    this.identityRows().filter((row) => row.sectionKey === 'plants.section.dimensions'),
+  );
+
+  readonly strengthsSection = computed<Row[]>(() =>
+    this.identityRows().filter((row) => row.sectionKey === 'plants.section.strengths'),
+  );
 }
 
 const FAMILY_LABELS: Record<PlantFamily, string> = {
@@ -131,10 +170,12 @@ const LIFE_CYCLE_LABELS: Record<PlantLifeCycle, string> = {
 };
 
 export interface Badge {
-  kind: 'sunlight' | 'water-need' | 'root-depth';
+  kind: 'sunlight' | 'water-need' | 'root-depth' | 'soil-ph' | 'trait';
   iconKey: string;
   textKey: string;
+  title: string;
   count?: number;
+  params?: Record<string, string | number>;
 }
 
 const SUNLIGHT_LABELS: Record<SunlightLevel, string> = {
@@ -179,6 +220,4 @@ const ROOT_DEPTH_ICONS: Record<RootDepthLevel, string> = {
   [RootDepthLevel.Deep]: 'lucideArrowDown',
 };
 
-const YES_KEY = 'common.yes';
-const NO_KEY = 'common.no';
 const NOT_SET_KEY = 'common.not-set';

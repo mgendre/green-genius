@@ -1,19 +1,32 @@
 .badge {
-  @apply inline-flex items-center gap-x-1 rounded-full px-sm py-xs font-medium text-foreground;
+  @apply inline-flex items-center gap-x-1 rounded-full px-sm py-xs font-medium text-foreground whitespace-normal;
+
+  &-inline {
+    margin-right: spacing-sm;
+  }
 
   &-sunlight {
-    border: 1px solid color-mix(in srgb, var(--color-sunlight) 40%, transparent);
-    background-color: color-mix(in srgb, var(--color-sunlight) 15%, transparent);
+    background-color: var(--color-sunlight);
+    color: var(--color-surface);
   }
 
   &-water-need {
-    color: var(--color-primary-foreground);
-    border: 1px solid color-mix(in srgb, var(--color-water) 40%, transparent);
-    background-color: color-mix(in srgb, var(--color-water) 15%, transparent);
+    background-color: var(--color-water);
+    color: var(--color-surface);
+
+    ng-icon {
+      fill: currentColor;
+    }
   }
 
   &-root-depth {
-    border: 1px solid color-mix(in srgb, var(--color-soil) 40%, transparent);
-    background-color: color-mix(in srgb, var(--color-soil) 15%, transparent);
+    background-color: var(--color-soil);
+    color: var(--color-surface);
   }
+}
+
+.badge-soil-ph,
+.badge-trait {
+  background-color: var(--color-primary-soft);
+  color: var(--color-surface);
 }

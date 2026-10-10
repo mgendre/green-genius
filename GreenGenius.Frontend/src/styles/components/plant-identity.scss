@@ -3,7 +3,7 @@
 }
 
 .plant-identity {
-  @apply w-full;
+  @apply flex w-full flex-col gap-lg;
 
   &-header {
     @apply mb-md;
@@ -18,11 +18,25 @@
   }
 
   &-details {
-    @apply grid gap-sm;
+    @apply grid gap-lg;
   }
 
   &-row {
-    @apply grid grid-cols-[max-content_1fr] gap-x-sm;
+    @apply grid gap-lg;
+
+    & > app-identities,
+    & > app-needs,
+    & > app-dimensions {
+      @apply flex-1 min-w-0;
+    }
+  }
+
+  &-section {
+    @apply mb-xs mt-sm border-t border-border text-xs font-semibold uppercase text-muted-foreground px-0 py-xs;
+  }
+
+  &-section:first-child {
+    @apply mt-0 border-t-0;
   }
 
   &-row > dt {
