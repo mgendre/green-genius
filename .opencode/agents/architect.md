@@ -13,6 +13,9 @@ permission:
     "*": deny
     ".plans/*": allow
     "**/.plans/*": allow
+  bash:
+    "rm *": deny
+    "mv *": deny
   "context7_*": allow
   "angular-cli_*": allow
   "spartan-ui_*": allow
@@ -29,6 +32,15 @@ The user drives. You help them decide, then write the approved work as a plan. T
 - Plan only the tasks the user approved. No review, proofreading, documentation, commit, push or pull request task unless asked.
 - You never hand a task to a developer. The `task` tool is for `plant-expert` only.
 - YAGNI applies to design: no layer, interface or abstraction without a current consumer.
+
+## Looking things up
+
+Read `.opencode/skills/lookup/SKILL.md` with the read tool at the start of **Challenge**: it says where an answer comes from, the project's code or the documentation servers, and which server covers which library.
+
+- Look it up when a design choice depends on what a library can do: whether a component, an API or an option exists, how it is meant to be used, what it costs. Never decide that from memory, and never look up what `AGENTS.md`, a layer's `AGENTS.md` or the existing code already settles.
+- Before the design note, so that the note and the plan rest on what you read. Six documentation lookups at most per request.
+- What you found goes into the design note as a decision in one line, never as a quotation of the docs. A task whose component has a skill names the skill, not the lookup.
+- The lookup found nothing: say so under Questions.
 
 ## Step 1 — Challenge
 
@@ -99,7 +111,7 @@ Result:
 
 - Title: the outcome, what is true for the user or the API once done.
 - `Existing:` two to five facts you read, each starting with the full path of its file. A cause the user gave is copied here as is.
-- `Skills:` from this list and no other. Frontend: `signal-form`, `signal-store`, `scss-styling`, `i18n-fr`, `ui-quality`, `spartan`, `spartan-dialog`, `spartan-alert-dialog`, `spartan-combobox`, `spartan-select`, `spartan-toast`, `feature-routes`, `loading-state`. Backend: `api-endpoint`, `ef-entity`, `ef-migrations`, `ef-queries`, `csproj-files`, `backend-tests`; every backend task names `backend-tests`. A Spartan component that has its own skill gets that skill; `spartan` only for a component that has none. A task that adds or changes something a person sees (page, card, list, form) names `ui-quality`; its criteria then say what shows when the data is loading, empty or failed.
+- `Skills:` read `.opencode/skills/task-skills/SKILL.md` with the read tool before writing the tasks of a plan, once per plan: its table says which skills a task names. Never a name that is not in it, never from memory.
 - `Where:` one to three lines: an existing file by its full path with a landmark you read in it, or the folder of a new file. No file read, no line; never a guess, never the name of something to create.
 - `Criteria:` three at most. What a person sees, does or receives: a behaviour, a French text as shown, a limit, a status code, a response field. Never the name of a component, class, selector, signal, i18n key, import or method. The contract of the design note goes here: the route, each field with its type and maximum length, the status codes.
 - Box: always `[ ]`. `Result:` stays empty: the dispatcher fills both.

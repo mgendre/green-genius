@@ -24,70 +24,13 @@ permission:
     "git restore*": deny
     "git reset*": deny
     "git clean*": deny
-    "rm *": allow
-    "mv *": allow
-    "rm *..*": deny
-    "rm *~*": deny
-    "rm *$*": deny
-    "mv *..*": deny
-    "mv *~*": deny
-    "mv *$*": deny
-    "rm *.git": deny
-    "rm *.git *": deny
-    "rm *.git/*": deny
-    "rm *.opencode*": deny
-    "rm *.agents*": deny
-    "rm *AGENTS.md*": deny
-    "rm *node_modules*": deny
-    "rm *opencode.json*": deny
-    "rm *.env*": deny
-    "rm *.apikey*": deny
-    "rm *.ssh*": deny
-    "rm *.plans*": deny
-    "rm *shared/spartan/helm*": deny
-    "rm *api-client.generated*": deny
     "rm *Migrations/*": deny
-    "mv *.git": deny
-    "mv *.git *": deny
-    "mv *.git/*": deny
-    "mv *.claude*": deny
-    "mv *.opencode*": deny
-    "mv *.agents*": deny
-    "mv *AGENTS.md*": deny
-    "mv *node_modules*": deny
-    "mv *opencode.json*": deny
-    "mv *.env*": deny
-    "mv *.apikey*": deny
-    "mv *.ssh*": deny
-    "mv *.plans*": deny
-    "mv *shared/spartan/helm*": deny
-    "mv *api-client.generated*": deny
     "mv *Migrations/*": deny
     "dotnet clean*": allow
     "dotnet * Clean*": allow
     "podman*": deny
     "docker*": deny
     "*start.sh*": deny
-    "mkdir *": deny
-    "mkdir GreenGenius.*": allow
-    "mkdir ./GreenGenius.*": allow
-    "mkdir /home/mg/dev/green-genius/GreenGenius.*": allow
-    "mkdir * * *": deny
-    "mkdir -p GreenGenius.*": allow
-    "mkdir -p ./GreenGenius.*": allow
-    "mkdir -p /home/mg/dev/green-genius/GreenGenius.*": allow
-    "mkdir -p * * *": deny
-    "mkdir *..*": deny
-    "mkdir *.claude*": deny
-    "mkdir *.opencode*": deny
-    "mkdir *.plans*": deny
-    "mkdir *.git/*": deny
-    "mkdir *node_modules*": deny
-    "mkdir *shared/spartan/helm*": deny
-    "* *.env*": deny
-    "* *.apikey*": deny
-    "* *.ssh*": deny
-    "* *opencode.json*": deny
   task: deny
   webfetch: deny
   websearch: deny

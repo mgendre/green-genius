@@ -4,7 +4,7 @@ mode: primary
 model: ollama/qwen3.6
 temperature: 0.6
 top_p: 0.95
-variant: low
+variant: medium
 permission:
   read:
     "*node_modules/*": deny
@@ -23,8 +23,7 @@ permission:
   "context7_*": deny
   bash:
     "*": deny
-    "git diff": allow
-    "git diff *": allow
+    "git diff*": allow
     "git status*": allow
     "git log*": allow
     "git show *": allow
@@ -142,7 +141,7 @@ Result:
 
 - Title: the outcome, what is true for the user or the API once done.
 - `Existing:` two to five facts you read, each starting with the full path of its file. A cause the user gave is copied here as is.
-- `Skills:` from this list and no other. Frontend: `signal-form`, `signal-store`, `scss-styling`, `i18n-fr`, `ui-quality`, `spartan`, `spartan-dialog`, `spartan-alert-dialog`, `spartan-combobox`, `spartan-select`, `spartan-toast`, `feature-routes`, `loading-state`. Backend: `api-endpoint`, `ef-entity`, `ef-migrations`, `ef-queries`, `csproj-files`, `backend-tests`; every backend task names `backend-tests`. A Spartan component that has its own skill gets that skill; `spartan` only for a component that has none. A task that adds or changes something a person sees (page, card, list, form) names `ui-quality`; its criteria then say what shows when the data is loading, empty or failed.
+- `Skills:` read `.opencode/skills/task-skills/SKILL.md` with the read tool before writing the tasks of a plan, once per plan: its table says which skills a task names. Never a name that is not in it, never from memory.
 - `Where:` one to three lines: an existing file by its full path with a landmark you read in it, or the folder of a new file. No file read, no line; never a guess, never the name of something to create.
 - `Criteria:` three at most. What a person sees, does or receives: a behaviour, a French text as shown, a limit, a status code, a response field. Never the name of a component, class, selector, signal, i18n key, import or method.
 - Box: `[ ]` to do, `[~]` handed over, `[x]` verified, `[!]` blocked.
@@ -223,7 +222,7 @@ dotnet test GreenGenius.slnx --filter GardensApiIntegrationTest 2>&1 | tail -20
 One smaller, more guided try, for a **new** developer (no `task_id`).
 
 1. Start from what you read in step 3 and the error line; read the file the error points to.
-2. Replace any earlier `Help:` of the task by a new block under `Skills:`, five lines at most, no code: what is done, what is left as ordered steps, every decision the task left open (decide it, or ask the user when it changes what they get), the file to read first, the last error copied as is. Add a missing skill to `Skills:`.
+2. Replace any earlier `Help:` of the task by a new block under `Skills:`, five lines at most, no code: what is done, what is left as ordered steps, every decision the task left open (decide it, or ask the user when it changes what they get), the file to read first, the last error copied as is. Add a missing skill to `Skills:`, from `.opencode/skills/task-skills/SKILL.md`.
 
 ```
 Help:
@@ -238,7 +237,7 @@ Help:
 4. More than three steps left: cut the task in two in the plan and hand over the first.
 5. It fails again: `[!]`, why in `Result:`, stop and report. Never a third try.
 
-A developer that fails on a library component (Spartan, Angular, EF Core) needs a skill, not your research: you never look for how a library works. No skill of the list covers it: `[!]`, `Result: missing skill: <component>`, stop and report, without a second try.
+A developer that fails on a library component (Spartan, Angular, EF Core) needs a skill, not your research: you never look for how a library works. No skill of that table covers it: `[!]`, `Result: missing skill: <component>`, stop and report, without a second try.
 
 ### When every task is done
 
