@@ -12,12 +12,10 @@
           @for (garden of gardensStore.gardens(); track garden.id) {
             @let selected = plannerStore.selectedGardenId() === garden.id;
             <li>
-              <div class="app-list-element flex items-center gap-2"
-                     role="button"
-                     tabindex="0"
-                     (click)="plannerStore.selectGarden(garden.id)"
-                     (keydown)="onGardenKeydown($event, garden.id)"
-                     [class.active]="selected">
+              <button type="button"
+                      class="app-list-element flex w-full items-center gap-2"
+                      (click)="plannerStore.selectGarden(garden.id)"
+                      [class.active]="selected">
                 <span class="app-list-element__title">{{ garden.name }}</span>
                 <button hlmBtn
                         type="button"
@@ -37,7 +35,7 @@
                         (click)="openDeleteDialog(garden)">
                   <ng-icon name="lucideTrash" aria-hidden="true" />
                 </button>
-              </div>
+              </button>
             </li>
           }
         </ul>

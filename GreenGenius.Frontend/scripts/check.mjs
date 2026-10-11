@@ -147,7 +147,7 @@ const orphanComponentsOf = (file) => {
     .filter(
       ([, name]) =>
         !sourceContents.some(
-          (source) => source.file !== file && new RegExp(`\\b${name}\\b`).test(source.content),
+          (source) => source.file !== file && new RegExp(String.raw`\b${name}\b`).test(source.content),
         ),
     )
     .map((match) =>
@@ -160,14 +160,16 @@ const orphanComponentsOf = (file) => {
     );
 };
 
-const routedComponentNames = filesOf(app, ['.routes.ts']).flatMap((file) =>
-  [...readFileSync(file, 'utf8').matchAll(/\bcomponent:\s*(\w+)/g)].map(([, name]) => name),
+const routedComponentNames = new Set(
+  filesOf(app, ['.routes.ts']).flatMap((file) =>
+    [...readFileSync(file, 'utf8').matchAll(/\bcomponent:\s*(\w+)/g)].map(([, name]) => name),
+  ),
 );
 
 const unboundInputsOf = (file) => {
   const content = readFileSync(file, 'utf8');
   const isRouted = [...content.matchAll(/export class (\w+)/g)].some(([, name]) =>
-    routedComponentNames.includes(name),
+    routedComponentNames.has(name),
   );
   if (!isRouted) {
     return [];
@@ -199,7 +201,7 @@ const translationLineOf = (key) =>
 
 const unsortedKeyProblems = translationKeys
   .map((key, index) => ({ key, previous: translationKeys[index - 1] }))
-  .filter(({ key, previous }) => previous !== undefined && key < previous)
+  .filter(({ key, previous }) => previous != undefined && key < previous)
   .map(
     ({ key, previous }) =>
       `${translationsPath}:${translationLineOf(key)}  '${key}' must come before '${previous}': keep fr.json sorted`,

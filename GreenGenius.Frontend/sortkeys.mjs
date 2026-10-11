@@ -11,7 +11,8 @@ if (lineCount !== keys.length) {
   process.exit(1);
 }
 
-const sorted = Object.fromEntries(keys.sort().map((key) => [key, translations[key]]));
+const sortedKeys = keys.toSorted();
+const sorted = Object.fromEntries(sortedKeys.map((key) => [key, translations[key]]));
 const output = `${JSON.stringify(sorted, null, 2)}\n`;
 
 if (output === source) {
