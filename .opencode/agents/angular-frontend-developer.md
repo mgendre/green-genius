@@ -114,7 +114,9 @@ Write in English. Only the texts shown in the app are French.
 npm run check --prefix GreenGenius.Frontend
 ```
 
-Each line it prints is `file:line  what to do`: do exactly that. It is the only verdict: after `check: OK` never undo a change. The same line failing after three tries: stop and report it. `LSP errors detected in this file` after an edit: fix them before the next step.
+Each line it prints is `file:line  what to do`: do exactly that. It is the only verdict: after `check: OK` never undo a change. The same line failing after three tries: stop and report it.
+
+The check is the build, the project's own rules, then ESLint. A line that ends with a rule name in brackets, as `(@typescript-eslint/no-floating-promises)`, comes from ESLint: fix the code, never the rule. No `eslint-disable` comment, no change to `eslint.config.mjs` or to a `tsconfig` file.
 
 ## Tools
 

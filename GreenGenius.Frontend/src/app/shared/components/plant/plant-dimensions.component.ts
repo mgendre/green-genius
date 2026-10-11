@@ -4,7 +4,7 @@ import { PlantDto } from '../../../api/api-client.generated';
 
 @Component({
   imports: [TranslatePipe],
-  selector: 'plant-dimensions',
+  selector: 'app-plant-dimensions',
   templateUrl: './plant-dimensions.html',
 })
 export class PlantDimensionsComponent {

@@ -1,23 +1,23 @@
 <div class="dimensions">
-  @if (plant().needs?.spacingRowCm != null) {
+  @if (plant().needs.spacingRowCm != null) {
     <div class="info-row">
       <span class="info-label">{{ 'plants.needs.spacing-row' | translate }}</span>
       <span class="info-value">{{ 'plants.unit.cm' | translate: { value: plant().needs.spacingRowCm } }}</span>
     </div>
   }
-  @if (plant().needs?.spacingPlantCm != null) {
+  @if (plant().needs.spacingPlantCm != null) {
     <div class="info-row">
       <span class="info-label">{{ 'plants.needs.spacing-plant' | translate }}</span>
       <span class="info-value">{{ 'plants.unit.cm' | translate: { value: plant().needs.spacingPlantCm } }}</span>
     </div>
   }
-  @if (plant().needs?.heightCm != null) {
+  @if (plant().needs.heightCm != null) {
     <div class="info-row">
       <span class="info-label">{{ 'plants.needs.height' | translate }}</span>
       <span class="info-value">{{ 'plants.unit.cm' | translate: { value: plant().needs.heightCm } }}</span>
     </div>
   }
-  @if (plant().needs?.spreadCm != null) {
+  @if (plant().needs.spreadCm != null) {
     <div class="info-row">
       <span class="info-label">{{ 'plants.needs.spread' | translate }}</span>
       <span class="info-value">{{ 'plants.unit.cm' | translate: { value: plant().needs.spreadCm } }}</span>

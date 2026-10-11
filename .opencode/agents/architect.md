@@ -1,6 +1,7 @@
 ---
 description: Use to design a feature or a structural change before it is built — challenges the request, decides the structure and the API contract, then, once the user has approved the design, writes the work plan in `.plans/` that the dispatcher executes. Advises and plans; never writes application code and never hands work to a developer.
 mode: all
+model: ollama/qwen3.6
 temperature: 0.6
 top_p: 0.95
 variant: high

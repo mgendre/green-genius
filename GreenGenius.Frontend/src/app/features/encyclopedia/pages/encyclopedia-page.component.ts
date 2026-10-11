@@ -16,7 +16,7 @@ export class EncyclopediaPageComponent {
 
   onPlantSelected(plant: PlantSummaryDto): void {
     if (plant.id) {
-      this.router.navigate(['/encyclopedia', plant.id]).finally();
+      void this.router.navigate(['/encyclopedia', plant.id]);
     }
   }
 }

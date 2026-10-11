@@ -41,7 +41,7 @@ export const WATER_NEED_DROPLETS: Record<WaterNeedLevel, number> = {
 
 @Component({
   imports: [NgIcon, TranslatePipe],
-  selector: 'plant-needs',
+  selector: 'app-plant-needs',
   templateUrl: './plant-needs.html',
 })
 export class PlantNeedsComponent {

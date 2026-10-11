@@ -147,7 +147,8 @@ const orphanComponentsOf = (file) => {
     .filter(
       ([, name]) =>
         !sourceContents.some(
-          (source) => source.file !== file && new RegExp(String.raw`\b${name}\b`).test(source.content),
+          (source) =>
+            source.file !== file && new RegExp(String.raw`\b${name}\b`).test(source.content),
         ),
     )
     .map((match) =>
@@ -253,7 +254,7 @@ const conventions = ourFiles
   .concat(wiringProblems, unsortedKeyProblems, unusedKeyProblems, duplicateKeyProblems)
   .filter((line, index, lines) => lines.indexOf(line) === index);
 
-const build =spawnSync(join(frontend, 'node_modules/.bin/ng'), ['build'], {
+const build = spawnSync(join(frontend, 'node_modules/.bin/ng'), ['build'], {
   cwd: frontend,
   encoding: 'utf8',
   env: { ...process.env, NO_COLOR: '1' },
@@ -263,6 +264,27 @@ const buildLines = `${build.stdout ?? ''}${build.stderr ?? ''}${build.error?.mes
 );
 const buildProblems = buildLines.filter((line) => /\[(ERROR|WARNING)\]/.test(line)).length;
 const buildFailed = build.status !== 0 || buildProblems > 0;
+
+const lint = spawnSync(join(frontend, 'node_modules/.bin/eslint'), ['.', '--format', 'json'], {
+  cwd: frontend,
+  encoding: 'utf8',
+  maxBuffer: 64 * 1024 * 1024,
+});
+const lintProblemsOf = (output) => {
+  try {
+    return JSON.parse(output).flatMap((file) =>
+      file.messages.map(
+        (message) =>
+          `${relative(repository, file.filePath)}:${message.line ?? 1}  ${message.message} (${message.ruleId ?? 'eslint'})`,
+      ),
+    );
+  } catch {
+    return [
+      `GreenGenius.Frontend/eslint.config.mjs:1  eslint did not run: ${(lint.stderr ?? '').trim().split('\n')[0]}`,
+    ];
+  }
+};
+const lintProblems = lintProblemsOf(lint.stdout ?? '');
 
 if (buildFailed) {
   const start = Math.max(
@@ -277,12 +299,13 @@ if (buildFailed) {
   );
 }
 conventions.forEach((line) => console.log(line));
+lintProblems.forEach((line) => console.log(line));
 
-const failed = buildFailed || conventions.length > 0;
+const failed = buildFailed || conventions.length > 0 || lintProblems.length > 0;
 const buildToFix = buildFailed ? Math.max(buildProblems, 1) : 0;
 console.log(
   failed
-    ? `check: FAILED, build: ${buildToFix} to fix, conventions: ${conventions.length} to fix`
+    ? `check: FAILED, build: ${buildToFix} to fix, conventions: ${conventions.length} to fix, lint: ${lintProblems.length} to fix`
     : 'check: OK',
 );
 process.exit(failed ? 1 : 0);

@@ -1,6 +1,7 @@
 ---
 description: Use only when the user explicitly asks for a security review — an occasional, in-depth pass on the whole repository or on a named diff. Covers owner scoping, injection, secrets, error leakage, dependencies, containers and CI. Never dispatched as part of another review. Never edits code.
 mode: subagent
+model: ollama/qwen3.6
 temperature: 0.6
 top_p: 0.95
 variant: high

@@ -29,4 +29,4 @@ Every name used in a template needs the TypeScript import below and an entry in 
 | Store | `import { patchState, signalStore, withHooks, withMethods, withState } from '@ngrx/signals';` | |
 | API types and client | `import { Client, GardenDto } from '../../api/api-client.generated';` | Relative path to `src/app/api/api-client.generated.ts`. Only a store injects `Client`. |
 
-**Check**: `npm run check --prefix GreenGenius.Frontend` must print `check: OK`. It builds without warnings, then looks for the project's known mistakes (i18n keys, `translate` misuse, `hlm` names, Helm imports, dialog services). Each line it prints is `file:line  what to do`. No test runner is set up yet.
+**Check**: `npm run check --prefix GreenGenius.Frontend` must print `check: OK`. It builds without warnings (strict TypeScript and templates, unused code), looks for the project's known mistakes (i18n keys, `translate` misuse, `hlm` names, Helm imports, dialog services), then runs ESLint (a promise nobody awaits, a selector without `app-`, template and accessibility rules). Each line it prints is `file:line  what to do`. No test runner is set up yet.

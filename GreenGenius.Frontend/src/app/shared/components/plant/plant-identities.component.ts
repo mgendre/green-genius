@@ -4,7 +4,7 @@ import { PlantFamily, PlantLifeCycle, PlantDto } from '../../../api/api-client.g
 
 @Component({
   imports: [TranslatePipe],
-  selector: 'plant-identities',
+  selector: 'app-plant-identities',
   templateUrl: './plant-identities.html',
 })
 export class PlantIdentitiesComponent {

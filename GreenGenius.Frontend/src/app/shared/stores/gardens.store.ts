@@ -60,7 +60,7 @@ export const GardensStore = signalStore(
   })),
   withHooks({
     onInit(store) {
-      store.loadGardens().finally();
+      void store.loadGardens();
     },
   }),
 );

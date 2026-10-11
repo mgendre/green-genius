@@ -33,7 +33,7 @@ export const EncyclopediaStore = signalStore(
   })),
   withHooks({
     onInit(store) {
-      store.loadPlants().finally();
+      void store.loadPlants();
     },
   }),
 );
