@@ -377,6 +377,7 @@ export interface PlantDto {
     id?: string;
     nameFr: string;
     binomialName?: string | undefined;
+    emoji?: string | undefined;
     descriptionFr?: string | undefined;
     family?: PlantFamily;
     lifeCycle?: PlantLifeCycle;
@@ -428,6 +429,7 @@ export interface PlantSummaryDto {
     id?: string;
     nameFr: string;
     binomialName?: string | undefined;
+    emoji?: string | undefined;
     family: string;
 
     [key: string]: any;

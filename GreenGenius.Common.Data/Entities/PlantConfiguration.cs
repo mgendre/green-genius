@@ -29,6 +29,9 @@ public sealed class PlantConfiguration : IEntityTypeConfiguration<Plant>
         builder.Property(plant => plant.BinomialName)
             .HasMaxLength(EntitiesConstants.MediumTextMaxLength);
 
+        builder.Property(plant => plant.Emoji)
+            .HasMaxLength(4);
+
         builder.Property(plant => plant.Family)
             .HasConversion<string>()
             .HasMaxLength(EntitiesConstants.ShortTextMaxLength);

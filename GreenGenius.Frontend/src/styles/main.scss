@@ -1,7 +1,8 @@
-@use "base/typography";
-@use "layout/menus";
-@use "layout/content";
-@use "components/app-card-list";
-@use "components/badge";
-@use "components/plant-identity";
-@use "vendors/tailwind";
+@use "./base/typography";
+@use "./layout/menus";
+@use "./layout/content";
+@use "./components/app-card-list";
+@use "./components/badge";
+@use "./components/labels";
+@use "./components/plants";
+@use "./vendors/tailwind";

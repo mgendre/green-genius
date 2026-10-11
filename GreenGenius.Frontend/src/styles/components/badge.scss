@@ -1,9 +1,5 @@
 .badge {
-  @apply inline-flex items-center gap-x-1 rounded-full px-sm py-xs font-medium text-foreground whitespace-normal;
-
-  &-inline {
-    margin-right: spacing-sm;
-  }
+  @apply inline-flex items-center gap-x-1 rounded-full px-md py-xs font-medium text-foreground whitespace-normal;
 
   &-sunlight {
     background-color: var(--color-sunlight);
@@ -25,8 +21,12 @@
   }
 }
 
-.badge-soil-ph,
-.badge-trait {
+.badge-soil-ph {
   background-color: var(--color-primary-soft);
+  color: var(--color-surface);
+}
+
+.badge-trait {
+  background-color: var(--color-primary);
   color: var(--color-surface);
 }

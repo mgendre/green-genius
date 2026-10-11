@@ -1,0 +1,35 @@
+@if (plant.isLoading()) {
+  <p>{{ 'plants.identity.loading' | translate }}</p>
+} @else if (plant.error()) {
+  <p>{{ 'plants.identity.not-found' | translate }}</p>
+} @else if (plant.value(); as p) {
+  <div class="plant-identity">
+    <div class="plant-identity-header">
+      <h2 class="plant-identity-title">{{ p.emoji ?? '' }} {{ p.nameFr }}</h2>
+      @if (p.binomialName) {
+        <p class="plant-identity-binomial">{{ p.binomialName }}</p>
+      }
+    </div>
+
+    @if (p.descriptionFr) {
+      <p class="plant-identity-description">{{ p.descriptionFr }}</p>
+    }
+
+    <plant-needs [plant]="p" />
+
+    <div class="plant-identity-row">
+      <hlm-card>
+        <hlm-card-header><h3 hlmCardTitle>{{ 'plants.section.identity' | translate }}</h3></hlm-card-header>
+        <div hlmCardContent><plant-identities [plant]="p" /></div>
+      </hlm-card>
+      <hlm-card>
+        <hlm-card-header><h3 hlmCardTitle>{{ 'plants.section.strengths' | translate }}</h3></hlm-card-header>
+        <div hlmCardContent><plant-traits [plant]="p" /></div>
+      </hlm-card>
+      <hlm-card>
+        <hlm-card-header><h3 hlmCardTitle>{{ 'plants.section.dimensions' | translate }}</h3></hlm-card-header>
+        <div hlmCardContent><plant-dimensions [plant]="p" /></div>
+      </hlm-card>
+    </div>
+  </div>
+}

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GreenGenius.App.Services;
 
-public sealed class PlantImporter(ApplicationDbContext dbContext, ILogger<PlantImporter> logger, string plantsDirectory = null!)
+public sealed class PlantImporter(ApplicationDbContext dbContext, ILogger<PlantImporter> logger, string? plantsDirectory = null)
 {
     private readonly string _plantsDirectory = plantsDirectory ?? Path.Combine(AppContext.BaseDirectory, "Data", "Plants");
 
@@ -95,6 +95,7 @@ public sealed class PlantImporter(ApplicationDbContext dbContext, ILogger<PlantI
         plant.NameFr = plantJson.NameFr;
         plant.DescriptionFr = plantJson.DescriptionFr;
         plant.BinomialName = plantJson.BinomialName;
+        plant.Emoji = plantJson.Emoji;
         plant.Family = plantJson.Family;
         plant.LifeCycle = plantJson.LifeCycle;
         plant.DaysToMaturity = plantJson.DaysToMaturity;

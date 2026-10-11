@@ -1,0 +1,34 @@
+<div class="traits">
+  @if (plant().traits?.nitrogenFixer) {
+    <div class="traits-row">
+      <span class="badge badge-inline badge-trait" title="{{ 'plants.traits.nitrogen-fixer' | translate }}">
+        <ng-icon name="lucideCheck" aria-hidden="true" />
+        {{ 'plants.traits.nitrogen-fixer' | translate }}
+      </span>
+    </div>
+  }
+  @if (plant().traits?.dynamicAccumulator) {
+    <div class="traits-row">
+      <span class="badge badge-inline badge-trait" title="{{ 'plants.traits.dynamic-accumulator' | translate }}">
+        <ng-icon name="lucideCheck" aria-hidden="true" />
+        {{ 'plants.traits.dynamic-accumulator' | translate }}
+      </span>
+    </div>
+  }
+  @if (plant().traits?.pollinatorFriendly) {
+    <div class="traits-row">
+      <span class="badge badge-inline badge-trait" title="{{ 'plants.traits.pollinator-friendly' | translate }}">
+        <ng-icon name="lucideCheck" aria-hidden="true" />
+        {{ 'plants.traits.pollinator-friendly' | translate }}
+      </span>
+    </div>
+  }
+  @if (plant().traits?.droughtTolerant) {
+    <div class="traits-row">
+      <span class="badge badge-inline badge-trait" title="{{ 'plants.traits.drought-tolerant' | translate }}">
+        <ng-icon name="lucideCheck" aria-hidden="true" />
+        {{ 'plants.traits.drought-tolerant' | translate }}
+      </span>
+    </div>
+  }
+</div>

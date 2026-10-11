@@ -253,6 +253,12 @@
               "string"
             ]
           },
+          "emoji": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "descriptionFr": {
             "type": [
               "null",
@@ -394,6 +400,12 @@
             "type": "string"
           },
           "binomialName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "emoji": {
             "type": [
               "null",
               "string"

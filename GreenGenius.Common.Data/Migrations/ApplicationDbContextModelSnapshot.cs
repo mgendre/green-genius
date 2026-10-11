@@ -58,6 +58,10 @@ namespace GreenGenius.Common.Data.Migrations
                         .HasMaxLength(4000)
                         .HasColumnType("character varying(4000)");
 
+                    b.Property<string>("Emoji")
+                        .HasMaxLength(4)
+                        .HasColumnType("character varying(4)");
+
                     b.Property<string>("Family")
                         .IsRequired()
                         .HasMaxLength(50)

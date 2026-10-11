@@ -1,0 +1,23 @@
+.plant-identity {
+  @apply flex w-full flex-col gap-sm;
+
+  &-title {
+    @apply text-2xl font-semibold;
+  }
+
+  &-binomial {
+    @apply italic text-muted-foreground;
+  }
+
+  &-row {
+    @apply grid grid-cols-3 gap-sm;
+  }
+}
+
+.plant-needs-row {
+  @apply flex flex-wrap items-center gap-2;
+
+  .plant-needs-title {
+    @apply mr-0 font-medium text-muted-foreground;
+  }
+}

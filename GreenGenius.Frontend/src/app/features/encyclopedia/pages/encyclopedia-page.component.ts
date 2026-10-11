@@ -2,7 +2,7 @@ import { Component, input, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PlantSummaryDto } from '../../../api/api-client.generated';
-import { PlantIdentityComponent } from '../../../shared/components/plant-identity.component';
+import { PlantIdentityComponent } from '../../../shared/components/plant/plant-identity.component';
 import { EncyclopediaSearchComponent } from '../encyclopedia-search.component';
 
 @Component({

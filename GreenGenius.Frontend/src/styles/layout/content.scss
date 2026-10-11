@@ -1,3 +1,4 @@
 .app-content {
-  @apply mx-auto w-full max-w-[68.75rem] p-md;
+  @apply mx-auto w-full max-w-[68.75rem] p-md mt-md;
+  @apply rounded-lg border border-border bg-card p-md;
 }

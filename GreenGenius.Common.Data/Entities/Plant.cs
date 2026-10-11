@@ -9,6 +9,7 @@ public class Plant
     public string? Key { get; init; }
     public string? DescriptionFr { get; set; }
     public string? BinomialName { get; set; }
+    public string? Emoji { get; set; }
     public PlantFamily Family { get; set; }
     public PlantLifeCycle LifeCycle { get; set; }
     public int? DaysToMaturity { get; set; }

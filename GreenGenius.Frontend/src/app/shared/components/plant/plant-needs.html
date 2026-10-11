@@ -1,0 +1,33 @@
+@if (plant().needs; as needs) {
+  @if (needs.sunlight || needs.waterNeed || needs.rootDepth || (needs.soilPhMin != null && needs.soilPhMax != null)) {
+    <div class="plant-needs-row">
+      <h3 class="plant-needs-title">{{ 'plants.section.needs' | translate }}</h3>
+      @if (needs.sunlight) {
+        <span class="badge badge-inline badge-sunlight" title="{{ 'plants.needs.sunlight.label' | translate }}">
+          <ng-icon [name]="SUNLIGHT_ICONS[needs.sunlight]" aria-hidden="true" />
+          {{ SUNLIGHT_LABELS[needs.sunlight] | translate }}
+        </span>
+      }
+        @if (needs.waterNeed) {
+          <span class="badge badge-inline badge-water-need" title="{{ 'plants.needs.water-need.label' | translate }}">
+            @for (i of dropletIndices(WATER_NEED_DROPLETS[needs.waterNeed]); track i) {
+              <ng-icon name="lucideDroplet" aria-hidden="true" />
+            }
+            {{ WATER_NEED_LABELS[needs.waterNeed] | translate }}
+          </span>
+        }
+      @if (needs.rootDepth) {
+        <span class="badge badge-inline badge-root-depth" title="{{ 'plants.needs.root-depth.label' | translate }}">
+          <ng-icon [name]="ROOT_DEPTH_ICONS[needs.rootDepth]" aria-hidden="true" />
+          {{ ROOT_DEPTH_LABELS[needs.rootDepth] | translate }}
+        </span>
+      }
+      @if (needs.soilPhMin != null && needs.soilPhMax != null) {
+        <span class="badge badge-inline badge-soil-ph" title="{{ 'plants.needs.soil-ph' | translate }}">
+          <ng-icon name="lucideFlaskConical" aria-hidden="true" />
+          {{ 'plants.needs.soil-ph.badge' | translate: { min: needs.soilPhMin, max: needs.soilPhMax } }}
+        </span>
+      }
+    </div>
+  }
+}

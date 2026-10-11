@@ -11,6 +11,7 @@ public static class PlantsExtensions
         Id = plant.Id,
         NameFr = plant.NameFr,
         BinomialName = plant.BinomialName,
+        Emoji = plant.Emoji,
         Family = plant.Family.ToString()
     };
 
@@ -19,6 +20,7 @@ public static class PlantsExtensions
         Id = plant.Id,
         NameFr = plant.NameFr,
         BinomialName = plant.BinomialName,
+        Emoji = plant.Emoji,
         DescriptionFr = plant.DescriptionFr,
         Family = plant.Family,
         LifeCycle = plant.LifeCycle,
