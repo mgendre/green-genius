@@ -27,6 +27,7 @@
 }
 
 .badge-trait {
-  background-color: var(--color-primary);
-  color: var(--color-surface);
+  background-color: var(--color-surface);
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
 }
