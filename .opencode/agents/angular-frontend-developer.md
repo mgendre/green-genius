@@ -1,7 +1,8 @@
 ---
 description: Use to build or change the Angular front end — SignalStores, pages, components, Spartan UI components bound to our tokens, SCSS 7-1 styling, i18n — over the NSwag-generated API client.
 mode: all
-model: ollama/qwen3.6-none
+model: ollama/qwen3.6
+variant: low
 temperature: 0.7
 top_p: 0.8
 steps: 100

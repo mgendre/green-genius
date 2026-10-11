@@ -2,6 +2,7 @@
 description: Use to build or change .NET backend features test-first — writes the API integration tests for the endpoint, then the vertical slice that makes them green (Minimal API endpoint, IApiHandler handler, DTOs, EF Core entity, configuration, migration). Owns both the tests and the production code of the backend.
 mode: all
 model: ollama/qwen3.6-none
+variant: low
 temperature: 0.7
 top_p: 0.8
 steps: 150
