@@ -1,0 +1,58 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "ollama/qwen3.6",
+  "mcp": {
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "enabled": true
+    }
+  },
+  "permissions": [
+    { "action": "context7_*", "resource": "*", "effect": "deny" },
+    { "action": "angular-cli_*", "resource": "*", "effect": "deny" },
+    { "action": "spartan-ui_*", "resource": "*", "effect": "deny" },
+    { "action": "skill", "resource": "dispatcher-plan", "effect": "deny" },
+    { "action": "skill", "resource": "opencode-skill-creator", "effect": "deny" },
+    { "action": "skill", "resource": "sonar-api", "effect": "deny" },
+    { "action": "shell", "resource": "rm *", "effect": "allow" },
+    { "action": "shell", "resource": "mv *", "effect": "allow" },
+    { "action": "shell", "resource": "rm *..*", "effect": "deny" },
+    { "action": "shell", "resource": "rm *~*", "effect": "deny" },
+    { "action": "shell", "resource": "rm *$*", "effect": "deny" },
+    { "action": "shell", "resource": "rm *.git", "effect": "deny" },
+    { "action": "shell", "resource": "rm *.git *", "effect": "deny" },
+    { "action": "shell", "resource": "rm *.git/*", "effect": "deny" },
+    { "action": "shell", "resource": "rm *.plans*", "effect": "deny" },
+    { "action": "shell", "resource": "rm *node_modules*", "effect": "deny" },
+    { "action": "shell", "resource": "mv *..*", "effect": "deny" },
+    { "action": "shell", "resource": "mv *~*", "effect": "deny" },
+    { "action": "shell", "resource": "mv *$*", "effect": "deny" },
+    { "action": "shell", "resource": "mv *.git", "effect": "deny" },
+    { "action": "shell", "resource": "mv *.git *", "effect": "deny" },
+    { "action": "shell", "resource": "mv *.git/*", "effect": "deny" },
+    { "action": "shell", "resource": "mv *.plans*", "effect": "deny" },
+    { "action": "shell", "resource": "mv *node_modules*", "effect": "deny" },
+    { "action": "shell", "resource": "* *.env*", "effect": "deny" },
+    { "action": "shell", "resource": "* *.apikey*", "effect": "deny" },
+    { "action": "shell", "resource": "* *.ssh*", "effect": "deny" },
+    { "action": "edit", "resource": "**/.opencode/**", "effect": "allow" },
+    { "action": "edit", "resource": "**/.github/**", "effect": "allow" },
+    { "action": "edit", "resource": "**/dotnet-tools.json", "effect": "allow" }
+  ],
+  "lsp": {
+    "csharp": {
+      "disabled": true
+    },
+    "yaml-ls": {
+      "disabled": true
+    },
+    "bash": {
+      "disabled": true
+    },
+    "dockerfile": {
+      "disabled": true
+    }
+  },
+  "default_agent": "dispatcher"
+}

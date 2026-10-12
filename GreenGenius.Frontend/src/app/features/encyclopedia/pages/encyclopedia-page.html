@@ -1,0 +1,11 @@
+<div class="flex flex-col gap-md">
+  <app-encyclopedia-search (selected)="onPlantSelected($event)"/>
+
+  @if (id() === undefined) {
+    <p>{{ 'encyclopedia.page.empty' | translate }}</p>
+  } @else if (id(); as plantId) {
+    <div class="card-encyclopedia">
+      <app-plant-identity [id]="plantId"/>
+    </div>
+  }
+</div>

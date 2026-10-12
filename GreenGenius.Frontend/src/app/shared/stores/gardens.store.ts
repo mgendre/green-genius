@@ -21,14 +21,19 @@ export const GardensStore = signalStore(
   withMethods((store, client = inject(Client)) => ({
     async loadGardens(): Promise<void> {
       patchState(store, { gardens: [], loaded: false, loading: true, error: null });
-      const gardens = await firstValueFrom(client.listGardens());
-      patchState(store, { gardens, loaded: true, loading: false, error: null });
+      try {
+        const gardens = await firstValueFrom(client.listGardens());
+        patchState(store, { gardens, loaded: true, loading: false, error: null });
+      } catch (e) {
+        patchState(store, { error: e instanceof Error ? e.message : 'Une erreur est survenue', loading: false });
+      }
     },
     async createGarden(name: string): Promise<void> {
       patchState(store, { loading: true, error: null });
       try {
         const garden = await firstValueFrom(client.createGarden({ name }));
-        patchState(store, { gardens: [garden, ...store.gardens()] });
+        const gardens = sortByName([garden, ...store.gardens()]);
+        patchState(store, { gardens });
       } catch (e) {
         patchState(store, { error: e instanceof Error ? e.message : 'An error occurred' });
       } finally {
@@ -39,7 +44,8 @@ export const GardensStore = signalStore(
       patchState(store, { loading: true, error: null });
       try {
         const garden = await firstValueFrom(client.updateGarden(id, { name }));
-        patchState(store, { gardens: store.gardens().map((existing) => (existing.id === id ? garden : existing)) });
+        const gardens = sortByName(store.gardens().map((existing) => (existing.id === id ? garden : existing)));
+        patchState(store, { gardens });
       } catch (e) {
         patchState(store, { error: e instanceof Error ? e.message : 'An error occurred' });
       } finally {
@@ -50,7 +56,7 @@ export const GardensStore = signalStore(
       patchState(store, { loading: true, error: null });
       try {
         await firstValueFrom(client.deleteGarden(id));
-        patchState(store, { gardens: store.gardens().filter((existing) => existing.id !== id) });
+        patchState(store, { gardens: sortByName(store.gardens().filter((existing) => existing.id !== id)) });
       } catch (e) {
         patchState(store, { error: e instanceof Error ? e.message : 'An error occurred' });
       } finally {
@@ -60,7 +66,11 @@ export const GardensStore = signalStore(
   })),
   withHooks({
     onInit(store) {
-      store.loadGardens().finally();
+      void store.loadGardens();
     },
   }),
 );
+
+function sortByName(gardens: GardenDto[]): GardenDto[] {
+  return [...gardens].sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+}

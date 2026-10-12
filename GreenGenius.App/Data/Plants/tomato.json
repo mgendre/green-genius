@@ -2,9 +2,10 @@
   "NameFr": "Tomate",
   "DescriptionFr": "Plante nécessitant beaucoup d'eau et de chaleur",
   "BinomialName": "Solanum lycopersicum",
+  "Emoji": "🍅",
   "Family": "Solanaceae",
   "LifeCycle": "Annual",
-  "Version": 1,
+  "Version": 2,
   "DaysToMaturity": null,
   "TemperatureMinC": null,
   "Needs": {

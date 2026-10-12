@@ -15,7 +15,6 @@ public sealed class PlantConfiguration : IEntityTypeConfiguration<Plant>
         builder.Property(plant => plant.Id).ValueGeneratedNever();
 
         builder.Property(plant => plant.NameFr)
-            .IsRequired()
             .HasMaxLength(EntitiesConstants.MediumTextMaxLength);
 
         builder.Property(plant => plant.Key)
@@ -28,6 +27,9 @@ public sealed class PlantConfiguration : IEntityTypeConfiguration<Plant>
 
         builder.Property(plant => plant.BinomialName)
             .HasMaxLength(EntitiesConstants.MediumTextMaxLength);
+
+        builder.Property(plant => plant.Emoji)
+            .HasMaxLength(4);
 
         builder.Property(plant => plant.Family)
             .HasConversion<string>()
@@ -42,15 +44,13 @@ public sealed class PlantConfiguration : IEntityTypeConfiguration<Plant>
             .HasForeignKey<PlantNeeds>(needs => needs.PlantId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Navigation(plant => plant.Needs)
-            .IsRequired();
+        builder.Navigation(plant => plant.Needs);
 
         builder.HasOne(plant => plant.Traits)
             .WithOne(traits => traits.Plant)
             .HasForeignKey<PlantTraits>(traits => traits.PlantId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Navigation(plant => plant.Traits)
-            .IsRequired();
+        builder.Navigation(plant => plant.Traits);
     }
 }

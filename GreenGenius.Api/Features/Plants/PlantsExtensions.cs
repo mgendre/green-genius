@@ -11,7 +11,8 @@ public static class PlantsExtensions
         Id = plant.Id,
         NameFr = plant.NameFr,
         BinomialName = plant.BinomialName,
-        Family = plant.Family.ToString()
+        Emoji = plant.Emoji,
+        Family = plant.Family
     };
 
     public static readonly Expression<Func<Plant, PlantDto>> AsDto = plant => new PlantDto
@@ -19,6 +20,7 @@ public static class PlantsExtensions
         Id = plant.Id,
         NameFr = plant.NameFr,
         BinomialName = plant.BinomialName,
+        Emoji = plant.Emoji,
         DescriptionFr = plant.DescriptionFr,
         Family = plant.Family,
         LifeCycle = plant.LifeCycle,

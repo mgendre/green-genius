@@ -8,7 +8,7 @@
     "/gardens": {
       "post": {
         "tags": [
-          "GreenGenius.App"
+          "Gardens"
         ],
         "operationId": "CreateGarden",
         "requestBody": {
@@ -36,7 +36,7 @@
       },
       "get": {
         "tags": [
-          "GreenGenius.App"
+          "Gardens"
         ],
         "operationId": "ListGardens",
         "responses": {
@@ -59,7 +59,7 @@
     "/gardens/{id}": {
       "put": {
         "tags": [
-          "GreenGenius.App"
+          "Gardens"
         ],
         "operationId": "UpdateGarden",
         "parameters": [
@@ -108,7 +108,7 @@
       },
       "delete": {
         "tags": [
-          "GreenGenius.App"
+          "Gardens"
         ],
         "operationId": "DeleteGarden",
         "parameters": [
@@ -142,7 +142,7 @@
     "/plants": {
       "get": {
         "tags": [
-          "GreenGenius.App"
+          "Plants"
         ],
         "operationId": "ListPlants",
         "responses": {
@@ -165,7 +165,7 @@
     "/plants/{id}": {
       "get": {
         "tags": [
-          "GreenGenius.App"
+          "Plants"
         ],
         "operationId": "GetPlant",
         "parameters": [
@@ -248,6 +248,12 @@
             "type": "string"
           },
           "binomialName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "emoji": {
             "type": [
               "null",
               "string"
@@ -399,8 +405,14 @@
               "string"
             ]
           },
+          "emoji": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
           "family": {
-            "type": "string"
+            "$ref": "#/components/schemas/PlantFamily"
           }
         }
       },
@@ -495,7 +507,10 @@
   },
   "tags": [
     {
-      "name": "GreenGenius.App"
+      "name": "Gardens"
+    },
+    {
+      "name": "Plants"
     }
   ]
 }

@@ -11,7 +11,8 @@ public static class PlantsApi
 {
     public static void WithPlantsApi(this IEndpointRouteBuilder app)
     {
-        var plants = app.MapGroup(RouteConstants.Plants);
+        var plants = app.MapGroup(RouteConstants.Plants)
+            .WithTags("Plants");
 
         plants.MapGet("/", (
             [FromServices] ListPlantsHandler h) => h.Handle())

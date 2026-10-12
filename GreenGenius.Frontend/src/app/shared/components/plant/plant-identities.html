@@ -1,0 +1,20 @@
+<div class="identities">
+  @if (familyKey()) {
+    <div class="info-row">
+      <span class="info-label">{{ 'plants.family.label' | translate }}</span>
+      <span class="info-value">{{ familyKey() | translate }}</span>
+    </div>
+  }
+  @if (lifeCycleKey()) {
+    <div class="info-row">
+      <span class="info-label">{{ 'plants.life-cycle.label' | translate }}</span>
+      <span class="info-value">{{ lifeCycleKey() | translate }}</span>
+    </div>
+  }
+  @if (plant().daysToMaturity != null) {
+    <div class="info-row">
+      <span class="info-label">{{ 'plants.days-to-maturity' | translate }}</span>
+      <span class="info-value">{{ 'plants.unit.days' | translate: { value: plant().daysToMaturity } }}</span>
+    </div>
+  }
+</div>

@@ -60,8 +60,9 @@ jobs:
           /o:"mgendre"
           /d:sonar.host.url="https://sonarcloud.io"
           /d:sonar.token="${SONAR_TOKEN}"
+          /d:sonar.qualitygate.wait=${{ github.event_name == 'pull_request' }}
           /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
-          /d:sonar.exclusions="**/Migrations/**,**/*generated.*,**/shared/spartan/helm/utils/**"
+          /d:sonar.exclusions="**/Migrations/**,**/*generated.*,**/shared/spartan/helm/**"
           /d:sonar.coverage.exclusions="GreenGenius.Frontend/**"
 
       - name: Build

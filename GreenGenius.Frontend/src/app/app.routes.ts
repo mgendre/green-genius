@@ -7,4 +7,9 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./features/planner/planner.routes').then((m) => m.PLANNER_ROUTES),
   },
+  {
+    path: 'encyclopedia',
+    loadChildren: () =>
+      import('./features/encyclopedia/encyclopedia.routes').then((m) => m.ENCYCLOPEDIA_ROUTES),
+  },
 ];
