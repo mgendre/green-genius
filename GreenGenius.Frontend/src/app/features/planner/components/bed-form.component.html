@@ -1,0 +1,18 @@
+<hlm-dialog-header>
+  <h3 hlmDialogTitle>{{ (bedId() ? 'beds.form.title.edit' : 'beds.form.title.create') | translate }}</h3>
+</hlm-dialog-header>
+
+<form [formRoot]="bedForm">
+  <hlm-field>
+    <label hlmFieldLabel for="bed-name">{{ 'beds.form.name.label' | translate }}</label>
+    <input hlmInput id="bed-name" type="text" [formField]="bedForm.name" />
+    @if (bedForm.name().touched() && bedForm.name().invalid()) {
+      <hlm-field-error>{{ bedForm.name().errors()[0].message ?? '' | translate }}</hlm-field-error>
+    }
+  </hlm-field>
+
+  <hlm-dialog-footer class="gap-2">
+    <button hlmBtn variant="outline" type="button" (click)="cancelled.emit()">{{ 'common.cancel' | translate }}</button>
+    <button hlmBtn type="submit" [disabled]="bedForm().submitting()">{{ 'beds.form.save' | translate }}</button>
+  </hlm-dialog-footer>
+</form>

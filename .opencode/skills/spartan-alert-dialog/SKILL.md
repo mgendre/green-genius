@@ -86,9 +86,7 @@ The name of the store method (`deleteGarden`) is the one of your store: read it 
 
 ## Mistakes to avoid
 
-- Running the action in the button of the list: it only opens the dialog.
 - A service or a ref to open it (`HlmDialogService`, `BrnAlertDialog`, a template reference `#dialog`): the signal does it.
 - `<hlm-alert-dialog-content>` without `*hlmAlertDialogPortal`: nothing shows.
 - A clickable `<div>` to open it: a `<button hlmBtn type="button">`.
 - A plain `hlm-dialog` for a confirmation: the alert dialog cannot be closed by a click outside, which is the point.
-- `if (x) return;` without braces: `{ }` on every `if`, `else`, `for` and `while`, also around a single line.

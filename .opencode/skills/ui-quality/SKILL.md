@@ -17,7 +17,7 @@ Spacing, flex and tokens are in `scss-styling`; loading of one item in `loading-
 
 - Hierarchy comes from weight and colour, not from size alone: the important text `font-medium` or `font-semibold` in `text-foreground`, the secondary one `text-muted-foreground`.
 - Group by proximity before drawing a line: related things share a `gap-sm`, unrelated blocks a `gap-md` or `gap-lg`. A border or a divider only when spacing is not enough.
-- A label and its value stay side by side or stacked, never far apart. Values the data may lack show `common.not-set`, never an empty cell.
+- A label and its value stay side by side or stacked, never far apart.
 - Numbers with units: value and unit together (`20 cm`, through a parametrised text), `tabular-nums` in a column of numbers.
 
 ## The four states of a data view
@@ -36,7 +36,7 @@ A view that handles only content is not finished. Check all four in the template
 ## Forms
 
 - A visible label on every field (`hlm-field` with its label), never a placeholder alone.
-- The error under the field it belongs to, in a full sentence that says what to do; submit disabled while the form is invalid or saving.
+- The error under the field it belongs to; submit disabled while the form is invalid or saving.
 - The first field has focus when a dialog opens; Enter submits; Escape closes.
 - A destructive action asks for confirmation in an alert dialog and names what is deleted: `Supprimer le jardin « Potager » ?`.
 - Right type and `autocomplete` on native inputs.
@@ -44,7 +44,7 @@ A view that handles only content is not finished. Check all four in the template
 ## Actions
 
 - A link goes somewhere (`routerLink`), a button does something (`<button>`). Never a clickable `div`.
-- A verb for an action (`Enregistrer`), the object for a title. The same word for the same action everywhere: do not mix `Supprimer` and `Effacer`.
+- The same word for the same action everywhere: do not mix `Supprimer` and `Effacer`.
 - An icon alone has an `aria-label` from `fr.json`. An icon next to a text is `aria-hidden="true"`.
 - A click target is at least 40 px high: Spartan sizes already do it; a bare icon in a custom button needs `p-sm`.
 
@@ -59,7 +59,6 @@ A view that handles only content is not finished. Check all four in the template
 
 - Colour never carries a meaning alone: a status has an icon or a text too (the badges do).
 - Keep the focus ring: never `outline-none` without `focus-visible:` replacement.
-- Contrast comes from the tokens; a hand-picked grey is a token to add, not a value.
 - Headings in order (one `h1` per page, then `h2`); a landmark per region (`nav`, `main`).
 - A dynamic message (error, saved) is in an `aria-live="polite"` region or a Spartan toast.
 

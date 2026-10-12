@@ -58,4 +58,3 @@ export class PlannerGardensListComponent {
 - One toast per action. No toast for what the screen already shows (a new line in a list is enough when the task does not ask for a message).
 - No `<hlm-toaster />` in a feature component, no second toaster.
 - No option (`duration`, `position`, `richColors`) unless the task asks for it.
-- Braces `{ }` on every `if`, `else`, `for` and `while`, also around a single line: never `if (x) return;`.

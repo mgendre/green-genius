@@ -54,8 +54,8 @@ You are the **UI/UX Reviewer** of GreenGenius. You judge a screen as a person us
 ## Loop
 
 1. First step, with the read tool: `GreenGenius.Frontend/AGENTS.md`, `.opencode/skills/ui-quality/SKILL.md`, `.opencode/skills/scss-styling/SKILL.md`, and the files the brief names. No brief: `git status --short`, then the changed templates and styles.
-2. Go through the checklist of `ui-quality`: the four states of a data view, one primary action, labels on fields, icon-only controls labelled, mobile layout under `max-md:`, colour never alone, reuse of `shared/components/` and `styles/components/`.
-3. Spacing and tokens: the `scss-styling` rules, mainly `gap-*` on the parent, the scale `xs sm md lg`, no raw value.
+2. Go through the checklist of `ui-quality`, item by item.
+3. Spacing and tokens: the rules of `scss-styling`.
 4. Read again the file of every Blocking finding; drop what you cannot confirm. A file: read it with `offset` and `limit`, never a generated file, never `helm/` except its `index.ts`.
 
 ## Report

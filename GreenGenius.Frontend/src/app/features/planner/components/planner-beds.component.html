@@ -1,0 +1,82 @@
+@if (plannerStore.selectedGardenId()) {
+<div class="flex items-center justify-between">
+  <button hlmBtn (click)="addBed()">{{ 'beds.list.add' | translate }}</button>
+</div>
+
+@if (bedsStore.loading()) {
+  <p>{{ 'planner.beds.loading' | translate }}</p>
+} @else if (bedsStore.error()) {
+  <p class="text-destructive">{{ 'planner.beds.error' | translate }}</p>
+} @else if (bedsStore.beds().length === 0) {
+  <p>{{ 'planner.beds.empty' | translate }}</p>
+} @else {
+  @for (bed of bedsStore.beds(); track bed.id) {
+    <hlm-card>
+      <hlm-card-header class="cursor-pointer hover:bg-primary-soft"
+                       [attr.aria-expanded]="bed.open"
+                       (click)="toggleBed(bed)"
+                       (keydown)="onKeydown($event, bed)">
+        <h3 hlmCardTitle>{{ bed.name }}</h3>
+      </hlm-card-header>
+      <hlm-card-footer class="justify-end">
+        <div class="flex gap-2">
+          <button hlmBtn
+                  type="button"
+                  variant="outline"
+                  size="icon-sm"
+                  [attr.aria-label]="'common.actions.edit' | translate"
+                  (click)="$event.stopPropagation(); editBed(bed)">
+            <ng-icon name="lucidePencil" aria-hidden="true" />
+          </button>
+          <button hlmBtn
+                  type="button"
+                  variant="outline"
+                  size="icon-sm"
+                  [attr.aria-label]="'common.actions.delete' | translate"
+                  (click)="$event.stopPropagation(); askDeleteBed(bed)">
+            <ng-icon name="lucideTrash" aria-hidden="true" />
+          </button>
+        </div>
+      </hlm-card-footer>
+      @if (bed.open) {
+        <div hlmCardContent class="flex flex-col gap-sm">
+          @for (plant of bed.plants; track plant.id) {
+            <div class="flex items-center gap-2"
+                 [attr.aria-label]="'beds.list.plant.identity' | translate: { plantName: plant.nameFr }">
+              <span class="text-xl" aria-hidden="true">{{ plant.emoji }}</span>
+              <span class="font-medium">{{ plant.nameFr }}</span>
+              @if (plant.binomialName) {
+                <span class="text-muted-foreground italic">{{ plant.binomialName }}</span>
+              }
+            </div>
+          }
+        </div>
+      }
+    </hlm-card>
+  }
+}
+
+<hlm-dialog [state]="dialogState()" (closed)="closeEditDialog()">
+  <hlm-dialog-content>
+    <app-bed-form
+      [bedId]="editedBedId()"
+      [gardenId]="plannerStore.selectedGardenId() ?? ''"
+      (saved)="closeEditDialog()"
+      (cancelled)="closeEditDialog()"
+    />
+  </hlm-dialog-content>
+</hlm-dialog>
+
+<hlm-alert-dialog [state]="deleteDialogState()" (closed)="closeDeleteDialog()">
+  <hlm-alert-dialog-content *hlmAlertDialogPortal>
+    <hlm-alert-dialog-header>
+      <h3 hlmAlertDialogTitle>{{ 'beds.delete.title' | translate }}</h3>
+      <p hlmAlertDialogDescription>{{ 'beds.delete.body' | translate }}</p>
+    </hlm-alert-dialog-header>
+    <hlm-alert-dialog-footer>
+      <button hlmAlertDialogCancel type="button" (click)="closeDeleteDialog()">{{ 'common.cancel' | translate }}</button>
+      <button hlmAlertDialogAction variant="destructive" type="button" (click)="confirmDeleteBed()" [disabled]="bedsStore.loading()">{{ 'beds.delete.action' | translate }}</button>
+    </hlm-alert-dialog-footer>
+  </hlm-alert-dialog-content>
+</hlm-alert-dialog>
+}

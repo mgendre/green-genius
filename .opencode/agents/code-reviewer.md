@@ -54,7 +54,6 @@ You are the **Code Reviewer** for the GreenGenius project. You review against `A
 - An import between two features; a handler registered by hand; a hand-written null check answering `404`; a second mapping of the same DTO.
 - An indirection with one caller, code nothing asked for, the same logic twice (point to both places).
 - A method over ~20 lines, nesting deeper than two, cognitive complexity above 15.
-- An `if`, `else`, `for`, `foreach` or `while` without `{ }`, also around a single line.
 - A new endpoint without its unknown-id and not-mine tests.
 
 **Frontend**:

@@ -17,6 +17,7 @@
 - **Ownership**: user-scoped entities implement `IHasOwner` and call `ConfigureOwnerIdQueryFilter`. `OwnerId` comes from `ICurrentUserService`, never from the request.
 - **Reads**: a read that returns a DTO projects in the database, by id as for a list: `.Where(e => e.Id == id).Select(<Feature>Extensions.AsDto).FirstOrDefaultAsync()`, then `DataNotFoundException` when null. No `Include`, no `AsNoTracking` there. An unprojected, unmodified entity read uses `AsNoTracking()`. Never load related data in a loop.
 - **Migrations**: generated with `dotnet ef migrations add`, never edited. Applied at startup in every environment.
+- **Logging**: `ILogger<T>` from the constructor, a message template with named values. Never the console: `BannedSymbols.txt` at the root lists what the build refuses (`RS0030`).
 - **Decided, not to be revisited or reported**: no `CancellationToken` in handlers, no input validation layer, migrations at startup in Production.
 
 ## Tests

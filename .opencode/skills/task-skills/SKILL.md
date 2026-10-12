@@ -15,6 +15,7 @@ Go through the rows for each task and name every skill whose row applies, in thi
 | an entity, a column, an index, an entity configuration | `ef-entity` and `ef-migrations`, together |
 | a migration alone: a rename, a wrong one to remove, a merge | `ef-migrations` |
 | a query, a loop over rows, an import, a bulk change | `ef-queries` |
+| a log line, a `catch` that reports an error, an import or a service that tells what it did | `dotnet-logging` |
 | a `.csproj`, a package, a project reference, a data file copied to the output | `csproj-files` |
 | **Frontend** | |
 | something a person sees: a page, a card, a list, a form | `ui-quality`; the criteria then say what shows when the data is loading, empty or failed |

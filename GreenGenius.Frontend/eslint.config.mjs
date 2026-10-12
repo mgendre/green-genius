@@ -27,6 +27,7 @@ export default defineConfig([
     },
     processor: angular.processInlineTemplates,
     rules: {
+      curly: ['error', 'all'],
       '@angular-eslint/component-selector': [
         'error',
         { type: 'element', prefix: 'app', style: 'kebab-case' },

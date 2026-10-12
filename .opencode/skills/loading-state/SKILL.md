@@ -59,6 +59,4 @@ export class PlantIdentityComponent {
 
 ## Never
 
-- Inject `Client` in a component that is not this shared sheet: a list or a form goes through a store.
 - Use `effect` or `subscribe` to fetch.
-- Write an `if`, `else`, `for` or `while` without `{ }`, also around a single line.

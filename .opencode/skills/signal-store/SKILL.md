@@ -11,14 +11,14 @@ Reference: `GreenGenius.Frontend/src/app/shared/stores/gardens.store.ts`, read i
 
 - State of one feature: `src/app/features/<feature>/<feature>.store.ts`.
 - State several features read: `src/app/shared/stores/<name>.store.ts`.
-- Always `signalStore({ providedIn: 'root' }, …)`. Never provided in a component, never a service holding state, never a `BehaviorSubject`.
+- Always `signalStore({ providedIn: 'root' }, …)`, never provided in a component.
 
 ## Recipe
 
 1. Declare the state as an exported interface, then `withState<TState>({ … })` with every property initialised. A store that loads from the API carries `loading: boolean`, `loaded: boolean` and `error: string | null`.
 2. Values derived from the state go in `withComputed`, as `computed`. Never store what can be computed.
 3. Methods go in `withMethods((store, client = inject(Client)) => ({ … }))`.
-4. A method that calls the API is `async`, awaits `firstValueFrom(client.<operation>(…))` and writes the result with `patchState`. No `rxMethod`, no `subscribe`, no `HttpClient`.
+4. A method that calls the API is `async`, awaits `firstValueFrom(client.<operation>(…))` and writes the result with `patchState`. No `subscribe`, no `HttpClient`.
 5. Data needed as soon as the store exists is loaded in `withHooks({ onInit(store) { … } })`.
 
 ## Shape of a method
@@ -44,10 +44,9 @@ async createGarden(name: string): Promise<void> {
 ## Mistakes to avoid
 
 - The generated client takes a request object, not loose values: `client.createGarden({ name })`, `client.updateGarden(id, { name })`. Read the method in `api-client.generated.ts` before calling it.
-- A client call returns an `Observable`: wrap it in `firstValueFrom`, never `await` it directly.
+- A client call returns an `Observable`: never `await` it directly.
 - An `id` of a generated DTO is optional (`string | undefined`).
-- `if (x) return;` without braces: `{ }` on every `if`, `else`, `for` and `while`, also around a single line.
 
 ## Components
 
-A component injects the store (`readonly gardensStore = inject(GardensStore)`), reads its signals and calls its methods. It never calls the API client and never copies store state into a local signal.
+A component injects the store (`readonly gardensStore = inject(GardensStore)`), reads its signals and calls its methods. It never copies store state into a local signal.

@@ -97,4 +97,3 @@ After a choice the field shows the text of `itemToString`.
 
 - Read or copy from `shared/spartan/helm/combobox/src/lib/` or from `node_modules`: this file is the reference.
 - Use the pieces not listed above (chips, multiple, groups, value template) unless the task asks for several choices: then report that this skill does not cover it.
-- Write an `if`, `else`, `for` or `while` without `{ }`, also around a single line.

@@ -58,9 +58,7 @@ gardens.MapPut("/{id:guid}", ([FromRoute] Guid id, [FromBody] UpdateGardenDto dt
 | Delete | `Task<NoContent>` | `GetAsync(id)`, `Remove`, `SaveChangesAsync` |
 
 - `GetAsync(id)` throws `DataNotFoundException`, turned into the `404`: never return `NotFound`, never catch it. A route that takes an id declares `.ProducesProblem(StatusCodes.Status404NotFound)`.
-- Handlers are registered by the assembly scan: never add them to the DI container by hand.
-- No `CancellationToken`, no validation layer, no service interface between the route and the handler.
+- No service interface between the route and the handler.
 - An enum is a string in the JSON, already configured (`JsonStringEnumConverter`): put the enum type in the DTO, never a `string` or an `int`.
 - A date and time is a `DateTimeOffset`, never a `DateTime`.
 - Data access in a handler: `ef-queries` skill.
-- Braces `{ }` on every `if`, `else`, `for`, `foreach` and `while`, also around a single line: never `if (x) return;`.

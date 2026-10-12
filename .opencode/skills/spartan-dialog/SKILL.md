@@ -113,11 +113,8 @@ A confirmation before a delete is an alert dialog: `.opencode/skills/spartan-ale
 
 ## Mistakes already made here
 
-- `inject(BrnDialogRef)`, or `BrnDialogRef` / `BrnDialog` in `imports`: there is no dialog reference outside `hlm-dialog-content`. Use the signal and the outputs.
-- `dialogRef.open()` does not exist. Opening is `this.dialogOpen.set(true)`.
-- Two dialogs for create and edit: one dialog, `editedGarden()` tells which.
+- `inject(BrnDialogRef)`, `dialogRef.open()`: there is no dialog reference outside `hlm-dialog-content`. Opening is `this.dialogOpen.set(true)`.
 - `@spartan-ts/…`, `@spartan-brain/…`: these packages do not exist.
 - An `hlm-alert-dialog` inside the content of an `hlm-dialog`: the inner one never opens. One dialog per window, side by side in the opener.
-- `if (x) return;` without braces: `{ }` on every `if`, `else`, `for` and `while`, also around a single line.
 
 The check does not catch a provider error: report the dialog as not opened in a browser.

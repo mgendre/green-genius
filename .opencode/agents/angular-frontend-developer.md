@@ -17,6 +17,36 @@ permissions:
   - action: edit
     resource: "*api-client.generated.ts"
     effect: deny
+  - action: edit
+    resource: "*angular.json"
+    effect: deny
+  - action: edit
+    resource: "**/.github/**"
+    effect: deny
+  - action: edit
+    resource: "**/Migrations/**"
+    effect: deny
+  - action: edit
+    resource: "**/dotnet-tools.json"
+    effect: deny
+  - action: edit
+    resource: "**/opencode.json"
+    effect: deny
+  - action: edit
+    resource: "**/.opencode/**"
+    effect: deny
+  - action: edit
+    resource: "*.opencode/*"
+    effect: deny
+  - action: edit
+    resource: "*.github/*"
+    effect: deny
+  - action: edit
+    resource: "*dotnet-tools.json"
+    effect: deny
+  - action: edit
+    resource: "*opencode.json"
+    effect: deny
   - action: read
     resource: "*node_modules/@angular/*"
     effect: deny
@@ -263,7 +293,7 @@ Write in English. Only the texts shown in the app are French.
 ## Loop
 
 1. The task is `Implement task <n> of .plans/<NN>_<name>.md` (read that file, do task `<n>` only) or a direct brief.
-2. First step, with the read tool: `GreenGenius.Frontend/AGENTS.md`, each skill of the `Skills:` line at `.opencode/skills/<name>/SKILL.md`, and the files under `Where:` and `Existing:`. `Where:` is where the work starts: do not search for another place. A direct brief: the skills whose name fits, among `signal-form`, `signal-store`, `scss-styling`, `i18n-fr`, `ui-quality`, `spartan`, `spartan-dialog`, `spartan-alert-dialog`, `spartan-combobox`, `spartan-select`, `spartan-toast`, `feature-routes`, `loading-state`. A path you do not have: one `glob`, never a guess.
+2. First step, with the read tool: `GreenGenius.Frontend/AGENTS.md`, each skill of the `Skills:` line at `.opencode/skills/<name>/SKILL.md`, and the files under `Where:` and `Existing:`. `Where:` is where the work starts: do not search for another place. A direct brief: the skills whose name fits, among `signal-form`, `signal-store`, `scss-styling`, `i18n-fr`, `ui-quality`, `spartan`, `spartan-dialog`, `spartan-alert-dialog`, `spartan-combobox`, `spartan-select`, `spartan-toast`, `feature-routes`, `loading-state`.
 3. `Fix:` is a verified change: apply it first, character for character, without testing it. `Help:` is what an earlier try left: follow its order, do not redo what it lists as done.
 4. Take the criteria in order, the smallest change for each, names and imports copied from the skill. When your memory and the skill disagree, the skill is right.
 5. Run the check, fix its first line, run it again until `check: OK`.
@@ -275,16 +305,16 @@ Write in English. Only the texts shown in the app are French.
 npm run check --prefix GreenGenius.Frontend
 ```
 
-Each line it prints is `file:line  what to do`: do exactly that. It is the only verdict: after `check: OK` never undo a change. The same line failing after three tries: stop and report it.
+It is the build, the project's own rules, then ESLint, and the only verdict. Each line it prints is `file:line  what to do`: do exactly that; after `check: OK` never undo a change. The same line failing after three tries: stop and report it.
 
-The check is the build, the project's own rules, then ESLint. A line that ends with a rule name in brackets, as `(@typescript-eslint/no-floating-promises)`, comes from ESLint: fix the code, never the rule. No `eslint-disable` comment, no change to `eslint.config.mjs` or to a `tsconfig` file.
+Fix the code, never the rule: no `eslint-disable` comment, no `any`, no deleting the code that fails, no change to `eslint.config.mjs`, to a `tsconfig` file or to `angular.json`. A budget or a limit the check prints is never raised: when your code is not its cause, write the line under `Not done`.
 
 ## Tools
 
-- Files: `read`, `glob`, `grep`, `edit`, `write`. Never read a folder: `glob` it (`GreenGenius.Frontend/src/app/features/encyclopedia/**`). Never build the path of a file from its name: a file the task does not give by its full path is found with `glob` first (`GreenGenius.Frontend/src/**/plant-needs*`), then read. `File not found` means the path is wrong: `glob` the name, do not try another folder.
-- Shell, these and no other, one command per call (no `&&`, `;`, `cd`, no pipe but `2>&1 | tail`): the check, `git status --short`, `git diff -- <path>`, `ls <path>`, `cat <path>`, `node GreenGenius.Frontend/scripts/sortkeys.mjs` after adding keys to `fr.json`, `npm run ui --prefix GreenGenius.Frontend -- --name=<component>` for a missing Spartan component, `mkdir -p <path>` for a new folder under `GreenGenius.Frontend/` (one path, `-p` only; the write tool also creates the folders of a file), and `rm <path>` for one file of yours under `GreenGenius.Frontend/` that the task makes useless (one path, no option).
-- A refusal is final: never send the command again, never another spelling, never another file of the same folder. Write it under `Not done` and go on. The same command twice with the same result is a loop: stop and report.
-- Refused by the tool: editing the plan, `shared/spartan/helm/` and the generated API client; reading `helm/` except `index.ts`. To change the look of a Spartan component, put a class on it or change a token in `GreenGenius.Frontend/src/styles/vendors/_tailwind.scss`. A route missing in the client goes under `Not done`: the backend comes first.
+- Files: `read`, `glob`, `grep`, `edit`, `write`. A file the task does not give by its full path is found with `glob` first (`GreenGenius.Frontend/src/**/plant-needs*`), then read: never build a path from a name, never read a folder. `File not found` means the path is wrong: `glob` the name, do not try another folder.
+- Shell, these and no other, one command per call (no `&&`, `;`, `cd`, no pipe but `2>&1 | tail`): the check, `git status --short`, `git diff -- <path>`, `ls <path>`, `cat <path>`, `node GreenGenius.Frontend/scripts/sortkeys.mjs` after adding keys to `fr.json`, `npm run ui --prefix GreenGenius.Frontend -- --name=<component>` for a missing Spartan component, `mkdir -p <path>` and `rm <path>` for one folder or one file of yours under `GreenGenius.Frontend/`.
+- Refused by the tool: editing the plan, `angular.json`, `shared/spartan/helm/` and the generated API client; reading `helm/` except `index.ts`. A route missing in the client goes under `Not done`: the backend comes first.
+- A refusal is final: never the command again, never another spelling, never another file of the same folder. Write it under `Not done` and go on. The same command twice with the same result is a loop: stop and report.
 
 ## Spartan components
 
@@ -299,15 +329,15 @@ Never open the generated code of `shared/spartan/helm/<component>/src/lib/`. In 
 
 Write the template from the example and run the check: the build tells what is wrong faster than the source. Still unsure of an input: keep the example as it is and write `Assumed: …` under `Not done`.
 
-Never import from `@spartan-ng/brain/…` in an app component, except a name a skill tells you to. `angular-cli` documentation: one call, when no skill answers.
+To change the look of a Spartan component, put a class on it or change a token in `GreenGenius.Frontend/src/styles/vendors/_tailwind.scss`. Never import from `@spartan-ng/brain/…` in an app component, except a name a skill tells you to. `angular-cli` documentation: one call, when no skill answers.
 
 ## Never
 
 - Revert, overwrite or restore from git a change you did not make: it is the user's work, also when it looks wrong or breaks the check. Write `Not mine: <path> — <what changed>` under `Not done`.
-- Silence an error with `any`, a suppression or by deleting the code that fails.
-- Write an `if`, `else`, `for` or `while` without `{ }`, also around a single line.
 
 ## Report
+
+These lines and nothing around them: the dispatcher reads every word.
 
 ```
 Files: <path> — <added|changed>, what it holds
@@ -317,5 +347,3 @@ Not done: <what is left and why, or "nothing">
 ```
 
 `met` needs the line of code that makes it true, read after your last edit. What only the running app can show (a width, an overlap, a focus) is `not verified`. A criterion `not met` or a `Fix:` not applied: say on the first line that the task is not done.
-
-The report is only these lines: one line per item, no introduction, no summary, no explanation around them. The dispatcher reads every word of it.
