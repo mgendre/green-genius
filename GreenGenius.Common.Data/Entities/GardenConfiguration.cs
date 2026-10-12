@@ -15,11 +15,9 @@ public sealed class GardenConfiguration(ApplicationDbContext dbContext) : IEntit
         builder.Property(garden => garden.Id).ValueGeneratedNever();
 
         builder.Property(garden => garden.Name)
-            .IsRequired()
             .HasMaxLength(EntitiesConstants.MediumTextMaxLength);
 
-        builder.Property(garden => garden.OwnerId)
-            .IsRequired();
+        builder.Property(garden => garden.OwnerId);
 
         builder.HasIndex(garden => new { garden.OwnerId, garden.Name });
 

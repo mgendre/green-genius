@@ -1,89 +1,228 @@
 ---
 description: Use to build a feature end to end — writes the plan of the request as a file in `.plans/`, small tasks with acceptance criteria, hands each one to the local developers, verifies the result and keeps the plan up to date. Never writes or designs code. Run it as the session agent with `opencode --agent dispatcher`.
 mode: primary
-model: ollama/qwen3.6
-temperature: 0.6
-top_p: 0.95
-variant: medium
-permission:
-  read:
-    "*node_modules/*": deny
-    "*shared/spartan/helm/*": deny
-    "*opencode/tool-output/*": deny
-  edit:
-    "*": deny
-    ".plans/*": allow
-  todowrite: deny
-  webfetch: deny
-  websearch: deny
-  lsp: deny
-  skill: deny
-  "angular-cli_*": deny
-  "spartan-ui_*": deny
-  "context7_*": deny
-  bash:
-    "*": deny
-    "git diff*": allow
-    "git status*": allow
-    "git log*": allow
-    "git show *": allow
-    "git ls-files*": allow
-    "ls": allow
-    "ls *": allow
-    "find *": allow
-    "find * -delete*": deny
-    "find * -exec*": deny
-    "head *": allow
-    "wc *": allow
-    "echo *": allow
-    "echo *>*": deny
-    "npm run check*": allow
-    "npm run build*": allow
-    "dotnet *": allow
-    "dotnet ef database*": deny
-    "dotnet ef migrations add*": deny
-    "dotnet ef migrations remove*": deny
-    "dotnet ef migrations bundle*": deny
-    "dotnet clean*": deny
-    "dotnet * Clean*": deny
-    "dotnet add*": deny
-    "dotnet remove*": deny
-    "dotnet format*": deny
-    "dotnet new*": deny
-    "dotnet nuget*": deny
-    "dotnet workload*": deny
-    "dotnet tool *": deny
-    "dotnet sln*": deny
-    "dotnet run*": deny
-    "dotnet watch*": deny
-    "dotnet tool restore*": allow
-    "tail *": allow
-    "grep *": allow
-    "rg *": allow
-    "cat *": allow
-    "cat *>*": deny
-    "git -C * status*": allow
-    "git -C * diff*": allow
-    "git -C * log*": allow
-    "git -C * show *": allow
-    "mv .plans/* .plans/done_*": allow
-    "mv /home/mg/dev/green-genius/.plans/* /home/mg/dev/green-genius/.plans/done_*": allow
-    "mv .plans/* .plans/*": allow
-    "mv /home/mg/dev/green-genius/.plans/* /home/mg/dev/green-genius/.plans/*": allow
-    "mv *..*": deny
-    "true": allow
-    "bash .opencode/skills/sonar-fix/issues.sh*": allow
-    "bash .opencode/skills/pr-fix/comments.sh*": allow
-    "bash /home/mg/dev/green-genius/.opencode/skills/pr-fix/comments.sh*": allow
-    "*node_modules*": deny
-    "* *.env*": deny
-    "* *.apikey*": deny
-    "* *.ssh*": deny
-    "* *opencode.json*": deny
-  task:
-    "*": deny
-    angular-frontend-developer: allow
-    dotnet-backend-developer: allow
+model: ollama/qwen3.6#medium
+request:
+  body:
+    temperature: 0.6
+    top_p: 0.95
+permissions:
+  - action: read
+    resource: "*node_modules/*"
+    effect: deny
+  - action: read
+    resource: "*shared/spartan/helm/*"
+    effect: deny
+  - action: read
+    resource: "*opencode/tool-output/*"
+    effect: deny
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: edit
+    resource: ".plans/*"
+    effect: allow
+  - action: webfetch
+    resource: "*"
+    effect: deny
+  - action: websearch
+    resource: "*"
+    effect: deny
+  - action: skill
+    resource: "*"
+    effect: deny
+  - action: "angular-cli_*"
+    resource: "*"
+    effect: deny
+  - action: "spartan-ui_*"
+    resource: "*"
+    effect: deny
+  - action: "context7_*"
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "git diff*"
+    effect: allow
+  - action: shell
+    resource: "git status*"
+    effect: allow
+  - action: shell
+    resource: "git log*"
+    effect: allow
+  - action: shell
+    resource: "git show *"
+    effect: allow
+  - action: shell
+    resource: "git ls-files*"
+    effect: allow
+  - action: shell
+    resource: "ls"
+    effect: allow
+  - action: shell
+    resource: "ls *"
+    effect: allow
+  - action: shell
+    resource: "find *"
+    effect: allow
+  - action: shell
+    resource: "find * -delete*"
+    effect: deny
+  - action: shell
+    resource: "find * -exec*"
+    effect: deny
+  - action: shell
+    resource: "head *"
+    effect: allow
+  - action: shell
+    resource: "wc *"
+    effect: allow
+  - action: shell
+    resource: "echo *"
+    effect: allow
+  - action: shell
+    resource: "echo *>*"
+    effect: deny
+  - action: shell
+    resource: "npm run check*"
+    effect: allow
+  - action: shell
+    resource: "npm run build*"
+    effect: allow
+  - action: shell
+    resource: "dotnet *"
+    effect: allow
+  - action: shell
+    resource: "dotnet ef database*"
+    effect: deny
+  - action: shell
+    resource: "dotnet ef migrations add*"
+    effect: deny
+  - action: shell
+    resource: "dotnet ef migrations remove*"
+    effect: deny
+  - action: shell
+    resource: "dotnet ef migrations bundle*"
+    effect: deny
+  - action: shell
+    resource: "dotnet clean*"
+    effect: deny
+  - action: shell
+    resource: "dotnet * Clean*"
+    effect: deny
+  - action: shell
+    resource: "dotnet add*"
+    effect: deny
+  - action: shell
+    resource: "dotnet remove*"
+    effect: deny
+  - action: shell
+    resource: "dotnet format*"
+    effect: deny
+  - action: shell
+    resource: "dotnet new*"
+    effect: deny
+  - action: shell
+    resource: "dotnet nuget*"
+    effect: deny
+  - action: shell
+    resource: "dotnet workload*"
+    effect: deny
+  - action: shell
+    resource: "dotnet tool *"
+    effect: deny
+  - action: shell
+    resource: "dotnet sln*"
+    effect: deny
+  - action: shell
+    resource: "dotnet run*"
+    effect: deny
+  - action: shell
+    resource: "dotnet watch*"
+    effect: deny
+  - action: shell
+    resource: "dotnet tool restore*"
+    effect: allow
+  - action: shell
+    resource: "tail *"
+    effect: allow
+  - action: shell
+    resource: "grep *"
+    effect: allow
+  - action: shell
+    resource: "rg *"
+    effect: allow
+  - action: shell
+    resource: "cat *"
+    effect: allow
+  - action: shell
+    resource: "cat *>*"
+    effect: deny
+  - action: shell
+    resource: "git -C * status*"
+    effect: allow
+  - action: shell
+    resource: "git -C * diff*"
+    effect: allow
+  - action: shell
+    resource: "git -C * log*"
+    effect: allow
+  - action: shell
+    resource: "git -C * show *"
+    effect: allow
+  - action: shell
+    resource: "mv .plans/* .plans/done_*"
+    effect: allow
+  - action: shell
+    resource: "mv /home/mg/dev/green-genius/.plans/* /home/mg/dev/green-genius/.plans/done_*"
+    effect: allow
+  - action: shell
+    resource: "mv .plans/* .plans/*"
+    effect: allow
+  - action: shell
+    resource: "mv /home/mg/dev/green-genius/.plans/* /home/mg/dev/green-genius/.plans/*"
+    effect: allow
+  - action: shell
+    resource: "mv *..*"
+    effect: deny
+  - action: shell
+    resource: "true"
+    effect: allow
+  - action: shell
+    resource: "bash .opencode/skills/sonar-fix/issues.sh*"
+    effect: allow
+  - action: shell
+    resource: "bash .opencode/skills/pr-fix/comments.sh*"
+    effect: allow
+  - action: shell
+    resource: "bash /home/mg/dev/green-genius/.opencode/skills/pr-fix/comments.sh*"
+    effect: allow
+  - action: shell
+    resource: "*node_modules*"
+    effect: deny
+  - action: shell
+    resource: "* *.env*"
+    effect: deny
+  - action: shell
+    resource: "* *.apikey*"
+    effect: deny
+  - action: shell
+    resource: "* *.ssh*"
+    effect: deny
+  - action: shell
+    resource: "* *opencode.json*"
+    effect: deny
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: subagent
+    resource: "angular-frontend-developer"
+    effect: allow
+  - action: subagent
+    resource: "dotnet-backend-developer"
+    effect: allow
 ---
 
 You are the **Dispatcher** of GreenGenius. You write the plan of the work as a file, hand over its tasks one at a time, and verify them. The developers design and write.
@@ -175,7 +314,7 @@ One task at a time: `dotnet-backend-developer` or `angular-frontend-developer`.
 
 1. `git status --short` and `git diff --stat`: the state **before** the task.
 2. Set the box to `[~]` and write `Result: before: <the last line of git diff --stat>`: after a long session this line is how you tell this task's work from older work.
-3. In the same turn, call the `task` tool with this text and nothing more:
+3. In the same turn, call the `subagent` tool with `agent` set to the developer, a short `description`, and this text as `prompt` and nothing more:
 
 ```
 Implement task 2 of .plans/03_garden_notes.md.
@@ -187,7 +326,7 @@ After a failed check only, add its line copied as is:
 Check failed: src/app/features/planner/garden-form.component.ts:14 - error TS2339: Property 'note' does not exist on type 'Garden'.
 ```
 
-Never end your turn before the `task` call. Never add a cause, a criterion or a hint: the developer reads the plan. A new task gets a new developer; pass the `task_id` only to send the same developer back to the task it just did.
+Never end your turn before the `subagent` call. Never pass `model`: the developer has its own, and a call that fails on a model is reported to the user, not retried with another one. Never add a cause, a criterion or a hint: the developer reads the plan. A new task gets a new developer; pass its `sessionID` only to send the same developer back to the task it just did.
 
 ## Verify
 

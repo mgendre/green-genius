@@ -1,19 +1,31 @@
 ---
 description: Use only when the user explicitly asks for a security review — an occasional, in-depth pass on the whole repository or on a named diff. Covers owner scoping, injection, secrets, error leakage, dependencies, containers and CI. Never dispatched as part of another review. Never edits code.
 mode: subagent
-model: ollama/qwen3.6
-temperature: 0.6
-top_p: 0.95
-variant: high
+model: ollama/qwen3.6#high
 steps: 30
-permission:
-  edit: deny
-  bash:
-    "rm *": deny
-    "mv *": deny
-  task: deny
-  webfetch: deny
-  skill: deny
+request:
+  body:
+    temperature: 0.6
+    top_p: 0.95
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "rm *"
+    effect: deny
+  - action: shell
+    resource: "mv *"
+    effect: deny
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: webfetch
+    resource: "*"
+    effect: deny
+  - action: skill
+    resource: "*"
+    effect: deny
 ---
 
 You are the **Security Reviewer** for the GreenGenius project. Conventions and decisions: `AGENTS.md`; a decision recorded there is not a finding.

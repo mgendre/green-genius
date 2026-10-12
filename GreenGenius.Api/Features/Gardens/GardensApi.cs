@@ -11,7 +11,8 @@ public static class GardensApi
 {
     public static void WithGardensApi(this IEndpointRouteBuilder app)
     {
-        var gardens = app.MapGroup(RouteConstants.Gardens);
+        var gardens = app.MapGroup(RouteConstants.Gardens)
+            .WithTags("Gardens");
         
         gardens.MapPost("/", ([FromBody] CreateGardenDto dto,
             [FromServices] CreateGardenHandler h) => h.Handle(dto))

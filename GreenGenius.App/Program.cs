@@ -26,7 +26,7 @@ if (!app.Environment.IsOpenApiGeneration())
 {
     await app.MigrateAsync();
 
-    if (app.Configuration["PlantsImporterEnabled"] != "false")
+    if (app.Configuration["PlantsImporterEnabled"] is not ("false" or "False"))
     {
         using var scope = app.Services.CreateScope();
         var importer = scope.ServiceProvider.GetRequiredService<PlantImporter>();

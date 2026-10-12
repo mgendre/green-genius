@@ -1,6 +1,7 @@
 import { Component, inject, input, output, linkedSignal } from '@angular/core';
 import { form, FormField, FormRoot, maxLength, required } from '@angular/forms/signals';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmDialogImports } from '@spartan-ng/helm/dialog';
 import { HlmFieldImports } from '@spartan-ng/helm/field';
@@ -16,6 +17,7 @@ const NAME_MAX_LENGTH = 250;
   templateUrl: './garden-form.component.html',
 })
 export class GardenFormComponent {
+  private readonly translate = inject(TranslateService);
   private readonly gardensStore = inject(GardensStore);
 
   readonly garden = input<GardenDto>();
@@ -36,6 +38,10 @@ export class GardenFormComponent {
       await this.gardensStore.updateGarden(garden.id, name);
     } else {
       await this.gardensStore.createGarden(name);
+    }
+    if (this.gardensStore.error()) {
+      toast.error(this.translate.instant('gardens.save.failed') as string);
+      return;
     }
     this.saved.emit();
   }

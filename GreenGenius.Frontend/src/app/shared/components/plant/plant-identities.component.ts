@@ -12,13 +12,13 @@ export class PlantIdentitiesComponent {
 
   readonly familyKey = computed<string>(() => {
     const p = this.plant();
-    if (!p.family) return '';
+    if (!p.family) { return ''; }
     return FAMILY_LABELS[p.family];
   });
 
   readonly lifeCycleKey = computed<string>(() => {
     const p = this.plant();
-    if (!p.lifeCycle) return '';
+    if (!p.lifeCycle) { return ''; }
     return LIFE_CYCLE_LABELS[p.lifeCycle];
   });
 }

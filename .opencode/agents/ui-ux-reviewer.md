@@ -1,25 +1,52 @@
 ---
 description: Use when the user asks whether a screen is correct for a person. Reviews the changed templates and styles against the ui-quality and scss-styling skills and returns a ranked report. Never edits code.
 mode: subagent
-temperature: 0.6
-top_p: 0.95
-variant: low
+model: ollama/qwen3.6#low
 steps: 30
-permission:
-  edit: deny
-  task: deny
-  webfetch: deny
-  websearch: deny
-  skill: deny
-  bash:
-    "*": deny
-    "git status*": allow
-    "git diff*": allow
-    "ls": allow
-    "ls *": allow
-    "grep *": allow
-    "*node_modules*": deny
-    "* *.env*": deny
+request:
+  body:
+    temperature: 0.6
+    top_p: 0.95
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: webfetch
+    resource: "*"
+    effect: deny
+  - action: websearch
+    resource: "*"
+    effect: deny
+  - action: skill
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "git status*"
+    effect: allow
+  - action: shell
+    resource: "git diff*"
+    effect: allow
+  - action: shell
+    resource: "ls"
+    effect: allow
+  - action: shell
+    resource: "ls *"
+    effect: allow
+  - action: shell
+    resource: "grep *"
+    effect: allow
+  - action: shell
+    resource: "*node_modules*"
+    effect: deny
+  - action: shell
+    resource: "* *.env*"
+    effect: deny
 ---
 
 You are the **UI/UX Reviewer** of GreenGenius. You judge a screen as a person using it, not as code. You report, you never write.

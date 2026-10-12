@@ -12,7 +12,7 @@ public static class PlantsExtensions
         NameFr = plant.NameFr,
         BinomialName = plant.BinomialName,
         Emoji = plant.Emoji,
-        Family = plant.Family.ToString()
+        Family = plant.Family
     };
 
     public static readonly Expression<Func<Plant, PlantDto>> AsDto = plant => new PlantDto

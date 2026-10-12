@@ -27,8 +27,8 @@ Pick the server from the subject. One subject, one server: never ask Angular's s
 
 | The question is about | Server | Tool |
 |---|---|---|
-| Angular: components, signals, Signal Forms, routing, templates, `@angular/*` | `angular-cli` | `angular-cli_search_documentation`, or `angular-cli_get_best_practices` for "what is the right way to…" |
-| Spartan UI: any `hlm` or `brn` component, dialog, button, field, input, card | `spartan-ui` | `spartan-ui_spartan_components_get` with the component name; `spartan-ui_spartan_components_list` when you do not know the name; `spartan-ui_spartan_docs_get` for installation and theming |
+| Angular: components, signals, Signal Forms, routing, templates, `@angular/*` | `angular-cli` | `tools["angular-cli"].search_documentation`, or `tools["angular-cli"].get_best_practices` for "what is the right way to…" |
+| Spartan UI: any `hlm` or `brn` component, dialog, button, field, input, card | `spartan-ui` | `tools["spartan-ui"].spartan_components_get` with the component name; `tools["spartan-ui"].spartan_components_list` when you do not know the name; `tools["spartan-ui"].spartan_docs_get` for installation and theming |
 | Tailwind: classes, sizes, breakpoints, `@theme`, colours | `context7` | library `tailwindcss` |
 | NgRx SignalStore | `context7` | library `@ngrx/signals` |
 | ngx-translate | `context7` | library `ngx-translate` |
@@ -36,6 +36,7 @@ Pick the server from the subject. One subject, one server: never ask Angular's s
 | .NET, ASP.NET Minimal API, EF Core, PostgreSQL | `context7` | library named in the question |
 | Anything else | `context7` | library named in the question |
 
+- These are not direct tools: call them inside the `execute` tool, as `return await tools["<server>"].<tool>({ ... })`, with the arguments the tool catalog of your instructions gives. A name the catalog does not show: `search({ namespace: "<server>" })` inside `execute`, never a guess.
 - With `context7`, two calls: first resolve the library name to its id, then ask the docs of that id your question.
 - Two subjects take one call per subject: "widen a Spartan dialog" is the Spartan dialog component first, then Tailwind for the width class.
 - Look it up before answering, never from memory. Stop as soon as you have the answer.

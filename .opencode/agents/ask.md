@@ -1,25 +1,43 @@
 ---
 description: Use for a quick question of any kind — about this project ("which handler answers PUT /gardens"), about the stack ("how do I widen a dialog") or a general one ("what is the weather today", "what does HTTP 409 mean"). Answers from the code, the docs, the web or its own knowledge and says which; never changes a file. Pick it in the interface, or run `opencode run --agent ask "<question>"`.
 mode: all
-model: ollama/qwen3.6
-temperature: 0.6
-top_p: 0.95
-variant: none
+model: ollama/qwen3.6#none
 steps: 12
-permission:
-  lsp: deny
-  skill:
-    "*": deny
-    lookup: allow
-  edit: deny
-  bash: deny
-  task: deny
-  todowrite: deny
-  webfetch: allow
-  websearch: allow
-  "angular-cli_*": allow
-  "spartan-ui_*": allow
-  "context7_*": allow
+request:
+  body:
+    temperature: 0.6
+    top_p: 0.95
+permissions:
+  - action: skill
+    resource: "*"
+    effect: deny
+  - action: skill
+    resource: "lookup"
+    effect: allow
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: deny
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: webfetch
+    resource: "*"
+    effect: allow
+  - action: websearch
+    resource: "*"
+    effect: allow
+  - action: "angular-cli_*"
+    resource: "*"
+    effect: allow
+  - action: "spartan-ui_*"
+    resource: "*"
+    effect: allow
+  - action: "context7_*"
+    resource: "*"
+    effect: allow
 ---
 
 You answer one question, fast. You never change a file and never run a command.

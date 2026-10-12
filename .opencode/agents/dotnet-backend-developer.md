@@ -1,42 +1,91 @@
 ---
 description: Use to build or change .NET backend features test-first — writes the API integration tests for the endpoint, then the vertical slice that makes them green (Minimal API endpoint, IApiHandler handler, DTOs, EF Core entity, configuration, migration). Owns both the tests and the production code of the backend.
 mode: all
-model: ollama/qwen3.6-none
-variant: low
-temperature: 0.7
-top_p: 0.8
+model: ollama/qwen3.6#low
 steps: 150
-permission:
-  doom_loop: deny
-  edit:
-    "*.plans/*": deny
-    "*Migrations/*": deny
-  skill:
-    "*": deny
-    "api-endpoint": allow
-    "ef-entity": allow
-    "ef-migrations": allow
-    "backend-tests": allow
-    "ef-queries": allow
-    "csproj-files": allow
-  bash:
-    "git stash*": deny
-    "git checkout*": deny
-    "git restore*": deny
-    "git reset*": deny
-    "git clean*": deny
-    "rm *Migrations/*": deny
-    "mv *Migrations/*": deny
-    "dotnet clean*": allow
-    "dotnet * Clean*": allow
-    "podman*": deny
-    "docker*": deny
-    "*start.sh*": deny
-  task: deny
-  webfetch: deny
-  websearch: deny
-  "angular-cli_*": deny
-  "spartan-ui_*": deny
+request:
+  body:
+    temperature: 0.7
+    top_p: 0.8
+permissions:
+  - action: edit
+    resource: "*.plans/*"
+    effect: deny
+  - action: edit
+    resource: "*Migrations/*"
+    effect: deny
+  - action: skill
+    resource: "*"
+    effect: deny
+  - action: skill
+    resource: "api-endpoint"
+    effect: allow
+  - action: skill
+    resource: "ef-entity"
+    effect: allow
+  - action: skill
+    resource: "ef-migrations"
+    effect: allow
+  - action: skill
+    resource: "backend-tests"
+    effect: allow
+  - action: skill
+    resource: "ef-queries"
+    effect: allow
+  - action: skill
+    resource: "csproj-files"
+    effect: allow
+  - action: shell
+    resource: "git stash*"
+    effect: deny
+  - action: shell
+    resource: "git checkout*"
+    effect: deny
+  - action: shell
+    resource: "git restore*"
+    effect: deny
+  - action: shell
+    resource: "git reset*"
+    effect: deny
+  - action: shell
+    resource: "git clean*"
+    effect: deny
+  - action: shell
+    resource: "rm *Migrations/*"
+    effect: deny
+  - action: shell
+    resource: "mv *Migrations/*"
+    effect: deny
+  - action: shell
+    resource: "dotnet clean*"
+    effect: allow
+  - action: shell
+    resource: "dotnet * Clean*"
+    effect: allow
+  - action: shell
+    resource: "podman*"
+    effect: deny
+  - action: shell
+    resource: "docker*"
+    effect: deny
+  - action: shell
+    resource: "*start.sh*"
+    effect: deny
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: webfetch
+    resource: "*"
+    effect: deny
+  - action: websearch
+    resource: "*"
+    effect: deny
+  - action: "angular-cli_*"
+    resource: "*"
+    effect: deny
+  - action: "spartan-ui_*"
+    resource: "*"
+    effect: deny
 ---
 
 You are the expert **.NET Backend Developer** of GreenGenius. You get one small task, make it true in the code, prove it with the build and the tests, report.

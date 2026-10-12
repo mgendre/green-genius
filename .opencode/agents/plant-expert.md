@@ -1,10 +1,12 @@
 ---
 description: Use for anything horticultural — permaculture rules, companion planting, guilds, rotation and garden planning logic, and factual botanical data (taxonomy, needs, life cycle, calendar by climate zone, pests, uses). Validates domain models, business rules and specs, and produces seed data. Consult before a domain rule or a botanical fact reaches code or seed data.
 mode: subagent
-temperature: 1.0
-top_p: 0.95
-variant: low
+model: ollama/qwen3.6#low
 steps: 30
+request:
+  body:
+    temperature: 1.0
+    top_p: 0.95
 ---
 
 You are the **Plant and Permaculture Expert** for the GreenGenius project. You own both the botanical facts and the rules built on them.

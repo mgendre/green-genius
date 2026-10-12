@@ -1,99 +1,259 @@
 ---
 description: Use to build or change the Angular front end — SignalStores, pages, components, Spartan UI components bound to our tokens, SCSS 7-1 styling, i18n — over the NSwag-generated API client.
 mode: all
-model: ollama/qwen3.6
-variant: low
-temperature: 0.7
-top_p: 0.8
+model: ollama/qwen3.6#low
 steps: 100
-permission:
-  doom_loop: deny
-  edit:
-    "*.plans/*": deny
-    "*shared/spartan/helm/*": deny
-    "*api-client.generated.ts": deny
-  read:
-    "*node_modules/@angular/*": deny
-    "*/dist/*": deny
-    "*shared/spartan/helm/*": deny
-    "*shared/spartan/helm/*/src/index.ts": allow
-  bash:
-    "*": deny
-    "cd *": allow
-    "npm run check*": allow
-    "npm run build*": allow
-    "npm run ui*": allow
-    "node GreenGenius.Frontend/scripts/sortkeys.mjs*": allow
-    "grep *": allow
-    "rg *": allow
-    "find *": allow
-    "find * -delete*": deny
-    "find * -exec*": deny
-    "git show *": allow
-    "git grep *": allow
-    "git log*": allow
-    "git ls-files*": allow
-    "git rm GreenGenius.*": allow
-    "git rm *..*": deny
-    "npm ls *": allow
-    "git status*": allow
-    "git diff*": allow
-    "git -C * status*": allow
-    "git -C * diff*": allow
-    "ls": allow
-    "ls *": allow
-    "cat *": allow
-    "head *": allow
-    "tail *": allow
-    "wc *": allow
-    "rm *": allow
-    "mv *": allow
-    "mkdir *": allow
-    "rm *..*": deny
-    "rm *~*": deny
-    "rm *$*": deny
-    "rm *.git": deny
-    "rm *.git *": deny
-    "rm *.git/*": deny
-    "rm *.plans*": deny
-    "rm *node_modules*": deny
-    "rm *shared/spartan/helm*": deny
-    "rm *api-client.generated*": deny
-    "mv *..*": deny
-    "mv *~*": deny
-    "mv *$*": deny
-    "mv *.git": deny
-    "mv *.git *": deny
-    "mv *.git/*": deny
-    "mv *.plans*": deny
-    "mv *node_modules*": deny
-    "mv *shared/spartan/helm*": deny
-    "mv *api-client.generated*": deny
-    "mkdir *shared/spartan/helm*": deny
-    "* *.env*": deny
-    "* *.apikey*": deny
-    "* *.ssh*": deny
-    "* *opencode.json*": deny
-  skill:
-    "*": deny
-    "signal-form": allow
-    "spartan-dialog": allow
-    "spartan-combobox": allow
-    "spartan-alert-dialog": allow
-    "spartan-select": allow
-    "spartan-toast": allow
-    "feature-routes": allow
-    "loading-state": allow
-    "signal-store": allow
-    "scss-styling": allow
-    "i18n-fr": allow
-    "ui-quality": allow
-    "spartan": allow
-  task: deny
-  webfetch: deny
-  websearch: deny
-  "angular-cli_*": allow
-  "spartan-ui_*": allow
+request:
+  body:
+    temperature: 0.7
+    top_p: 0.8
+permissions:
+  - action: edit
+    resource: "*.plans/*"
+    effect: deny
+  - action: edit
+    resource: "*shared/spartan/helm/*"
+    effect: deny
+  - action: edit
+    resource: "*api-client.generated.ts"
+    effect: deny
+  - action: read
+    resource: "*node_modules/@angular/*"
+    effect: deny
+  - action: read
+    resource: "*/dist/*"
+    effect: deny
+  - action: read
+    resource: "*shared/spartan/helm/*"
+    effect: deny
+  - action: read
+    resource: "*shared/spartan/helm/*/src/index.ts"
+    effect: allow
+  - action: shell
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "cd *"
+    effect: allow
+  - action: shell
+    resource: "npm run check*"
+    effect: allow
+  - action: shell
+    resource: "npm run build*"
+    effect: allow
+  - action: shell
+    resource: "npm run ui*"
+    effect: allow
+  - action: shell
+    resource: "node GreenGenius.Frontend/scripts/sortkeys.mjs*"
+    effect: allow
+  - action: shell
+    resource: "grep *"
+    effect: allow
+  - action: shell
+    resource: "rg *"
+    effect: allow
+  - action: shell
+    resource: "find *"
+    effect: allow
+  - action: shell
+    resource: "find * -delete*"
+    effect: deny
+  - action: shell
+    resource: "find * -exec*"
+    effect: deny
+  - action: shell
+    resource: "git show *"
+    effect: allow
+  - action: shell
+    resource: "git grep *"
+    effect: allow
+  - action: shell
+    resource: "git log*"
+    effect: allow
+  - action: shell
+    resource: "git ls-files*"
+    effect: allow
+  - action: shell
+    resource: "git rm GreenGenius.*"
+    effect: allow
+  - action: shell
+    resource: "git rm *..*"
+    effect: deny
+  - action: shell
+    resource: "npm ls *"
+    effect: allow
+  - action: shell
+    resource: "git status*"
+    effect: allow
+  - action: shell
+    resource: "git diff*"
+    effect: allow
+  - action: shell
+    resource: "git -C * status*"
+    effect: allow
+  - action: shell
+    resource: "git -C * diff*"
+    effect: allow
+  - action: shell
+    resource: "ls"
+    effect: allow
+  - action: shell
+    resource: "ls *"
+    effect: allow
+  - action: shell
+    resource: "cat *"
+    effect: allow
+  - action: shell
+    resource: "head *"
+    effect: allow
+  - action: shell
+    resource: "tail *"
+    effect: allow
+  - action: shell
+    resource: "wc *"
+    effect: allow
+  - action: shell
+    resource: "rm *"
+    effect: allow
+  - action: shell
+    resource: "mv *"
+    effect: allow
+  - action: shell
+    resource: "mkdir *"
+    effect: allow
+  - action: shell
+    resource: "rm *..*"
+    effect: deny
+  - action: shell
+    resource: "rm *~*"
+    effect: deny
+  - action: shell
+    resource: "rm *$*"
+    effect: deny
+  - action: shell
+    resource: "rm *.git"
+    effect: deny
+  - action: shell
+    resource: "rm *.git *"
+    effect: deny
+  - action: shell
+    resource: "rm *.git/*"
+    effect: deny
+  - action: shell
+    resource: "rm *.plans*"
+    effect: deny
+  - action: shell
+    resource: "rm *node_modules*"
+    effect: deny
+  - action: shell
+    resource: "rm *shared/spartan/helm*"
+    effect: deny
+  - action: shell
+    resource: "rm *api-client.generated*"
+    effect: deny
+  - action: shell
+    resource: "mv *..*"
+    effect: deny
+  - action: shell
+    resource: "mv *~*"
+    effect: deny
+  - action: shell
+    resource: "mv *$*"
+    effect: deny
+  - action: shell
+    resource: "mv *.git"
+    effect: deny
+  - action: shell
+    resource: "mv *.git *"
+    effect: deny
+  - action: shell
+    resource: "mv *.git/*"
+    effect: deny
+  - action: shell
+    resource: "mv *.plans*"
+    effect: deny
+  - action: shell
+    resource: "mv *node_modules*"
+    effect: deny
+  - action: shell
+    resource: "mv *shared/spartan/helm*"
+    effect: deny
+  - action: shell
+    resource: "mv *api-client.generated*"
+    effect: deny
+  - action: shell
+    resource: "mkdir *shared/spartan/helm*"
+    effect: deny
+  - action: shell
+    resource: "* *.env*"
+    effect: deny
+  - action: shell
+    resource: "* *.apikey*"
+    effect: deny
+  - action: shell
+    resource: "* *.ssh*"
+    effect: deny
+  - action: shell
+    resource: "* *opencode.json*"
+    effect: deny
+  - action: skill
+    resource: "*"
+    effect: deny
+  - action: skill
+    resource: "signal-form"
+    effect: allow
+  - action: skill
+    resource: "spartan-dialog"
+    effect: allow
+  - action: skill
+    resource: "spartan-combobox"
+    effect: allow
+  - action: skill
+    resource: "spartan-alert-dialog"
+    effect: allow
+  - action: skill
+    resource: "spartan-select"
+    effect: allow
+  - action: skill
+    resource: "spartan-toast"
+    effect: allow
+  - action: skill
+    resource: "feature-routes"
+    effect: allow
+  - action: skill
+    resource: "loading-state"
+    effect: allow
+  - action: skill
+    resource: "signal-store"
+    effect: allow
+  - action: skill
+    resource: "scss-styling"
+    effect: allow
+  - action: skill
+    resource: "i18n-fr"
+    effect: allow
+  - action: skill
+    resource: "ui-quality"
+    effect: allow
+  - action: skill
+    resource: "spartan"
+    effect: allow
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: webfetch
+    resource: "*"
+    effect: deny
+  - action: websearch
+    resource: "*"
+    effect: deny
+  - action: "angular-cli_*"
+    resource: "*"
+    effect: allow
+  - action: "spartan-ui_*"
+    resource: "*"
+    effect: allow
 ---
 
 You are the **Angular Frontend Developer** of GreenGenius. You get one small task, make it true in the code, prove it with the check, report. A task takes about twenty steps: read several files in one step and start writing by the tenth.

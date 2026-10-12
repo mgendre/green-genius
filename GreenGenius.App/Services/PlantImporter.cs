@@ -8,7 +8,8 @@ namespace GreenGenius.App.Services;
 
 public sealed class PlantImporter(ApplicationDbContext dbContext, ILogger<PlantImporter> logger, string? plantsDirectory = null)
 {
-    private readonly string _plantsDirectory = plantsDirectory ?? Path.Combine(AppContext.BaseDirectory, "Data", "Plants");
+    private readonly string _plantsDirectory = plantsDirectory ?? Environment.GetEnvironmentVariable("GREENGENIUS_PLANTS_DIRECTORY")
+        ?? Path.Combine(AppContext.BaseDirectory, "Data", "Plants");
 
     public async Task<int> ImportAsync(CancellationToken ct = default)
     {
@@ -39,7 +40,7 @@ public sealed class PlantImporter(ApplicationDbContext dbContext, ILogger<PlantI
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Plant {Key} failed to import", key);
+                logger.LogError(ex, "Plant {Key} failed to import from JSON", key);
                 continue;
             }
 
@@ -53,16 +54,22 @@ public sealed class PlantImporter(ApplicationDbContext dbContext, ILogger<PlantI
             {
                 if (ImportOne(dbContext, plants, key, plantJson))
                 {
+                    await dbContext.SaveChangesAsync(ct);
                     imported++;
                 }
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Plant {Key} failed to import", key);
+                logger.LogError(ex, "Plant {Key} failed to import to database", key);
+                foreach (var entryInContext in dbContext.ChangeTracker.Entries())
+                {
+                    if (entryInContext.Entity is Plant { Key: var k } && k == key)
+                    {
+                        entryInContext.State = EntityState.Detached;
+                    }
+                }
             }
         }
-
-        await dbContext.SaveChangesAsync(ct);
 
         return imported;
     }

@@ -430,7 +430,7 @@ export interface PlantSummaryDto {
     nameFr: string;
     binomialName?: string | undefined;
     emoji?: string | undefined;
-    family: string;
+    family: PlantFamily;
 
     [key: string]: any;
 }

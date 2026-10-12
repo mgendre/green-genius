@@ -1,10 +1,12 @@
 using System.Net;
+using System.Text.Json;
 using GreenGenius.Api.Constants;
 using GreenGenius.Api.Features.Plants.Dtos;
 using GreenGenius.App.IntegrationTests.Extensions;
 using GreenGenius.App.IntegrationTests.Fixtures;
 using GreenGenius.App.IntegrationTests.Infra;
 using GreenGenius.Common.Data.Entities;
+using GreenGenius.Common.Data.Enums;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
@@ -31,7 +33,7 @@ public class PlantsApiIntegrationTest(
         plants.Select(p => p.NameFr).ToList().ShouldBeInOrder(SortDirection.Ascending);
         plants.First().BinomialName.ShouldBeNull();
         plants.Last().BinomialName.ShouldBe("Solanum lycopersicum");
-        plants.First().Family.ShouldNotBeNull();
+        plants.First().Family.ShouldNotBe(PlantFamily.Other);
         plants.First().Id.ShouldNotBe(Guid.Empty);
     }
 
@@ -106,15 +108,56 @@ public class PlantsImporterIntegrationTest(
     }
 
     [Fact]
-    public async Task Import_WhenImportFails_ShouldStillStart()
+    public async Task Import_WhenOnePlantFileIsRejectedByDb_ShouldStillImportTheOthers()
     {
+        var tempDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(tempDirectory);
+
+        await File.WriteAllTextAsync(Path.Combine(tempDirectory, "tomato.json"),
+            JsonSerializer.Serialize(new
+            {
+                NameFr = "Tomate",
+                DescriptionFr = "Plante nécessitant beaucoup d'eau et de chaleur",
+                BinomialName = "Solanum lycopersicum",
+                Emoji = "🍅",
+                Family = "Solanaceae",
+                LifeCycle = "Annual",
+                Version = 99,
+                Needs = new { Sunlight = "High", WaterNeed = "High", RootDepth = "Deep", SpacingRowCm = 100, SpacingPlantCm = 50, HeightCm = 120, SpreadCm = 50 },
+                Traits = new { NitrogenFixer = false, DynamicAccumulator = false, PollinatorFriendly = true, DroughtTolerant = false }
+            }));
+
+        var badName = new string('A', 260);
+        await File.WriteAllTextAsync(Path.Combine(tempDirectory, "bad.json"),
+            JsonSerializer.Serialize(new
+            {
+                NameFr = badName,
+                Family = "Solanaceae",
+                LifeCycle = "Annual",
+                Needs = new { Sunlight = "Low", WaterNeed = "Low", RootDepth = "Shallow", SpacingRowCm = 10, SpacingPlantCm = 10, HeightCm = 10, SpreadCm = 10 },
+                Traits = new { NitrogenFixer = false, DynamicAccumulator = false, PollinatorFriendly = false, DroughtTolerant = false }
+            }));
+
+        Environment.SetEnvironmentVariable("GREENGENIUS_PLANTS_DIRECTORY", tempDirectory);
+
+        var response = await CreateClient().GetAsync(RouteConstants.Plants);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
         await ExecuteInScopeAsync(async ctx =>
         {
-            var plant = await ctx.Plants
+            var tomato = await ctx.Plants
                 .Where(p => p.Key == "tomato")
                 .FirstOrDefaultAsync();
+            tomato.ShouldNotBeNull();
+            tomato.NameFr.ShouldBe("Tomate");
+            tomato.Version.ShouldBe(99);
 
-            plant.ShouldNotBeNull();
+            var bad = await ctx.Plants
+                .Where(p => p.Key == "bad")
+                .AnyAsync();
+            bad.ShouldBeFalse();
         });
+
+        Directory.Delete(tempDirectory, true);
     }
 }

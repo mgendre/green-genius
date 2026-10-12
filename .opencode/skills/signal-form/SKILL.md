@@ -84,7 +84,7 @@ export class GardenFormComponent {
 
 - The model signal and the fields are the same data: typing updates `gardenModel()` at once. Never an `effect`, a subscription or a helper between the model and the form.
 - `FormControl`, `FormGroup`, `setValue`, `valueChanges` and `subscribe` do not exist here.
-- Never open `node_modules/@angular/forms`. If something is missing here, call `angular-cli_search_documentation` with `signal forms <topic>`.
+- Never open `node_modules/@angular/forms`. If something is missing here, call `tools["angular-cli"].search_documentation` through `execute` with `signal forms <topic>`.
 
 ## Rules
 

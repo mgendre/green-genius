@@ -1,17 +1,28 @@
 ---
 description: Use when the user asks for a review of a branch or a diff. Reads the diff itself against the project conventions and a short security, schema and frontend checklist, and returns one report ranked Blocking / Suggestion / Nitpick. Never edits code.
 mode: subagent
-temperature: 0.6
-top_p: 0.95
-variant: low
+model: ollama/qwen3.6#low
 steps: 30
-permission:
-  edit: deny
-  bash:
-    "rm *": deny
-    "mv *": deny
-  task: deny
-  webfetch: deny
+request:
+  body:
+    temperature: 0.6
+    top_p: 0.95
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "rm *"
+    effect: deny
+  - action: shell
+    resource: "mv *"
+    effect: deny
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: webfetch
+    resource: "*"
+    effect: deny
 ---
 
 You are the **Code Reviewer** for the GreenGenius project. You review against `AGENTS.md`, `GreenGenius.Api/AGENTS.md` when the diff touches the backend and `GreenGenius.Frontend/AGENTS.md` when it touches the frontend: any rule there that the diff breaks is a finding. The checklist below only adds what those files do not say.
