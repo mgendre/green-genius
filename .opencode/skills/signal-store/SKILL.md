@@ -15,22 +15,27 @@ Reference: `GreenGenius.Frontend/src/app/shared/stores/gardens.store.ts`, read i
 
 ## Recipe
 
-1. Declare the state as an exported interface, then `withState<TState>({ … })` with every property initialised. A store that loads from the API carries `loading: boolean`, `loaded: boolean` and `error: string | null`.
+1. Declare the state as an exported interface, then `withState<TState>({ … })` with every property initialised. A store that loads from the API carries `loading: boolean`, `loaded: boolean` and `error: boolean`; `error` is set by the load method only, a failed save or delete sets no flag.
 2. Values derived from the state go in `withComputed`, as `computed`. Never store what can be computed.
-3. Methods go in `withMethods((store, client = inject(Client)) => ({ … }))`.
+3. Methods go in `withMethods((store, client = inject(Client), translate = inject(TranslateService)) => ({ … }))`; `translate` only when a method shows a toast.
 4. A method that calls the API is `async`, awaits `firstValueFrom(client.<operation>(…))` and writes the result with `patchState`. No `subscribe`, no `HttpClient`.
 5. Data needed as soon as the store exists is loaded in `withHooks({ onInit(store) { … } })`.
 
 ## Shape of a method
 
+A load method sets `error`. A create, update or delete method shows its toast (`spartan-toast` skill) and returns whether it worked.
+
 ```ts
-async createGarden(name: string): Promise<void> {
-  patchState(store, { loading: true, error: null });
+async createGarden(name: string): Promise<boolean> {
+  patchState(store, { loading: true });
   try {
     const garden = await firstValueFrom(client.createGarden({ name }));
     patchState(store, { gardens: [garden, ...store.gardens()] });
-  } catch (e) {
-    patchState(store, { error: e instanceof Error ? e.message : 'An error occurred' });
+    toast.success(translate.instant('gardens.save.done') as string);
+    return true;
+  } catch {
+    toast.error(translate.instant('gardens.save.failed') as string);
+    return false;
   } finally {
     patchState(store, { loading: false });
   }
@@ -49,4 +54,4 @@ async createGarden(name: string): Promise<void> {
 
 ## Components
 
-A component injects the store (`readonly gardensStore = inject(GardensStore)`), reads its signals and calls its methods. It never copies store state into a local signal.
+A component injects the store (`readonly gardensStore = inject(GardensStore)`), reads its signals and calls its methods. It closes its window or form when a save or delete method answered `true`. It never copies store state into a local signal and never shows the toast of a save or a delete itself.

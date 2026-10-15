@@ -1,6 +1,6 @@
 ---
 name: spartan-toast
-description: "How to tell the user that an action succeeded or failed here — a Spartan sonner toast shown from the component after a store call. Read before adding a confirmation message, a notification, a toast or a snackbar after a save, a delete or an error."
+description: "How to tell the user that an action succeeded or failed here — a Spartan sonner toast shown by the store method when a save or a delete succeeds or fails. Read before adding a confirmation message, a notification, a toast or a snackbar after a save, a delete or an error."
 ---
 
 # Spartan toast
@@ -18,43 +18,54 @@ The toaster is declared once, in the root component. Check `GreenGenius.Frontend
 
 ## Showing a toast
 
-`toast` is the one name an app component imports from `@spartan-ng/brain/…`.
-
-Verified in the browser: both toasts appear after the click.
+`toast` is the one name an app file imports from `@spartan-ng/brain/…`. The store method that saves or deletes shows the toast of its outcome, and returns `true` when it worked.
 
 ```ts
-import { Component, inject } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { toast } from '@spartan-ng/brain/sonner';
-import { GardensStore } from '../../../shared/stores/gardens.store';
+export const GardensStore = signalStore(
+  { providedIn: 'root' },
+  withState<GardensState>({ gardens: [], loading: false, loaded: false, error: false }),
+  withMethods((store, client = inject(Client), translate = inject(TranslateService)) => ({
+    async deleteGarden(id: string): Promise<boolean> {
+      patchState(store, { loading: true });
+      try {
+        await firstValueFrom(client.deleteGarden(id));
+        patchState(store, { gardens: store.gardens().filter((existing) => existing.id !== id) });
+        toast.success(translate.instant('gardens.delete.done') as string);
+        return true;
+      } catch {
+        toast.error(translate.instant('gardens.delete.failed') as string);
+        return false;
+      } finally {
+        patchState(store, { loading: false });
+      }
+    },
+  })),
+);
+```
 
-@Component({ /* … */ })
-export class PlannerGardensListComponent {
-  private readonly translate = inject(TranslateService);
-  readonly gardensStore = inject(GardensStore);
+The component only reacts to the answer:
 
-  async confirmDeleteGarden(id: string): Promise<void> {
-    await this.gardensStore.deleteGarden(id);
-    if (this.gardensStore.error()) {
-      toast.error(this.translate.instant('gardens.delete.failed'));
-    } else {
-      toast.success(this.translate.instant('gardens.delete.done'));
-    }
+```ts
+async confirmDeleteGarden(): Promise<void> {
+  const garden = this.deletingGarden();
+  if (garden?.id && (await this.gardensStore.deleteGarden(garden.id))) {
+    this.closeDeleteDialog();
   }
 }
 ```
 
 | Call | When |
 |---|---|
-| `toast.success(text)` | The action is done. |
-| `toast.error(text)` | The action failed. |
+| `toast.success(text)` | The save or the delete is done. |
+| `toast.error(text)` | The save or the delete failed. |
 | `toast(text)` | Neutral information. |
 
 ## Rules
 
-- The component shows the toast, after `await` of the store method. A store never imports `toast`.
-- The stores here catch their own errors and keep the message in `error`: read `store.error()` after the `await`, never a `try/catch` around a store method.
-- The text is always `this.translate.instant('<key>')`, with the key added to `public/i18n/fr.json` (`i18n-fr`). Never a French text in the code.
-- One toast per action. No toast for what the screen already shows (a new line in a list is enough when the task does not ask for a message).
+- The store method shows the toast, in the `try` for the success and in the `catch` for the failure, then returns `true` or `false`. A component never imports `toast` for a save or a delete.
+- The stores catch their own errors: a component reads the boolean answer, never a `try/catch` around a store method and never a failure flag of the store.
+- The load of a list shows no toast: its failure is the `error` text of the screen.
+- The text is always `translate.instant('<key>')`, with the key added to `public/i18n/fr.json` (`i18n-fr`): `<feature>.save.done`, `<feature>.save.failed`, `<feature>.delete.done`, `<feature>.delete.failed`. Never a French text in the code.
+- One toast per action. A create and a rename share `<feature>.save.done`.
 - No `<hlm-toaster />` in a feature component, no second toaster.
 - No option (`duration`, `position`, `richColors`) unless the task asks for it.
