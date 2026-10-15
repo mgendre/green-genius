@@ -2,12 +2,14 @@ import { inject } from '@angular/core';
 import { patchState, signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
 import { firstValueFrom } from 'rxjs';
 import { Client, GardenDto } from '../../api/api-client.generated';
+import { toast } from '@spartan-ng/brain/sonner';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface GardensState {
   gardens: GardenDto[];
   loading: boolean;
   loaded: boolean;
-  error: string | null;
+  error: boolean;
 }
 
 export const GardensStore = signalStore(
@@ -16,49 +18,58 @@ export const GardensStore = signalStore(
     gardens: [],
     loading: false,
     loaded: false,
-    error: null,
+    error: false,
   }),
-  withMethods((store, client = inject(Client)) => ({
+  withMethods((store, client = inject(Client), translate = inject(TranslateService)) => ({
     async loadGardens(): Promise<void> {
-      patchState(store, { gardens: [], loaded: false, loading: true, error: null });
+      patchState(store, { gardens: [], loaded: false, loading: true, error: false });
       try {
         const gardens = await firstValueFrom(client.listGardens());
-        patchState(store, { gardens, loaded: true, loading: false, error: null });
-      } catch (e) {
-        patchState(store, { error: e instanceof Error ? e.message : 'Une erreur est survenue', loading: false });
+        patchState(store, { gardens, loaded: true, loading: false, error: false });
+      } catch {
+        patchState(store, { error: true, loading: false });
       }
     },
-    async createGarden(name: string): Promise<void> {
-      patchState(store, { loading: true, error: null });
+    async createGarden(name: string): Promise<boolean> {
+      patchState(store, { loading: true });
       try {
         const garden = await firstValueFrom(client.createGarden({ name }));
         const gardens = sortByName([garden, ...store.gardens()]);
         patchState(store, { gardens });
-      } catch (e) {
-        patchState(store, { error: e instanceof Error ? e.message : 'An error occurred' });
+        toast.success(translate.instant('gardens.save.done') as string);
+        return true;
+      } catch {
+        toast.error(translate.instant('gardens.save.failed') as string);
+        return false;
       } finally {
         patchState(store, { loading: false });
       }
     },
-    async updateGarden(id: string, name: string): Promise<void> {
-      patchState(store, { loading: true, error: null });
+    async updateGarden(id: string, name: string): Promise<boolean> {
+      patchState(store, { loading: true });
       try {
         const garden = await firstValueFrom(client.updateGarden(id, { name }));
         const gardens = sortByName(store.gardens().map((existing) => (existing.id === id ? garden : existing)));
         patchState(store, { gardens });
-      } catch (e) {
-        patchState(store, { error: e instanceof Error ? e.message : 'An error occurred' });
+        toast.success(translate.instant('gardens.save.done') as string);
+        return true;
+      } catch {
+        toast.error(translate.instant('gardens.save.failed') as string);
+        return false;
       } finally {
         patchState(store, { loading: false });
       }
     },
-    async deleteGarden(id: string): Promise<void> {
-      patchState(store, { loading: true, error: null });
+    async deleteGarden(id: string): Promise<boolean> {
+      patchState(store, { loading: true });
       try {
         await firstValueFrom(client.deleteGarden(id));
         patchState(store, { gardens: sortByName(store.gardens().filter((existing) => existing.id !== id)) });
-      } catch (e) {
-        patchState(store, { error: e instanceof Error ? e.message : 'An error occurred' });
+        toast.success(translate.instant('gardens.delete.done') as string);
+        return true;
+      } catch {
+        toast.error(translate.instant('gardens.delete.failed') as string);
+        return false;
       } finally {
         patchState(store, { loading: false });
       }

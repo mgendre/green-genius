@@ -16,15 +16,24 @@ public class BedsApiIntegrationTest(
     IntegrationTestsApplicationFixture integrationFixture)
     : AbstractApiIntegrationTest(integrationFixture)
 {
+    private static string GetBedsUrl(Guid gardenId)
+    {
+        return RouteConstants.Gardens + "/" + gardenId + "/beds";
+    }
+
+    private static string GetBedUrl(Guid gardenId, Guid bedId)
+    {
+        return RouteConstants.Gardens + "/" + gardenId + "/beds/" + bedId;
+    }
+
     [Fact]
     public async Task CreateBed_ShouldInsert()
     {
         var garden = await PersistGardenAsync(DefaultCurrentUser);
 
         var result = await CreateClient().PostAndRead<BedDto, CreateBedDto>(
-            RouteConstants.Beds, new CreateBedDto
+            GetBedsUrl(garden.Id), new CreateBedDto
             {
-                GardenId = garden.Id,
                 Name = "TestBed"
             });
 
@@ -45,8 +54,8 @@ public class BedsApiIntegrationTest(
     public async Task CreateBed_WhenGardenDoesNotExist_ShouldBeNotFound()
     {
         var response = await CreateClient().PostAsJsonAsync(
-            RouteConstants.Beds,
-            new { gardenId = Guid.NewGuid(), name = "TestBed" });
+            GetBedsUrl(Guid.NewGuid()),
+            new { name = "TestBed" });
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
@@ -57,8 +66,8 @@ public class BedsApiIntegrationTest(
         var garden = await PersistGardenAsync(Guid.NewGuid());
 
         var response = await CreateClient().PostAsJsonAsync(
-            RouteConstants.Beds,
-            new { gardenId = garden.Id, name = "TestBed" });
+            GetBedsUrl(garden.Id),
+            new { name = "TestBed" });
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
@@ -71,7 +80,7 @@ public class BedsApiIntegrationTest(
         await PersistBedAsync(garden.Id, "ABed", DefaultCurrentUser);
 
         var beds = await CreateClient().GetAndReadList<BedDto>(
-            RouteConstants.Beds + "?gardenId=" + garden.Id);
+            GetBedsUrl(garden.Id));
 
         beds.Count.ShouldBe(2);
         beds[0].Name.ShouldBe("ABed");
@@ -84,7 +93,7 @@ public class BedsApiIntegrationTest(
     public async Task ListBeds_WhenGardenDoesNotExist_ShouldBeNotFound()
     {
         var response = await CreateClient().GetAsync(
-            RouteConstants.Beds + "?gardenId=" + Guid.NewGuid());
+            GetBedsUrl(Guid.NewGuid()));
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
@@ -95,7 +104,7 @@ public class BedsApiIntegrationTest(
         var garden = await PersistGardenAsync(Guid.NewGuid());
 
         var response = await CreateClient().GetAsync(
-            RouteConstants.Beds + "?gardenId=" + garden.Id);
+            GetBedsUrl(garden.Id));
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
@@ -112,7 +121,7 @@ public class BedsApiIntegrationTest(
         });
 
         var beds = await CreateClient().GetAndReadList<BedDto>(
-            RouteConstants.Beds + "?gardenId=" + garden.Id);
+            GetBedsUrl(garden.Id));
 
         beds.Count.ShouldBe(1);
         beds[0].Plants.Count.ShouldBe(1);
@@ -134,7 +143,7 @@ public class BedsApiIntegrationTest(
         });
 
         var result = await CreateClient().PutAndRead<BedDto, UpdateBedDto>(
-            RouteConstants.Beds + "/" + bed.Id, new UpdateBedDto
+            GetBedUrl(garden.Id, bed.Id), new UpdateBedDto
             {
                 Name = "NewName",
                 PlantIds = [tomate!.Id, plante!.Id]
@@ -149,6 +158,7 @@ public class BedsApiIntegrationTest(
     [Fact]
     public async Task UpdateBed_WhenBedUnknown_ShouldBeNotFound()
     {
+        var garden = await PersistGardenAsync(DefaultCurrentUser);
         var update = new UpdateBedDto
         {
             Name = "NewName",
@@ -156,7 +166,7 @@ public class BedsApiIntegrationTest(
         };
 
         var response = await CreateClient().PutAsJsonAsync(
-            RouteConstants.Beds + "/" + Guid.NewGuid(), update);
+            GetBedUrl(garden.Id, Guid.NewGuid()), update);
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
@@ -164,11 +174,12 @@ public class BedsApiIntegrationTest(
     [Fact]
     public async Task UpdateBed_WhenBedNotOwned_ShouldBeNotFound()
     {
-        var garden = await PersistGardenAsync(Guid.NewGuid());
-        var bed = await PersistBedAsync(garden.Id, "OldName", Guid.NewGuid());
+        var myGarden = await PersistGardenAsync(DefaultCurrentUser);
+        var otherGarden = await PersistGardenAsync(Guid.NewGuid());
+        var bed = await PersistBedAsync(otherGarden.Id, "OldName", Guid.NewGuid());
 
         var response = await CreateClient().PutAsJsonAsync(
-            RouteConstants.Beds + "/" + bed.Id,
+            GetBedUrl(myGarden.Id, bed.Id),
             new { name = "NewName", plantIds = Array.Empty<Guid>() });
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -181,7 +192,7 @@ public class BedsApiIntegrationTest(
         var bed = await PersistBedAsync(garden.Id, "OldName", DefaultCurrentUser);
 
         var response = await CreateClient().PutAsJsonAsync(
-            RouteConstants.Beds + "/" + bed.Id,
+            GetBedUrl(garden.Id, bed.Id),
             new { name = "NewName", plantIds = new[] { Guid.NewGuid() } });
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
@@ -200,7 +211,7 @@ public class BedsApiIntegrationTest(
         });
 
         var result = await CreateClient().PutAndRead<BedDto, UpdateBedDto>(
-            RouteConstants.Beds + "/" + bed.Id, new UpdateBedDto
+            GetBedUrl(garden.Id, bed.Id), new UpdateBedDto
             {
                 Name = "MyBed",
                 PlantIds = [plante.Id, plante.Id]
@@ -229,7 +240,7 @@ public class BedsApiIntegrationTest(
         });
 
         var response = await CreateClient().DeleteAsync(
-            RouteConstants.Beds + "/" + bed.Id);
+            GetBedUrl(garden.Id, bed.Id));
 
         response.StatusCode.ShouldBe(HttpStatusCode.NoContent);
 
@@ -253,8 +264,9 @@ public class BedsApiIntegrationTest(
     [Fact]
     public async Task DeleteBed_WhenUnknown_ShouldBeNotFound()
     {
+        var garden = await PersistGardenAsync(DefaultCurrentUser);
         var response = await CreateClient().DeleteAsync(
-            RouteConstants.Beds + "/" + Guid.NewGuid());
+            GetBedUrl(garden.Id, Guid.NewGuid()));
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
@@ -262,11 +274,12 @@ public class BedsApiIntegrationTest(
     [Fact]
     public async Task DeleteBed_WhenNotOwned_ShouldBeNotFound()
     {
-        var garden = await PersistGardenAsync(Guid.NewGuid());
-        var bed = await PersistBedAsync(garden.Id, "ToDelete", Guid.NewGuid());
+        var myGarden = await PersistGardenAsync(DefaultCurrentUser);
+        var otherGarden = await PersistGardenAsync(Guid.NewGuid());
+        var bed = await PersistBedAsync(otherGarden.Id, "ToDelete", Guid.NewGuid());
 
         var response = await CreateClient().DeleteAsync(
-            RouteConstants.Beds + "/" + bed.Id);
+            GetBedUrl(myGarden.Id, bed.Id));
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }

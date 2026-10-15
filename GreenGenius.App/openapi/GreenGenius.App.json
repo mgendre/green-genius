@@ -203,7 +203,7 @@
         }
       }
     },
-    "/beds": {
+    "/gardens/{gardenId}/beds": {
       "get": {
         "tags": [
           "Beds"
@@ -212,7 +212,7 @@
         "parameters": [
           {
             "name": "gardenId",
-            "in": "query",
+            "in": "path",
             "required": true,
             "schema": {
               "type": "string",
@@ -233,6 +233,16 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       },
@@ -241,6 +251,17 @@
           "Beds"
         ],
         "operationId": "CreateBed",
+        "parameters": [
+          {
+            "name": "gardenId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -275,13 +296,22 @@
         }
       }
     },
-    "/beds/{id}": {
+    "/gardens/{gardenId}/beds/{id}": {
       "put": {
         "tags": [
           "Beds"
         ],
         "operationId": "UpdateBed",
         "parameters": [
+          {
+            "name": "gardenId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
           {
             "name": "id",
             "in": "path",
@@ -331,6 +361,15 @@
         ],
         "operationId": "DeleteBed",
         "parameters": [
+          {
+            "name": "gardenId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
           {
             "name": "id",
             "in": "path",
@@ -390,15 +429,10 @@
       },
       "CreateBedDto": {
         "required": [
-          "gardenId",
           "name"
         ],
         "type": "object",
         "properties": {
-          "gardenId": {
-            "type": "string",
-            "format": "uuid"
-          },
           "name": {
             "type": "string"
           }

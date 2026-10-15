@@ -1,46 +1,16 @@
 import { effect, inject } from '@angular/core';
 import { patchState, signalStore, withHooks, withMethods, withState } from '@ngrx/signals';
 import { firstValueFrom } from 'rxjs';
-import { BedDto, Client, PlantSummaryDto } from '../../api/api-client.generated';
+import { BedDto, Client } from '../../api/api-client.generated';
 import { PlannerStore } from './planner.store';
-
-export interface BedPlant {
-  id: string;
-  nameFr: string;
-  binomialName?: string;
-  emoji?: string;
-  family?: string;
-}
-
-export interface Bed {
-  id: string;
-  name: string;
-  gardenId: string;
-  open: boolean;
-  plants: BedPlant[];
-}
+import { toast } from '@spartan-ng/brain/sonner';
+import { TranslateService } from '@ngx-translate/core';
 
 export interface BedsState {
-  beds: Bed[];
+  beds: BedDto[];
   loading: boolean;
   loaded: boolean;
-  error: boolean;
-}
-
-function mapApiBed(dto: BedDto): Bed {
-  return {
-    id: dto.id || '',
-    name: dto.name,
-    gardenId: dto.gardenId,
-    open: false,
-    plants: dto.plants.map((p: PlantSummaryDto) => ({
-      id: p.id || '',
-      nameFr: p.nameFr,
-      binomialName: p.binomialName,
-      emoji: p.emoji,
-      family: p.family,
-    })),
-  };
+  loadError: boolean;
 }
 
 export const BedsStore = signalStore(
@@ -49,73 +19,64 @@ export const BedsStore = signalStore(
     beds: [],
     loading: false,
     loaded: false,
-    error: false,
+    loadError: false,
   }),
-  withMethods((store, client = inject(Client)) => ({
+  withMethods((store, client = inject(Client), plannerStore = inject(PlannerStore), translate = inject(TranslateService)) => ({
     async loadBeds(gardenId: string): Promise<void> {
-      patchState(store, { beds: [], loading: true, error: false });
+      patchState(store, { beds: [], loading: true, loadError: false, loaded: false });
       try {
         const beds = await firstValueFrom(client.listBeds(gardenId));
+        if (plannerStore.selectedGardenId() !== gardenId) {
+          return;
+        }
         patchState(store, {
-          beds: beds.map(mapApiBed),
+          beds,
           loaded: true,
           loading: false,
         });
       } catch {
-        patchState(store, { error: true, loading: false, loaded: false });
+        if (plannerStore.selectedGardenId() !== gardenId) {
+          return;
+        }
+        patchState(store, { loadError: true, loading: false, loaded: false });
       }
     },
-    async createBed(gardenId: string, name: string): Promise<void> {
-      patchState(store, { loading: true, error: false });
+    async createBed(gardenId: string, name: string): Promise<boolean> {
       try {
-        const bed = await firstValueFrom(client.createBed({ gardenId, name }));
-        patchState(store, {
-          beds: [...store.beds(), mapApiBed(bed)],
-        });
+        const bed = await firstValueFrom(client.createBed(gardenId, { name }));
+        patchState(store, { beds: [...store.beds(), bed] });
+        toast.success(translate.instant('beds.save.done') as string);
+        return true;
       } catch {
-        patchState(store, { error: true });
-      } finally {
-        patchState(store, { loading: false });
+        toast.error(translate.instant('beds.save.failed') as string);
+        return false;
       }
     },
-    async updateBed(id: string, name: string, plantIds: string[]): Promise<void> {
-      patchState(store, { loading: true, error: false });
+    async updateBed(gardenId: string, id: string, name: string, plantIds: string[]): Promise<boolean> {
       try {
-        const bed = await firstValueFrom(client.updateBed(id, { name, plantIds }));
+        const bed = await firstValueFrom(client.updateBed(gardenId, id, { name, plantIds }));
         patchState(store, {
           beds: store.beds().map((existing) =>
-            existing.id === id
-              ? {
-                  ...existing,
-                  name: bed.name,
-                  gardenId: bed.gardenId,
-                  plants: mapApiBed(bed).plants,
-                }
-              : existing,
+            existing.id === id ? bed : existing,
           ),
         });
+        toast.success(translate.instant('beds.save.done') as string);
+        return true;
       } catch {
-        patchState(store, { error: true });
-      } finally {
-        patchState(store, { loading: false });
+        toast.error(translate.instant('beds.save.failed') as string);
+        return false;
       }
     },
-    async deleteBed(id: string): Promise<void> {
-      patchState(store, { loading: true, error: false });
+    async deleteBed(gardenId: string, id: string): Promise<boolean> {
       try {
-        await firstValueFrom(client.deleteBed(id));
+        await firstValueFrom(client.deleteBed(gardenId, id));
         patchState(store, { beds: store.beds().filter((existing) => existing.id !== id) });
+        toast.success(translate.instant('beds.delete.done') as string);
+        return true;
       } catch {
-        patchState(store, { error: true });
-      } finally {
-        patchState(store, { loading: false });
+        toast.error(translate.instant('beds.delete.failed') as string);
+        return false;
       }
-    },
-    toggleBed(id: string): void {
-      patchState(
-        store,
-        { beds: store.beds().map((bed) => (bed.id === id ? { ...bed, open: !bed.open } : bed)) },
-      );
     },
   })),
   withHooks({

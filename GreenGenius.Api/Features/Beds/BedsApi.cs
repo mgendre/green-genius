@@ -11,26 +11,38 @@ public static class BedsApi
 {
     public static void WithBedsApi(this IEndpointRouteBuilder app)
     {
-        var beds = app.MapGroup(RouteConstants.Beds)
-            .WithTags("Beds");
+        var beds = app.MapGroup(RouteConstants.Gardens);
 
-        beds.MapGet("/", ([FromQuery] Guid gardenId, 
-            [FromServices] ListBedsHandler h) => h.Handle(gardenId))
-            .WithName("ListBeds");
+        beds.MapGet("/{gardenId:guid}/beds",
+                ([FromRoute] Guid gardenId, [FromServices] ListBedsHandler h)
+                    => h.Handle(gardenId))
+            .WithName("ListBeds")
+            .WithTags("Beds")
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
-        beds.MapPost("/", ([FromBody] CreateBedDto dto, 
-            [FromServices] CreateBedHandler h) => h.Handle(dto))
+        beds.MapPost("/{gardenId:guid}/beds",
+                ([FromBody] CreateBedDto dto, [FromRoute] Guid gardenId,
+                    [FromServices] CreateBedHandler h)
+                    => h.Handle(dto, gardenId))
             .WithName("CreateBed")
+            .WithTags("Beds")
             .ProducesProblem(StatusCodes.Status404NotFound);
 
-        beds.MapPut("/{id:guid}", ([FromRoute] Guid id, [FromBody] UpdateBedDto dto, 
-            [FromServices] UpdateBedHandler h) => h.Handle(id, dto))
+        beds.MapPut("/{gardenId:guid}/beds/{id:guid}",
+                ([FromRoute] Guid gardenId, [FromRoute] Guid id,
+                    [FromBody] UpdateBedDto dto,
+                    [FromServices] UpdateBedHandler h)
+                    => h.Handle(gardenId, id, dto))
             .WithName("UpdateBed")
+            .WithTags("Beds")
             .ProducesProblem(StatusCodes.Status404NotFound);
 
-        beds.MapDelete("/{id:guid}", ([FromRoute] Guid id, 
-            [FromServices] DeleteBedHandler h) => h.Handle(id))
+        beds.MapDelete("/{gardenId:guid}/beds/{id:guid}",
+                ([FromRoute] Guid gardenId, [FromRoute] Guid id,
+                    [FromServices] DeleteBedHandler h)
+                    => h.Handle(gardenId, id))
             .WithName("DeleteBed")
+            .WithTags("Beds")
             .ProducesProblem(StatusCodes.Status404NotFound);
     }
 }

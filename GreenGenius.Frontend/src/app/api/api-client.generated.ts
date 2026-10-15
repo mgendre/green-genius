@@ -363,11 +363,10 @@ export class Client {
      * @return OK
      */
     listBeds(gardenId: string): Observable<BedDto[]> {
-        let url_ = this.baseUrl + "/beds?";
+        let url_ = this.baseUrl + "/gardens/{gardenId}/beds";
         if (gardenId === undefined || gardenId === null)
-            throw new globalThis.Error("The parameter 'gardenId' must be defined and cannot be null.");
-        else
-            url_ += "gardenId=" + encodeURIComponent("" + gardenId) + "&";
+            throw new globalThis.Error("The parameter 'gardenId' must be defined.");
+        url_ = url_.replace("{gardenId}", encodeURIComponent("" + gardenId));
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -405,6 +404,12 @@ export class Client {
             result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BedDto[];
             return _observableOf(result200);
             }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result404: any = null;
+            result404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -416,8 +421,11 @@ export class Client {
     /**
      * @return Created
      */
-    createBed(body: CreateBedDto): Observable<BedDto> {
-        let url_ = this.baseUrl + "/beds";
+    createBed(gardenId: string, body: CreateBedDto): Observable<BedDto> {
+        let url_ = this.baseUrl + "/gardens/{gardenId}/beds";
+        if (gardenId === undefined || gardenId === null)
+            throw new globalThis.Error("The parameter 'gardenId' must be defined.");
+        url_ = url_.replace("{gardenId}", encodeURIComponent("" + gardenId));
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -476,8 +484,11 @@ export class Client {
     /**
      * @return OK
      */
-    updateBed(id: string, body: UpdateBedDto): Observable<BedDto> {
-        let url_ = this.baseUrl + "/beds/{id}";
+    updateBed(gardenId: string, id: string, body: UpdateBedDto): Observable<BedDto> {
+        let url_ = this.baseUrl + "/gardens/{gardenId}/beds/{id}";
+        if (gardenId === undefined || gardenId === null)
+            throw new globalThis.Error("The parameter 'gardenId' must be defined.");
+        url_ = url_.replace("{gardenId}", encodeURIComponent("" + gardenId));
         if (id === undefined || id === null)
             throw new globalThis.Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -539,8 +550,11 @@ export class Client {
     /**
      * @return No Content
      */
-    deleteBed(id: string): Observable<void> {
-        let url_ = this.baseUrl + "/beds/{id}";
+    deleteBed(gardenId: string, id: string): Observable<void> {
+        let url_ = this.baseUrl + "/gardens/{gardenId}/beds/{id}";
+        if (gardenId === undefined || gardenId === null)
+            throw new globalThis.Error("The parameter 'gardenId' must be defined.");
+        url_ = url_.replace("{gardenId}", encodeURIComponent("" + gardenId));
         if (id === undefined || id === null)
             throw new globalThis.Error("The parameter 'id' must be defined.");
         url_ = url_.replace("{id}", encodeURIComponent("" + id));
@@ -603,7 +617,6 @@ export interface BedDto {
 }
 
 export interface CreateBedDto {
-    gardenId: string;
     name: string;
 
     [key: string]: any;

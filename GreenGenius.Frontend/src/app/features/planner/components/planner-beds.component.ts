@@ -1,13 +1,13 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { toast } from '@spartan-ng/brain/sonner';
+import { TranslatePipe } from '@ngx-translate/core';
 import { HlmAlertDialogImports } from '@spartan-ng/helm/alert-dialog';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmDialogImports } from '@spartan-ng/helm/dialog';
+import { BedDto } from '../../../api/api-client.generated';
 import { PlannerStore } from '../planner.store';
-import { BedsStore, BedsState } from '../beds.store';
+import { BedsStore } from '../beds.store';
 import { BedFormComponent } from './bed-form.component';
 
 @Component({
@@ -25,52 +25,51 @@ import { BedFormComponent } from './bed-form.component';
   host: { class: 'app-beds-list' },
 })
 export class PlannerBedsComponent {
-  private readonly translate = inject(TranslateService);
   readonly bedsStore = inject(BedsStore);
   readonly plannerStore = inject(PlannerStore);
 
   readonly dialogOpen = signal(false);
   readonly deleteDialogOpen = signal(false);
   readonly editedBedId = signal<string | undefined>(undefined);
-  readonly deletingBed = signal<BedsState['beds'][number] | undefined>(undefined);
+  readonly deletingBed = signal<BedDto | undefined>(undefined);
   readonly dialogState = computed(() => (this.dialogOpen() ? 'open' : 'closed'));
   readonly deleteDialogState = computed(() => (this.deleteDialogOpen() ? 'open' : 'closed'));
+  readonly isBedOpen = signal<string | undefined>(undefined);
 
-  toggleBed(bed: BedsState['beds'][number]): void {
-    this.bedsStore.toggleBed(bed.id);
+  toggleBed(bed: BedDto): void {
+    this.isBedOpen.update((id) => (id === bed.id ? undefined : bed.id));
   }
 
-  onKeydown(event: KeyboardEvent, bed: BedsState['beds'][number]): void {
+  onKeydown(event: KeyboardEvent, bed: BedDto): void {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
-      this.bedsStore.toggleBed(bed.id);
+      this.toggleBed(bed);
     }
+  }
+
+  isBedOpenAt(bedId: string | undefined): boolean {
+    return this.isBedOpen() === bedId;
   }
 
   addBed(): void {
     this.openEditDialog(undefined);
   }
 
-  editBed(bed: BedsState['beds'][number]): void {
+  editBed(bed: BedDto): void {
     this.openEditDialog(bed.id);
   }
 
-  askDeleteBed(bed: BedsState['beds'][number]): void {
+  askDeleteBed(bed: BedDto): void {
     this.deletingBed.set(bed);
     this.deleteDialogOpen.set(true);
   }
 
   async confirmDeleteBed(): Promise<void> {
     const bed = this.deletingBed();
-    if (bed?.id) {
-      await this.bedsStore.deleteBed(bed.id);
-      if (this.bedsStore.error()) {
-        toast.error(this.translate.instant('beds.delete.failed') as string);
-        this.closeDeleteDialog();
-        return;
-      }
+    const gardenId = this.plannerStore.selectedGardenId();
+    if (bed?.id && gardenId && (await this.bedsStore.deleteBed(gardenId, bed.id))) {
+      this.closeDeleteDialog();
     }
-    this.closeDeleteDialog();
   }
 
   closeEditDialog(): void {

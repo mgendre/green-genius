@@ -12,7 +12,7 @@
   </hlm-field>
 
   <hlm-dialog-footer class="gap-2">
-    <button hlmBtn variant="outline" type="button" (click)="cancelled.emit()">{{ 'common.cancel' | translate }}</button>
-    <button hlmBtn type="submit" [disabled]="bedForm().submitting()">{{ 'beds.form.save' | translate }}</button>
+    <button hlmBtn variant="outline" type="button" (click)="cancelled.emit()">{{ 'common.action.cancel' | translate }}</button>
+    <button hlmBtn type="submit" [disabled]="bedForm().submitting()">{{ 'common.action.save' | translate }}</button>
   </hlm-dialog-footer>
 </form>

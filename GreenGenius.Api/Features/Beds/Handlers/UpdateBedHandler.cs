@@ -13,35 +13,49 @@ namespace GreenGenius.Api.Features.Beds.Handlers;
 
 public class UpdateBedHandler(ApplicationDbContext dbContext) : IApiHandler
 {
-    public async Task<Ok<BedDto>> Handle(Guid id, UpdateBedDto dto)
+    public async Task<Ok<BedDto>> Handle(Guid gardenId, Guid id, UpdateBedDto dto)
     {
-        var bed = await dbContext.Beds.GetAsync(id);
+        var bed = await dbContext.Beds
+            .Where(b => b.Id == id && b.GardenId == gardenId)
+            .FirstOrDefaultAsync();
+
+        if (bed is null)
+        {
+            throw new DataNotFoundException($"Bed {id} not found in garden {gardenId}");
+        }
 
         bed.Name = dto.Name;
 
-        var uniquePlantIds = dto.PlantIds.Distinct().ToArray();
+        var uniquePlantIds = dto.PlantIds.Distinct().ToHashSet();
 
         var existingPlantIds = await dbContext.Plants
             .Where(p => uniquePlantIds.Contains(p.Id))
             .Select(p => p.Id)
             .ToListAsync();
 
-        if (existingPlantIds.Count != uniquePlantIds.Length)
+        if (existingPlantIds.Count != uniquePlantIds.Count)
         {
             var missingPlantId = uniquePlantIds.First(pid => !existingPlantIds.Contains(pid));
             throw new DataNotFoundException($"Plant not found: {missingPlantId}");
         }
 
-        var existingLinks = dbContext.BedPlants
+        var existingPlantIdsOnBed = await dbContext.BedPlants
             .Where(bp => bp.BedId == id)
-            .ToList();
+            .Select(bp => bp.PlantId)
+            .ToListAsync();
 
-        foreach (var link in existingLinks)
+        var existingSet = new HashSet<Guid>(existingPlantIdsOnBed);
+
+        var plantIdsToRemove = existingPlantIdsOnBed.Where(pid => !uniquePlantIds.Contains(pid)).ToList();
+        var plantIdsToAdd = uniquePlantIds.Where(pid => !existingSet.Contains(pid)).ToArray();
+
+        foreach (var plantId in plantIdsToRemove)
         {
+            var link = dbContext.BedPlants.Single(bp => bp.BedId == id && bp.PlantId == plantId);
             dbContext.BedPlants.Remove(link);
         }
 
-        foreach (var plantId in uniquePlantIds)
+        foreach (var plantId in plantIdsToAdd)
         {
             dbContext.BedPlants.Add(new BedPlant { BedId = id, PlantId = plantId });
         }

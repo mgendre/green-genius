@@ -6,7 +6,7 @@
   @if (gardensStore.loading()) {
     <p class="m-4" hlmCardDescription>{{ 'gardens.loading' | translate }}</p>
   } @else if (gardensStore.error()) {
-    <p class="m-4 text-destructive" hlmCardDescription>{{ 'gardens.load.error' | translate }}</p>
+    <p class="m-4 text-destructive" hlmCardDescription>{{ 'common.errors.load-error' | translate }}</p>
   } @else {
     @if (gardensStore.gardens().length === 0) {
       <p class="m-4" hlmCardDescription>{{ 'gardens.empty' | translate }}</p>
@@ -28,7 +28,7 @@
                         [variant]="'outline'"
                         size="icon-sm"
                         class="app-garden-edit ml-auto"
-                         [attr.aria-label]="'common.actions.edit' | translate"
+                         [attr.aria-label]="'common.action.edit' | translate"
                         (click)="$event.stopPropagation(); editGarden(garden)">
                   <ng-icon name="lucidePencil" aria-hidden="true" />
                 </button>
@@ -37,7 +37,7 @@
                         [variant]="'outline'"
                         size="icon-sm"
                         class="app-garden-delete"
-                         [attr.aria-label]="'common.actions.delete' | translate"
+                         [attr.aria-label]="'common.action.delete' | translate"
                         (click)="$event.stopPropagation(); openDeleteDialog(garden)">
                   <ng-icon name="lucideTrash" aria-hidden="true" />
                 </button>
@@ -71,7 +71,7 @@
       <p hlmAlertDialogDescription>{{ 'gardens.delete.body' | translate: deletingGarden() }}</p>
     </hlm-alert-dialog-header>
     <hlm-alert-dialog-footer>
-      <button hlmAlertDialogCancel type="button" (click)="closeDeleteDialog()">{{ 'common.cancel' | translate }}</button>
+      <button hlmAlertDialogCancel type="button" (click)="closeDeleteDialog()">{{ 'common.action.cancel' | translate }}</button>
       <button hlmAlertDialogAction variant="destructive" type="button" (click)="confirmDeleteGarden()" [disabled]="gardensStore.loading()">{{ 'gardens.delete.action' | translate }}</button>
     </hlm-alert-dialog-footer>
   </hlm-alert-dialog-content>

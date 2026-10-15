@@ -12,14 +12,14 @@ namespace GreenGenius.Api.Features.Beds.Handlers;
 
 public class CreateBedHandler(ApplicationDbContext dbContext, ICurrentUserService currentUser) : IApiHandler
 {
-    public async Task<Created<BedDto>> Handle(CreateBedDto dto)
+    public async Task<Created<BedDto>> Handle(CreateBedDto dto, Guid gardenId)
     {
-        await dbContext.Gardens.GetAsync(dto.GardenId);
+        var garden = await dbContext.Gardens.GetAsync(gardenId);
 
         var bed = new Bed
         {
             Id = Guid.NewGuid(),
-            GardenId = dto.GardenId,
+            GardenId = gardenId,
             OwnerId = currentUser.GetCurrentUserId(),
             Name = dto.Name
         };
@@ -35,6 +35,5 @@ public class CreateBedHandler(ApplicationDbContext dbContext, ICurrentUserServic
 [UsedImplicitly]
 public class CreateBedDto
 {
-    public required Guid GardenId { get; init; }
     public required string Name { get; init; } = "";
 }
