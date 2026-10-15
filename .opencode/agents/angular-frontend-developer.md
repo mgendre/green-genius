@@ -1,12 +1,15 @@
 ---
 description: Use to build or change the Angular front end — SignalStores, pages, components, Spartan UI components bound to our tokens, SCSS 7-1 styling, i18n — over the NSwag-generated API client.
 mode: all
-model: ollama/qwen3.6#low
+model: strata/swift#low
 steps: 100
 request:
   body:
-    temperature: 0.7
-    top_p: 0.8
+    temperature: 1.0
+    top_p: 0.95
+    top_k: 20
+    min_p: 0.0
+    presence_penalty: 0.0
 permissions:
   - action: edit
     resource: "*.plans/*"
@@ -78,6 +81,9 @@ permissions:
     resource: "node GreenGenius.Frontend/scripts/sortkeys.mjs*"
     effect: allow
   - action: shell
+    resource: "node */GreenGenius.Frontend/scripts/sortkeys.mjs*"
+    effect: allow
+  - action: shell
     resource: "grep *"
     effect: allow
   - action: shell
@@ -106,6 +112,9 @@ permissions:
     effect: allow
   - action: shell
     resource: "git rm GreenGenius.*"
+    effect: allow
+  - action: shell
+    resource: "git rm */GreenGenius.*"
     effect: allow
   - action: shell
     resource: "git rm *..*"
@@ -284,6 +293,111 @@ permissions:
   - action: "spartan-ui_*"
     resource: "*"
     effect: allow
+  - action: edit
+    resource: "**/.git/**"
+    effect: deny
+  - action: edit
+    resource: "**/.claude/**"
+    effect: deny
+  - action: shell
+    resource: "cd /*"
+    effect: deny
+  - action: shell
+    resource: "cd ~*"
+    effect: deny
+  - action: shell
+    resource: "cd *..*"
+    effect: deny
+  - action: shell
+    resource: "rm * /*"
+    effect: deny
+  - action: shell
+    resource: "rm /*"
+    effect: deny
+  - action: shell
+    resource: "rm * ."
+    effect: deny
+  - action: shell
+    resource: "rm * ./"
+    effect: deny
+  - action: shell
+    resource: "rm *.claude*"
+    effect: deny
+  - action: shell
+    resource: "find * -ok*"
+    effect: deny
+  - action: shell
+    resource: "find * -fprint*"
+    effect: deny
+  - action: shell
+    resource: "find * -fls*"
+    effect: deny
+  - action: shell
+    resource: "cat *>*"
+    effect: deny
+  - action: edit
+    resource: "*package.json"
+    effect: deny
+  - action: edit
+    resource: "*package-lock.json"
+    effect: deny
+  - action: shell
+    resource: "rm /*"
+    effect: deny
+  - action: shell
+    resource: "rm * /*"
+    effect: deny
+  - action: shell
+    resource: "mv /*"
+    effect: deny
+  - action: shell
+    resource: "mv * /*"
+    effect: deny
+  - action: shell
+    resource: "find * -delete*"
+    effect: deny
+  - action: shell
+    resource: "find * -exec*"
+    effect: deny
+  - action: shell
+    resource: "find * -ok*"
+    effect: deny
+  - action: shell
+    resource: "find * -fprint*"
+    effect: deny
+  - action: shell
+    resource: "find * -fls*"
+    effect: deny
+  - action: shell
+    resource: "rg *--pre*"
+    effect: deny
+  - action: shell
+    resource: "git * --output*"
+    effect: deny
+  - action: shell
+    resource: "git grep *-O*"
+    effect: deny
+  - action: shell
+    resource: "git grep *--open-files-in-pager*"
+    effect: deny
+  - action: shell
+    resource: "* >*"
+    effect: deny
+  - action: shell
+    resource: "* 1>*"
+    effect: deny
+  - action: shell
+    resource: "* &>*"
+    effect: deny
+  - action: shell
+    resource: "* *.gnupg*"
+    effect: deny
+  - action: shell
+    resource: "* *.config/gh*"
+    effect: deny
+  - action: shell
+    resource: "* *.local/share/opencode*"
+    effect: deny
 ---
 
 You are the **Angular Frontend Developer** of GreenGenius. You get one small task, make it true in the code, prove it with the check, report. A task takes about twenty steps: read several files in one step and start writing by the tenth.

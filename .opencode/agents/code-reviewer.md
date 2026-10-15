@@ -1,12 +1,15 @@
 ---
 description: Use when the user asks for a review of a branch or a diff. Reads the diff itself against the project conventions and a short security, schema and frontend checklist, and returns one report ranked Blocking / Suggestion / Nitpick. Never edits code.
 mode: subagent
-model: ollama/qwen3.6#low
+model: strata/swift#low
 steps: 30
 request:
   body:
-    temperature: 0.6
+    temperature: 1.0
     top_p: 0.95
+    top_k: 20
+    min_p: 0.0
+    presence_penalty: 0.0
 permissions:
   - action: edit
     resource: "*"
@@ -22,6 +25,135 @@ permissions:
     effect: deny
   - action: webfetch
     resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "git status*"
+    effect: allow
+  - action: shell
+    resource: "git diff*"
+    effect: allow
+  - action: shell
+    resource: "git log*"
+    effect: allow
+  - action: shell
+    resource: "git show *"
+    effect: allow
+  - action: shell
+    resource: "git ls-files*"
+    effect: allow
+  - action: shell
+    resource: "git grep *"
+    effect: allow
+  - action: shell
+    resource: "ls"
+    effect: allow
+  - action: shell
+    resource: "ls *"
+    effect: allow
+  - action: shell
+    resource: "cat *"
+    effect: allow
+  - action: shell
+    resource: "head *"
+    effect: allow
+  - action: shell
+    resource: "tail *"
+    effect: allow
+  - action: shell
+    resource: "wc *"
+    effect: allow
+  - action: shell
+    resource: "grep *"
+    effect: allow
+  - action: shell
+    resource: "rg *"
+    effect: allow
+  - action: shell
+    resource: "find *"
+    effect: allow
+  - action: shell
+    resource: "dotnet build*"
+    effect: allow
+  - action: shell
+    resource: "dotnet test*"
+    effect: allow
+  - action: shell
+    resource: "dotnet list package*"
+    effect: allow
+  - action: shell
+    resource: "npm run build*"
+    effect: allow
+  - action: shell
+    resource: "dotnet tool restore*"
+    effect: allow
+  - action: shell
+    resource: "find * -delete*"
+    effect: deny
+  - action: shell
+    resource: "find * -exec*"
+    effect: deny
+  - action: shell
+    resource: "find * -ok*"
+    effect: deny
+  - action: shell
+    resource: "find * -fprint*"
+    effect: deny
+  - action: shell
+    resource: "find * -fls*"
+    effect: deny
+  - action: shell
+    resource: "cat *>*"
+    effect: deny
+  - action: shell
+    resource: "*node_modules*"
+    effect: deny
+  - action: shell
+    resource: "* *.env*"
+    effect: deny
+  - action: shell
+    resource: "* *.apikey*"
+    effect: deny
+  - action: shell
+    resource: "* *.ssh*"
+    effect: deny
+  - action: shell
+    resource: "* *opencode.json*"
+    effect: deny
+  - action: websearch
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "rg *--pre*"
+    effect: deny
+  - action: shell
+    resource: "git * --output*"
+    effect: deny
+  - action: shell
+    resource: "git grep *-O*"
+    effect: deny
+  - action: shell
+    resource: "git grep *--open-files-in-pager*"
+    effect: deny
+  - action: shell
+    resource: "* >*"
+    effect: deny
+  - action: shell
+    resource: "* 1>*"
+    effect: deny
+  - action: shell
+    resource: "* &>*"
+    effect: deny
+  - action: shell
+    resource: "* *.gnupg*"
+    effect: deny
+  - action: shell
+    resource: "* *.config/gh*"
+    effect: deny
+  - action: shell
+    resource: "* *.local/share/opencode*"
     effect: deny
 ---
 

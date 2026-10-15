@@ -1,12 +1,15 @@
 ---
 description: Use to build or change .NET backend features test-first — writes the API integration tests for the endpoint, then the vertical slice that makes them green (Minimal API endpoint, IApiHandler handler, DTOs, EF Core entity, configuration, migration). Owns both the tests and the production code of the backend.
 mode: all
-model: ollama/qwen3.6#medium
+model: strata/swift#medium
 steps: 150
 request:
   body:
-    temperature: 0.7
-    top_p: 0.8
+    temperature: 1.0
+    top_p: 0.95
+    top_k: 20
+    min_p: 0.0
+    presence_penalty: 0.0
 permissions:
   - action: edit
     resource: "*.plans/*"
@@ -244,6 +247,108 @@ permissions:
     effect: deny
   - action: "spartan-ui_*"
     resource: "*"
+    effect: deny
+  - action: edit
+    resource: "**/.git/**"
+    effect: deny
+  - action: edit
+    resource: "**/.claude/**"
+    effect: deny
+  - action: shell
+    resource: "cd /*"
+    effect: deny
+  - action: shell
+    resource: "cd ~*"
+    effect: deny
+  - action: shell
+    resource: "cd *..*"
+    effect: deny
+  - action: shell
+    resource: "rm * /*"
+    effect: deny
+  - action: shell
+    resource: "rm /*"
+    effect: deny
+  - action: shell
+    resource: "rm * ."
+    effect: deny
+  - action: shell
+    resource: "rm * ./"
+    effect: deny
+  - action: shell
+    resource: "rm *.claude*"
+    effect: deny
+  - action: shell
+    resource: "find * -ok*"
+    effect: deny
+  - action: shell
+    resource: "find * -fprint*"
+    effect: deny
+  - action: shell
+    resource: "find * -fls*"
+    effect: deny
+  - action: shell
+    resource: "cat *>*"
+    effect: deny
+  - action: shell
+    resource: "dotnet user-secrets*"
+    effect: deny
+  - action: shell
+    resource: "git push*"
+    effect: deny
+  - action: shell
+    resource: "gh *"
+    effect: deny
+  - action: shell
+    resource: "curl *"
+    effect: deny
+  - action: shell
+    resource: "wget *"
+    effect: deny
+  - action: shell
+    resource: "npm *"
+    effect: deny
+  - action: shell
+    resource: "npx *"
+    effect: deny
+  - action: shell
+    resource: "find * -delete*"
+    effect: deny
+  - action: shell
+    resource: "find * -exec*"
+    effect: deny
+  - action: shell
+    resource: "rg *--pre*"
+    effect: deny
+  - action: shell
+    resource: "git * --output*"
+    effect: deny
+  - action: shell
+    resource: "git grep *-O*"
+    effect: deny
+  - action: shell
+    resource: "git grep *--open-files-in-pager*"
+    effect: deny
+  - action: shell
+    resource: "* >*"
+    effect: deny
+  - action: shell
+    resource: "* 1>*"
+    effect: deny
+  - action: shell
+    resource: "* &>*"
+    effect: deny
+  - action: shell
+    resource: "* *.ssh*"
+    effect: deny
+  - action: shell
+    resource: "* *.gnupg*"
+    effect: deny
+  - action: shell
+    resource: "* *.config/gh*"
+    effect: deny
+  - action: shell
+    resource: "* *.local/share/opencode*"
     effect: deny
 ---
 

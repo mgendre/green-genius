@@ -1,11 +1,14 @@
 ---
 description: Use to build a feature end to end — writes the plan of the request as a file in `.plans/`, small tasks with acceptance criteria, hands each one to the local developers, verifies the result and keeps the plan up to date. Never writes or designs code. Run it as the session agent with `opencode --agent dispatcher`.
 mode: primary
-model: ollama/qwen3.6#medium
+model: strata/swift#medium
 request:
   body:
-    temperature: 0.6
+    temperature: 1.0
     top_p: 0.95
+    top_k: 20
+    min_p: 0.0
+    presence_penalty: 0.0
 permissions:
   - action: read
     resource: "*node_modules/*"
@@ -21,6 +24,9 @@ permissions:
     effect: deny
   - action: edit
     resource: ".plans/*"
+    effect: allow
+  - action: edit
+    resource: "**/.plans/*"
     effect: allow
   - action: webfetch
     resource: "*"
@@ -176,13 +182,13 @@ permissions:
     resource: "mv .plans/* .plans/done_*"
     effect: allow
   - action: shell
-    resource: "mv /home/mg/dev/green-genius/.plans/* /home/mg/dev/green-genius/.plans/done_*"
+    resource: "mv */.plans/* */.plans/done_*"
     effect: allow
   - action: shell
     resource: "mv .plans/* .plans/*"
     effect: allow
   - action: shell
-    resource: "mv /home/mg/dev/green-genius/.plans/* /home/mg/dev/green-genius/.plans/*"
+    resource: "mv */.plans/* */.plans/*"
     effect: allow
   - action: shell
     resource: "mv *..*"
@@ -194,10 +200,13 @@ permissions:
     resource: "bash .opencode/skills/sonar-fix/issues.sh*"
     effect: allow
   - action: shell
+    resource: "bash */.opencode/skills/sonar-fix/issues.sh*"
+    effect: allow
+  - action: shell
     resource: "bash .opencode/skills/pr-fix/comments.sh*"
     effect: allow
   - action: shell
-    resource: "bash /home/mg/dev/green-genius/.opencode/skills/pr-fix/comments.sh*"
+    resource: "bash */.opencode/skills/pr-fix/comments.sh*"
     effect: allow
   - action: shell
     resource: "*node_modules*"
@@ -223,6 +232,57 @@ permissions:
   - action: subagent
     resource: "dotnet-backend-developer"
     effect: allow
+  - action: shell
+    resource: "dotnet user-secrets*"
+    effect: deny
+  - action: shell
+    resource: "dotnet publish*"
+    effect: deny
+  - action: shell
+    resource: "find * -delete*"
+    effect: deny
+  - action: shell
+    resource: "find * -exec*"
+    effect: deny
+  - action: shell
+    resource: "find * -ok*"
+    effect: deny
+  - action: shell
+    resource: "find * -fprint*"
+    effect: deny
+  - action: shell
+    resource: "find * -fls*"
+    effect: deny
+  - action: shell
+    resource: "rg *--pre*"
+    effect: deny
+  - action: shell
+    resource: "git * --output*"
+    effect: deny
+  - action: shell
+    resource: "git grep *-O*"
+    effect: deny
+  - action: shell
+    resource: "git grep *--open-files-in-pager*"
+    effect: deny
+  - action: shell
+    resource: "* >*"
+    effect: deny
+  - action: shell
+    resource: "* 1>*"
+    effect: deny
+  - action: shell
+    resource: "* &>*"
+    effect: deny
+  - action: shell
+    resource: "* *.gnupg*"
+    effect: deny
+  - action: shell
+    resource: "* *.config/gh*"
+    effect: deny
+  - action: shell
+    resource: "* *.local/share/opencode*"
+    effect: deny
 ---
 
 You are the **Dispatcher** of GreenGenius. You write the plan of the work as a file, hand over its tasks one at a time, and verify them. The developers design and write.
