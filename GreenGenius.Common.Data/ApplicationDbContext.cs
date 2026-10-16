@@ -12,6 +12,8 @@ public class ApplicationDbContext(
     public DbSet<Plant> Plants { get; set; } = null!;
     public DbSet<PlantNeeds> PlantNeeds { get; set; } = null!;
     public DbSet<PlantTraits> PlantTraits { get; set; } = null!;
+    public DbSet<Bed> Beds { get; set; } = null!;
+    public DbSet<BedPlant> BedPlants { get; set; } = null!;
 
     // EF re-evaluates a global query filter per query only when it reads a member of the DbContext instance
     public Guid CurrentUserId => currentUserService.GetCurrentUserId();
@@ -19,6 +21,8 @@ public class ApplicationDbContext(
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfiguration(new BedConfiguration(this));
+        modelBuilder.ApplyConfiguration(new BedPlantConfiguration(this));
         modelBuilder.ApplyConfiguration(new GardenConfiguration(this));
         modelBuilder.ApplyConfiguration(new PlantConfiguration());
         modelBuilder.ApplyConfiguration(new PlantNeedsConfiguration());

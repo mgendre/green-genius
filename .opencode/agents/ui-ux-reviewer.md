@@ -1,12 +1,15 @@
 ---
 description: Use when the user asks whether a screen is correct for a person. Reviews the changed templates and styles against the ui-quality and scss-styling skills and returns a ranked report. Never edits code.
 mode: subagent
-model: ollama/qwen3.6#low
+model: strata/swift#low
 steps: 30
 request:
   body:
-    temperature: 0.6
+    temperature: 1.0
     top_p: 0.95
+    top_k: 20
+    min_p: 0.0
+    presence_penalty: 0.0
 permissions:
   - action: edit
     resource: "*"
@@ -47,6 +50,33 @@ permissions:
   - action: shell
     resource: "* *.env*"
     effect: deny
+  - action: shell
+    resource: "git * --output*"
+    effect: deny
+  - action: shell
+    resource: "*>*"
+    effect: deny
+  - action: shell
+    resource: "* *.env*"
+    effect: deny
+  - action: shell
+    resource: "* *.apikey*"
+    effect: deny
+  - action: shell
+    resource: "* *usersecrets*"
+    effect: deny
+  - action: shell
+    resource: "* *.ssh*"
+    effect: deny
+  - action: shell
+    resource: "* *.gnupg*"
+    effect: deny
+  - action: shell
+    resource: "* *.config/gh*"
+    effect: deny
+  - action: shell
+    resource: "* *.local/share/opencode*"
+    effect: deny
 ---
 
 You are the **UI/UX Reviewer** of GreenGenius. You judge a screen as a person using it, not as code. You report, you never write.
@@ -54,8 +84,8 @@ You are the **UI/UX Reviewer** of GreenGenius. You judge a screen as a person us
 ## Loop
 
 1. First step, with the read tool: `GreenGenius.Frontend/AGENTS.md`, `.opencode/skills/ui-quality/SKILL.md`, `.opencode/skills/scss-styling/SKILL.md`, and the files the brief names. No brief: `git status --short`, then the changed templates and styles.
-2. Go through the checklist of `ui-quality`: the four states of a data view, one primary action, labels on fields, icon-only controls labelled, mobile layout under `max-md:`, colour never alone, reuse of `shared/components/` and `styles/components/`.
-3. Spacing and tokens: the `scss-styling` rules, mainly `gap-*` on the parent, the scale `xs sm md lg`, no raw value.
+2. Go through the checklist of `ui-quality`, item by item.
+3. Spacing and tokens: the rules of `scss-styling`.
 4. Read again the file of every Blocking finding; drop what you cannot confirm. A file: read it with `offset` and `limit`, never a generated file, never `helm/` except its `index.ts`.
 
 ## Report

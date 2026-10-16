@@ -1,11 +1,21 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "ollama/qwen3.6",
+  "model": "strata/swift",
   "mcp": {
-    "context7": {
-      "type": "remote",
-      "url": "https://mcp.context7.com/mcp",
-      "enabled": true
+    "servers": {
+      "context7": {
+        "type": "remote",
+        "url": "https://mcp.context7.com/mcp"
+      },
+      "angular-cli": {
+        "type": "local",
+        "command": ["npx", "-y", "@angular/cli@22.2.1", "mcp", "--read-only", "--root", "."],
+        "cwd": "GreenGenius.Frontend"
+      },
+      "spartan-ui": {
+        "type": "local",
+        "command": ["npx", "-y", "@spartan-ng/mcp@1.5.0"]
+      }
     }
   },
   "permissions": [
@@ -35,11 +45,46 @@
     { "action": "shell", "resource": "mv *node_modules*", "effect": "deny" },
     { "action": "shell", "resource": "* *.env*", "effect": "deny" },
     { "action": "shell", "resource": "* *.apikey*", "effect": "deny" },
+    { "action": "shell", "resource": "* *usersecrets*", "effect": "deny" },
+    { "action": "shell", "resource": "rm /*", "effect": "deny" },
+    { "action": "shell", "resource": "rm * /*", "effect": "deny" },
+    { "action": "shell", "resource": "mv /*", "effect": "deny" },
+    { "action": "shell", "resource": "mv * /*", "effect": "deny" },
     { "action": "shell", "resource": "* *.ssh*", "effect": "deny" },
-    { "action": "edit", "resource": "**/.opencode/**", "effect": "allow" },
-    { "action": "edit", "resource": "**/.github/**", "effect": "allow" },
-    { "action": "edit", "resource": "**/dotnet-tools.json", "effect": "allow" }
+    { "action": "shell", "resource": "* *.gnupg*", "effect": "deny" },
+    { "action": "shell", "resource": "* *.config/gh*", "effect": "deny" },
+    { "action": "shell", "resource": "* *.local/share/opencode*", "effect": "deny" },
+    { "action": "shell", "resource": "* *opencode.json*", "effect": "deny" },
+    { "action": "shell", "resource": "* *.opencode/*", "effect": "deny" },
+    { "action": "shell", "resource": "* *.github/*", "effect": "deny" },
+    { "action": "shell", "resource": "* *AGENTS.md*", "effect": "deny" },
+    { "action": "external_directory", "resource": "*", "effect": "ask" },
+    { "action": "external_directory", "resource": "~/.nuget/packages/*", "effect": "allow" },
+    { "action": "read", "resource": "*usersecrets*", "effect": "deny" },
+    { "action": "read", "resource": "~/.ssh/*", "effect": "deny" },
+    { "action": "read", "resource": "~/.gnupg/*", "effect": "deny" },
+    { "action": "read", "resource": "~/.config/gh/*", "effect": "deny" },
+    { "action": "read", "resource": "~/.local/share/opencode/*", "effect": "deny" },
+    { "action": "edit", "resource": "~/*", "effect": "deny" },
+    { "action": "edit", "resource": "opencode.json", "effect": "deny" },
+    { "action": "edit", "resource": ".opencode/*", "effect": "deny" },
+    { "action": "edit", "resource": ".github/*", "effect": "deny" },
+    { "action": "edit", "resource": "AGENTS.md", "effect": "deny" },
+    { "action": "edit", "resource": "*/AGENTS.md", "effect": "deny" },
+    { "action": "edit", "resource": "**/dotnet-tools.json", "effect": "allow" },
+    { "action": "edit", "resource": "**/.git/**", "effect": "deny" }
   ],
+  "agents": {
+    "build": {
+      "permissions": [
+        { "action": "edit", "resource": "opencode.json", "effect": "allow" },
+        { "action": "edit", "resource": ".opencode/*", "effect": "allow" },
+        { "action": "edit", "resource": ".github/*", "effect": "allow" },
+        { "action": "edit", "resource": "AGENTS.md", "effect": "allow" },
+        { "action": "edit", "resource": "*/AGENTS.md", "effect": "allow" }
+      ]
+    }
+  },
   "lsp": {
     "csharp": {
       "disabled": true

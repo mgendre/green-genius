@@ -1,12 +1,15 @@
 ---
 description: Use for a quick question of any kind — about this project ("which handler answers PUT /gardens"), about the stack ("how do I widen a dialog") or a general one ("what is the weather today", "what does HTTP 409 mean"). Answers from the code, the docs, the web or its own knowledge and says which; never changes a file. Pick it in the interface, or run `opencode run --agent ask "<question>"`.
 mode: all
-model: ollama/qwen3.6#none
+model: strata/swift#none
 steps: 12
 request:
   body:
-    temperature: 0.6
-    top_p: 0.95
+    temperature: 0.7
+    top_p: 0.8
+    top_k: 20
+    min_p: 0.0
+    presence_penalty: 1.5
 permissions:
   - action: skill
     resource: "*"

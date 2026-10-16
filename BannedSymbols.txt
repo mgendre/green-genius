@@ -1,0 +1,3 @@
+T:System.Console;Use ILogger<T> from the constructor, see the dotnet-logging skill
+T:System.Diagnostics.Debug;Use ILogger<T> from the constructor, see the dotnet-logging skill
+T:System.Diagnostics.Trace;Use ILogger<T> from the constructor, see the dotnet-logging skill

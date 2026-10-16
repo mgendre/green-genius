@@ -33,16 +33,15 @@ styles/pages/                 page-specific rules only
 
 - Layout and appearance both live in named classes in the right 7-1 partial, composed with `@apply` from Tailwind utilities: `.app-main-menu { @apply flex items-baseline gap-lg bg-primary px-lg py-sm; }`. A template carries class names by role.
 - More than two utilities on an element means a named class.
-- Tokens are Tailwind theme entries, so `bg-primary`, `text-muted-foreground`, `border-border`, `rounded-base`, `shadow-sm` exist for free.
 - A raw CSS property only when Tailwind has no utility for it (`content`, a pseudo-element).
-- Classes: base + variant + size (`.btn .btn-primary .btn-sm`), named by role not look, states via Tailwind variants inside `@apply` (`hover:`, `focus-visible:`, `disabled:`). Desktop-first: base rule for desktop, then `max-md:` variants; no SCSS breakpoint mixin, Tailwind owns the breakpoints.
+- Classes: base + variant + size (`.btn .btn-primary .btn-sm`), named by role not look, states via Tailwind variants inside `@apply` (`hover:`, `focus-visible:`, `disabled:`). No SCSS breakpoint mixin: Tailwind owns the breakpoints.
 - Repeated fragments (surface + border + radius, focus ring) → a mixin in `abstracts/_mixins.scss` made of `@apply` lines, included by each class. Two classes sharing three utilities is the trigger.
 - Component `.scss` files are the exception: only for a rule meaningless outside that one component (a keyframe for its own animation) and under ~15 lines. Host display goes in metadata: `host: { class: 'block' }`.
 - **Delete test**: remove the rule; if nothing visible changes, it stays deleted.
 
 ## Flex and spacing
 
-Spacing is owned by the parent, with one rule per role. The sized steps are `xs` 4px, `sm` 8px, `md` 16px, `lg` 32px (`p-sm` is Tailwind's `p-2`, `p-md` its `p-4`: write ours).
+Spacing is owned by the parent, with one rule per role (`p-sm` is Tailwind's `p-2`, `p-md` its `p-4`: write ours).
 
 | Where | Utility | Why |
 |---|---|---|

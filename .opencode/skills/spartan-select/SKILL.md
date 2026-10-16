@@ -103,4 +103,3 @@ The inside of `<hlm-select>` is the same.
 - An option text typed in French in the template: a key in `public/i18n/fr.json`, see `i18n-fr`.
 - Reading `shared/spartan/helm/select/src/lib/` or `node_modules`: this file is the reference.
 - Several choices, groups, a custom value template: this skill does not cover them, report it.
-- `if (x) return;` without braces: `{ }` on every `if`, `else`, `for` and `while`, also around a single line.

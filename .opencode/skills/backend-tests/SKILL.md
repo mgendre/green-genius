@@ -17,7 +17,7 @@ Every backend change ends with its tests written or adapted, and run: a test tha
 | A class that takes `ApplicationDbContext` and decides in C#: an import, an upsert rule, a service | Unit, with an in-memory database | `GreenGenius.Api.Tests/<Folder>/<Class>Test.cs` |
 | A rename or a removal of a field | No new test: adapt every test that names it | search the old name with `grep` in both test projects |
 
-Integration first: what an endpoint shows is tested there, with no unit test for the same thing.
+What an endpoint shows is tested through HTTP only, with no unit test for the same thing.
 
 ## Integration test
 
@@ -72,13 +72,11 @@ public class CurrentUserServiceTest
 
 ## Unit test with an in-memory database
 
-For a class that receives `ApplicationDbContext` (an import, an upsert rule, a service). Read `.opencode/skills/backend-tests/in-memory.md` before writing it: it holds the reference to copy and the rule of one new context per step. Never mock `DbContext` or a `DbSet`.
+For a class that receives `ApplicationDbContext` (an import, an upsert rule, a service). Read `.opencode/skills/backend-tests/in-memory.md` before writing it: it holds the reference to copy and the rule of one new context per step.
 
 ## Shape of every test
 
-- Name: `<UseCase>_Should<Outcome>` or `<UseCase>_When<Condition>_Should<Outcome>`.
-- Arrange, Act, Assert, separated by one blank line, no comment.
-- Shouldly for the assertions: `ShouldBe`, `ShouldBeTrue`, `ShouldNotBe`, `ShouldBeInOrder`.
+Names and layout: `GreenGenius.Api/AGENTS.md`, section **Tests**. Shouldly for the assertions: `ShouldBe`, `ShouldBeTrue`, `ShouldNotBe`, `ShouldBeInOrder`.
 
 ## Run
 
@@ -86,7 +84,7 @@ For a class that receives `ApplicationDbContext` (an import, an upsert rule, a s
 dotnet test GreenGenius.slnx --filter <TestClass> 2>&1 | tail -20
 ```
 
-`<TestClass>` is the class name alone: `GardensApiIntegrationTest`. Run the class you wrote or adapted, then those of every feature you touched. New behaviour: write the test first, it must fail for the right reason.
+`<TestClass>` is the class name alone: `GardensApiIntegrationTest`. Run the class you wrote or adapted, then those of every feature you touched.
 
 ## Never
 
@@ -100,4 +98,3 @@ dotnet test GreenGenius.slnx --filter <TestClass> 2>&1 | tail -20
 - Read the same test file twice: read it once, then write.
 - Look inside the database of the integration tests from outside: to know what it holds, assert it in the test.
 - Deliver untested when the integration tests cannot start (no container engine): stop and report.
-- Write an `if`, `else`, `for`, `foreach` or `while` without `{ }`, also around a single line.

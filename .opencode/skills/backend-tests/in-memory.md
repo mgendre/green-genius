@@ -1,6 +1,6 @@
 # Unit test with an in-memory database
 
-For a class that receives `ApplicationDbContext`. Never mock `DbContext` or a `DbSet` with Moq: give the class a real context on the in-memory provider.
+For a class that receives `ApplicationDbContext`: give it a real context on the in-memory provider.
 
 Needs `<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.12" />` in `GreenGenius.Api.Tests.csproj`. If it is missing, stop and report: you do not add a package.
 

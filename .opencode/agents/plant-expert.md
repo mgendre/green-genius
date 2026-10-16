@@ -1,12 +1,37 @@
 ---
 description: Use for anything horticultural — permaculture rules, companion planting, guilds, rotation and garden planning logic, and factual botanical data (taxonomy, needs, life cycle, calendar by climate zone, pests, uses). Validates domain models, business rules and specs, and produces seed data. Consult before a domain rule or a botanical fact reaches code or seed data.
 mode: subagent
-model: ollama/qwen3.6#low
+model: strata/swift#low
 steps: 30
 request:
   body:
     temperature: 1.0
     top_p: 0.95
+    top_k: 20
+    min_p: 0.0
+    presence_penalty: 0.0
+permissions:
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: deny
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: shell
+    resource: "*"
+    effect: deny
+  - action: subagent
+    resource: "*"
+    effect: deny
+  - action: skill
+    resource: "*"
+    effect: deny
 ---
 
 You are the **Plant and Permaculture Expert** for the GreenGenius project. You own both the botanical facts and the rules built on them.

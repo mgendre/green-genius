@@ -83,7 +83,6 @@ export class GardenFormComponent {
 | The state of the whole form | `this.gardenForm()` then `.valid()`, `.submitting()`, `.reset(…)` | |
 
 - The model signal and the fields are the same data: typing updates `gardenModel()` at once. Never an `effect`, a subscription or a helper between the model and the form.
-- `FormControl`, `FormGroup`, `setValue`, `valueChanges` and `subscribe` do not exist here.
 - Never open `node_modules/@angular/forms`. If something is missing here, call `tools["angular-cli"].search_documentation` through `execute` with `signal forms <topic>`.
 
 ## Rules
@@ -94,15 +93,12 @@ export class GardenFormComponent {
 - A form shown in a modal: `spartan-dialog` skill.
 - Validators available from `@angular/forms/signals`: `required`, `email`, `min`, `max`, `minLength`, `maxLength`, `pattern`. Conditional state: `disabled`, `hidden`, `readonly` with `{ when: ({ valueOf }) => … }`.
 - A Spartan piece that is missing (`select`, `textarea`, `checkbox`) is generated with the `spartan` skill, never written by hand.
-- The component never calls the API client and holds no loading or error state: the store does (`signal-store` skill).
-- Braces `{ }` on every `if`, `else`, `for` and `while`, also around a single line: never `if (x) return;`.
 
 ## Mistakes already made here
 
 - `FormSubmissionState` does not exist. The submit action takes no argument: read `this.gardenModel().name`.
-- Spartan pieces are imported as one array per component (`HlmFieldImports`), never one by one (`HlmField, HlmFieldError, …`).
 - `input`, `output`, `signal`, `linkedSignal`, `computed` come from `@angular/core`, each in the import list.
 - `output<void>()` is emitted with `this.saved.emit()`; `output<string>()` needs a value. Declare the type you emit.
 - An `id` of a generated DTO is optional (`string | undefined`): test it before passing it to the store, `if (garden?.id) { … }`.
 - A template referenced by `templateUrl` must exist before the build: write the `.html` in the same step as the `.ts`.
-- Components go under `src/app/`, next to their feature. The shared folder is `src/app/shared/`, not `src/shared/`.
+- The shared folder is `src/app/shared/`, not `src/shared/`.

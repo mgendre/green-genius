@@ -65,4 +65,3 @@ export class EncyclopediaPageComponent {
 
 - Read `ActivatedRoute` or `paramMap` in a component to get an id: the input does it.
 - Add a route to a feature without opening it in the menu or a link when the task asks for the page to be reachable.
-- Write an `if`, `else`, `for` or `while` without `{ }`, also around a single line.

@@ -32,22 +32,6 @@ All user-facing text lives in `GreenGenius.Frontend/public/i18n/fr.json`. You wr
 - A count never uses `(s)`. Write two keys and choose in the template: `gardens.count.one` → `{{count}} jardin`, `gardens.count.other` → `{{count}} jardins`.
 - A value in a text is a parameter: `"gardens.count.other": "{{count}} jardins"`, used as `{{ 'gardens.count.other' | translate: { count: gardenCount() } }}`.
 
-## Example
-
-```json
-{
-  "gardens.empty": "Aucun jardin pour le moment",
-  "gardens.form.cancel": "Annuler",
-  "gardens.form.name.label": "Nom",
-  "gardens.form.name.required": "Saisissez un nom.",
-  "gardens.form.name.too-long": "Le nom ne peut pas dépasser 250 caractères.",
-  "gardens.form.save": "Enregistrer",
-  "gardens.form.title.create": "Nouveau jardin",
-  "gardens.form.title.edit": "Modifier le jardin",
-  "gardens.list.add": "Ajouter un jardin"
-}
-```
-
 ## Enum labels, units, yes and no
 
 A value of an enum (family, life cycle, level), a unit and a yes or no are texts: they live in `fr.json` like any other.
@@ -62,4 +46,3 @@ A value of an enum (family, life cycle, level), a unit and a yes or no are texts
 
 - Leave a French sentence, a French word or an accented letter in a template or in a component `.ts`: it goes in `fr.json`.
 - Add a key nothing uses, or translate into another language.
-- Use the `translate` directive: the pipe only.

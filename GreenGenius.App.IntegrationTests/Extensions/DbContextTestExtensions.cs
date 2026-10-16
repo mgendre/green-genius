@@ -6,64 +6,99 @@ namespace GreenGenius.App.IntegrationTests.Extensions;
 
 public static class DbContextTestExtensions
 {
-    public static async Task<Garden> PersistGardenAsync(this ApplicationDbContext dbContext, string name, Guid ownerId)
+    extension(ApplicationDbContext dbContext)
     {
-        var garden = new Garden
+        public async Task<Garden> PersistGardenAsync(string name, Guid ownerId)
         {
-            Id = Guid.NewGuid(),
-            OwnerId = ownerId,
-            Name = name
-        };
+            var garden = new Garden
+            {
+                Id = Guid.NewGuid(),
+                OwnerId = ownerId,
+                Name = name
+            };
 
-        dbContext.Add(garden);
+            dbContext.Add(garden);
         
-        await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
 
-        return garden;
-    }
+            return garden;
+        }
 
-    public static async Task<Plant> PersistPlantAsync(
-        this ApplicationDbContext dbContext,
-        string nameFr,
-        PlantFamily family = PlantFamily.Solanaceae,
-        PlantLifeCycle lifeCycle = PlantLifeCycle.Annual,
-        string? binomialName = null)
-    {
-        var id = Guid.NewGuid();
-        var plant = new Plant
+        public async Task<Bed> PersistBedAsync(Guid id,
+            Guid gardenId,
+            string name,
+            Guid ownerId)
         {
-            Id = id,
-            NameFr = nameFr,
-            BinomialName = binomialName,
-            Family = family,
-            LifeCycle = lifeCycle,
-            Needs = new PlantNeeds
+            var bed = new Bed
             {
-                PlantId = id,
-                Sunlight = SunlightLevel.Medium,
-                WaterNeed = WaterNeedLevel.Medium,
-                RootDepth = RootDepthLevel.Medium,
-                SoilPhMin = 6.0m,
-                SoilPhMax = 7.0m,
-                SpacingRowCm = 50,
-                SpacingPlantCm = 30,
-                HeightCm = 100,
-                SpreadCm = 80
-            },
-            Traits = new PlantTraits
+                Id = id,
+                GardenId = gardenId,
+                OwnerId = ownerId,
+                Name = name
+            };
+
+            dbContext.Add(bed);
+
+            await dbContext.SaveChangesAsync();
+
+            return bed;
+        }
+
+        public async Task LinkBedPlantAsync(Guid bedId,
+            Plant plant)
+        {
+            var bedPlant = new BedPlant
             {
-                PlantId = id,
-                NitrogenFixer = false,
-                DynamicAccumulator = false,
-                PollinatorFriendly = false,
-                DroughtTolerant = false
-            }
-        };
+                BedId = bedId,
+                PlantId = plant.Id
+            };
 
-        dbContext.Add(plant);
+            dbContext.Add(bedPlant);
 
-        await dbContext.SaveChangesAsync();
+            await dbContext.SaveChangesAsync();
+        }
 
-        return plant;
+        public async Task<Plant> PersistPlantAsync(string nameFr,
+            PlantFamily family = PlantFamily.Solanaceae,
+            PlantLifeCycle lifeCycle = PlantLifeCycle.Annual,
+            string? binomialName = null)
+        {
+            var id = Guid.NewGuid();
+            var plant = new Plant
+            {
+                Id = id,
+                NameFr = nameFr,
+                BinomialName = binomialName,
+                Family = family,
+                LifeCycle = lifeCycle,
+                Needs = new PlantNeeds
+                {
+                    PlantId = id,
+                    Sunlight = SunlightLevel.Medium,
+                    WaterNeed = WaterNeedLevel.Medium,
+                    RootDepth = RootDepthLevel.Medium,
+                    SoilPhMin = 6.0m,
+                    SoilPhMax = 7.0m,
+                    SpacingRowCm = 50,
+                    SpacingPlantCm = 30,
+                    HeightCm = 100,
+                    SpreadCm = 80
+                },
+                Traits = new PlantTraits
+                {
+                    PlantId = id,
+                    NitrogenFixer = false,
+                    DynamicAccumulator = false,
+                    PollinatorFriendly = false,
+                    DroughtTolerant = false
+                }
+            };
+
+            dbContext.Add(plant);
+
+            await dbContext.SaveChangesAsync();
+
+            return plant;
+        }
     }
 }

@@ -16,12 +16,11 @@ export const PlannerStore = signalStore(
   })),
   withHooks({
     onInit(store) {
-      effect(() => {
-        if (store.selectedGardenId() !== undefined) return;
-      });
       const gardensStore = inject(GardensStore);
       effect(() => {
-        if (!gardensStore.loaded()) return;
+        if (!gardensStore.loaded()) {
+          return;
+        }
         const ids = gardensStore.gardens().map((g) => g.id);
         if (!ids.includes(store.selectedGardenId())) {
           patchState(store, {

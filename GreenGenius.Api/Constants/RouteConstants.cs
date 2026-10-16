@@ -5,4 +5,5 @@ public static class RouteConstants
     public const string Health = "/health";
     public const string Gardens = "/gardens";
     public const string Plants = "/plants";
+    public const string Beds = "/beds";
 }

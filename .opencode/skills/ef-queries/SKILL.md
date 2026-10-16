@@ -28,33 +28,6 @@ A class that queries receives `ApplicationDbContext` in its primary constructor 
 public sealed class PlantImporter(ApplicationDbContext dbContext)
 ```
 
-## Requests on a plant
-
-Does a plant exist:
-
-```csharp
-var exists = await dbContext.Plants.AnyAsync(plant => plant.Key == key);
-```
-
-One plant to change, with its needs and traits:
-
-```csharp
-var plant = await dbContext.Plants
-    .Include(plant => plant.Needs)
-    .Include(plant => plant.Traits)
-    .FirstOrDefaultAsync(plant => plant.Key == key);
-```
-
-A list, filtered, sorted and projected in the database:
-
-```csharp
-var names = await dbContext.Plants
-    .Where(plant => plant.Family == family)
-    .OrderBy(plant => plant.NameFr)
-    .Select(plant => plant.NameFr)
-    .ToListAsync();
-```
-
 ## Many rows: one query, then the loop, one save
 
 A query inside a loop runs once per turn. Load what the loop needs before it, change in memory, save once after it. The import of plants:
@@ -107,13 +80,4 @@ await dbContext.SaveChangesAsync();
 - Two collection navigations included in one query: add `.AsSplitQuery()`.
 - Always the async method, awaited: `ToListAsync`, `FirstOrDefaultAsync`, `AnyAsync`, `SaveChangesAsync`.
 - No lazy loading, no `virtual` navigation, no SQL by hand.
-- Braces `{ }` on every `if`, `else`, `for`, `foreach` and `while`, also around a single line: never `if (x) return;`.
-
-## Mistakes already made here
-
-- `private readonly DbContext _db` and `_db.Set<Plant>()`: `ApplicationDbContext dbContext` and `dbContext.Plants`.
-- `FirstOrDefaultAsync` inside the `foreach` to find the existing plant: the dictionary above, one query.
-- A plant loaded without `Include`, then `plant.Needs = new PlantNeeds { … }`: include, then change the properties.
-- `plant.Version = 0` whatever the file says: compare, then copy the version of the file.
-- `SaveChangesAsync` inside the loop: once, after it.
-- `.Select(e => e.ToDto())`: it loads the entity. Project with `.Select(<Feature>Extensions.AsDto)`.
+- `.Select(e => e.ToDto())` loads the entity: project with `.Select(<Feature>Extensions.AsDto)`.

@@ -22,6 +22,44 @@ namespace GreenGenius.Common.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("GreenGenius.Common.Data.Entities.Bed", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("GardenId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GardenId", "OwnerId", "Name");
+
+                    b.ToTable("beds", (string)null);
+                });
+
+            modelBuilder.Entity("GreenGenius.Common.Data.Entities.BedPlant", b =>
+                {
+                    b.Property<Guid>("BedId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PlantId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("BedId", "PlantId");
+
+                    b.HasIndex("PlantId");
+
+                    b.ToTable("bed_plants", (string)null);
+                });
+
             modelBuilder.Entity("GreenGenius.Common.Data.Entities.Garden", b =>
                 {
                     b.Property<Guid>("Id")
@@ -162,6 +200,34 @@ namespace GreenGenius.Common.Data.Migrations
                     b.ToTable("plant_traits", (string)null);
                 });
 
+            modelBuilder.Entity("GreenGenius.Common.Data.Entities.Bed", b =>
+                {
+                    b.HasOne("GreenGenius.Common.Data.Entities.Garden", null)
+                        .WithMany()
+                        .HasForeignKey("GardenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GreenGenius.Common.Data.Entities.BedPlant", b =>
+                {
+                    b.HasOne("GreenGenius.Common.Data.Entities.Bed", "Bed")
+                        .WithMany("BedPlants")
+                        .HasForeignKey("BedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GreenGenius.Common.Data.Entities.Plant", "Plant")
+                        .WithMany()
+                        .HasForeignKey("PlantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Bed");
+
+                    b.Navigation("Plant");
+                });
+
             modelBuilder.Entity("GreenGenius.Common.Data.Entities.PlantNeeds", b =>
                 {
                     b.HasOne("GreenGenius.Common.Data.Entities.Plant", "Plant")
@@ -182,6 +248,11 @@ namespace GreenGenius.Common.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Plant");
+                });
+
+            modelBuilder.Entity("GreenGenius.Common.Data.Entities.Bed", b =>
+                {
+                    b.Navigation("BedPlants");
                 });
 
             modelBuilder.Entity("GreenGenius.Common.Data.Entities.Plant", b =>

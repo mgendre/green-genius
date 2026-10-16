@@ -47,9 +47,9 @@ public sealed class GardenConfiguration(ApplicationDbContext dbContext) : IEntit
 - Configure only what EF does not infer: no `IsRequired()` on a non-nullable value type (`int`, `bool`, `Guid`, enum) or on a `required` non-nullable reference, no `HasDefaultValue` equal to the CLR default.
 - A unique value: `builder.HasIndex(entity => entity.Key).IsUnique()`.
 - A user-scoped entity implements `IHasOwner` and calls `ConfigureOwnerIdQueryFilter(dbContext)`. `OwnerId` comes from `ICurrentUserService`, never from a request.
+- A `<Entity>Id` property is a relationship, declared in the configuration. Without a navigation property: `builder.HasOne<Garden>().WithMany().HasForeignKey(bed => bed.GardenId).OnDelete(DeleteBehavior.Cascade)`. `Cascade` when the row cannot live without its parent, `Restrict` otherwise. Add a navigation property only when a query reads through it.
 - A dependent reached only through its principal's navigation gets no `DbSet`.
 - An entity split into a principal and 1:1 dependents sharing its key is a decided design: do not merge them.
-- Braces `{ }` on every `if`, `else`, `for`, `foreach` and `while`, also around a single line: never `if (x) return;`.
 
 ## Renaming or replacing a column
 

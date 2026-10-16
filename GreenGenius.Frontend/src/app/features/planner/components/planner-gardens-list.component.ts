@@ -1,7 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { toast } from '@spartan-ng/brain/sonner';
+import { TranslatePipe } from '@ngx-translate/core';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmCardImports } from '@spartan-ng/helm/card';
 import { HlmDialogImports } from '@spartan-ng/helm/dialog';
@@ -25,7 +24,6 @@ import { GardenFormComponent } from './garden-form.component';
   templateUrl: './planner-gardens-list.component.html',
 })
 export class PlannerGardensListComponent {
-  private readonly translate = inject(TranslateService);
   readonly gardensStore = inject(GardensStore);
   readonly plannerStore = inject(PlannerStore);
 
@@ -56,12 +54,9 @@ export class PlannerGardensListComponent {
     if (!garden?.id) {
       return;
     }
-    await this.gardensStore.deleteGarden(garden.id);
-    if (this.gardensStore.error()) {
-      toast.error(this.translate.instant('gardens.delete.failed') as string);
-      return;
+    if (await this.gardensStore.deleteGarden(garden.id)) {
+      this.closeDeleteDialog();
     }
-    this.closeDeleteDialog();
   }
 
   closeEditDialog(): void {
