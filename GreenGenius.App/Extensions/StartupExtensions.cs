@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using GreenGenius.Api.Features.Gardens;
 using GreenGenius.App.Security;
 using GreenGenius.App.Services;
@@ -30,7 +29,7 @@ public static class StartupExtensions
     {
         builder.Services.ConfigureHttpJsonOptions(options =>
         {
-            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            options.SerializerOptions.UseAppJsonDefaults();
         });
     }
 }

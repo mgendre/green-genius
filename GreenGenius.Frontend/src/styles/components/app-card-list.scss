@@ -4,13 +4,25 @@
   }
 
   .app-list-element {
-    @apply p-2 cursor-pointer border-t border-border hover:bg-primary-soft;
+    @apply flex w-full items-center gap-sm p-2 border-t border-border hover:bg-primary-soft;
 
     &.active {
       @apply bg-primary text-primary-foreground;
 
-      button {
+      .app-list-element__select {
+        color: inherit;
+      }
+
+      button:not(.app-list-element__select) {
         color: var(--color-foreground);
+      }
+    }
+
+    .app-list-element__select {
+      @apply flex flex-1 min-w-0 items-center text-left cursor-pointer;
+
+      &:focus-visible {
+        @apply outline-2 outline-offset-2 outline-ring;
       }
     }
 
