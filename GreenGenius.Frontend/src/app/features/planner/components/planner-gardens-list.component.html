@@ -28,7 +28,7 @@
                         [variant]="'outline'"
                         size="icon-sm"
                         class="app-garden-edit ml-auto"
-                         [attr.aria-label]="'common.action.edit' | translate"
+                         [attr.aria-label]="'common.actions.edit' | translate"
                         (click)="$event.stopPropagation(); editGarden(garden)">
                   <ng-icon name="lucidePencil" aria-hidden="true" />
                 </button>
@@ -37,7 +37,7 @@
                         [variant]="'outline'"
                         size="icon-sm"
                         class="app-garden-delete"
-                         [attr.aria-label]="'common.action.delete' | translate"
+                         [attr.aria-label]="'common.actions.delete' | translate"
                         (click)="$event.stopPropagation(); openDeleteDialog(garden)">
                   <ng-icon name="lucideTrash" aria-hidden="true" />
                 </button>
@@ -71,8 +71,8 @@
       <p hlmAlertDialogDescription>{{ 'gardens.delete.body' | translate: deletingGarden() }}</p>
     </hlm-alert-dialog-header>
     <hlm-alert-dialog-footer>
-      <button hlmAlertDialogCancel type="button" (click)="closeDeleteDialog()">{{ 'common.action.cancel' | translate }}</button>
-      <button hlmAlertDialogAction variant="destructive" type="button" (click)="confirmDeleteGarden()" [disabled]="gardensStore.loading()">{{ 'gardens.delete.action' | translate }}</button>
+      <button hlmAlertDialogCancel type="button" (click)="closeDeleteDialog()">{{ 'common.actions.cancel' | translate }}</button>
+      <button hlmAlertDialogAction variant="destructive" type="button" (click)="confirmDeleteGarden()" [disabled]="gardensStore.deleting()">{{ 'gardens.delete.action' | translate }}</button>
     </hlm-alert-dialog-footer>
   </hlm-alert-dialog-content>
 </hlm-alert-dialog>

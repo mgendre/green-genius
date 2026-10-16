@@ -104,6 +104,12 @@ permissions:
     resource: "dotnet test*"
     effect: allow
   - action: shell
+    resource: "dotnet ef migrations has-pending-model-changes*"
+    effect: allow
+  - action: shell
+    resource: "dotnet ef migrations list*"
+    effect: allow
+  - action: shell
     resource: "dotnet ef database*"
     effect: deny
   - action: shell

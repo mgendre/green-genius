@@ -10,6 +10,7 @@ export interface GardensState {
   loading: boolean;
   loaded: boolean;
   error: boolean;
+  deleting: boolean;
 }
 
 export const GardensStore = signalStore(
@@ -19,6 +20,7 @@ export const GardensStore = signalStore(
     loading: false,
     loaded: false,
     error: false,
+    deleting: false,
   }),
   withMethods((store, client = inject(Client), translate = inject(TranslateService)) => ({
     async loadGardens(): Promise<void> {
@@ -31,7 +33,6 @@ export const GardensStore = signalStore(
       }
     },
     async createGarden(name: string): Promise<boolean> {
-      patchState(store, { loading: true });
       try {
         const garden = await firstValueFrom(client.createGarden({ name }));
         const gardens = sortByName([garden, ...store.gardens()]);
@@ -41,12 +42,9 @@ export const GardensStore = signalStore(
       } catch {
         toast.error(translate.instant('gardens.save.failed') as string);
         return false;
-      } finally {
-        patchState(store, { loading: false });
       }
     },
     async updateGarden(id: string, name: string): Promise<boolean> {
-      patchState(store, { loading: true });
       try {
         const garden = await firstValueFrom(client.updateGarden(id, { name }));
         const gardens = sortByName(store.gardens().map((existing) => (existing.id === id ? garden : existing)));
@@ -56,12 +54,10 @@ export const GardensStore = signalStore(
       } catch {
         toast.error(translate.instant('gardens.save.failed') as string);
         return false;
-      } finally {
-        patchState(store, { loading: false });
       }
     },
     async deleteGarden(id: string): Promise<boolean> {
-      patchState(store, { loading: true });
+      patchState(store, { deleting: true });
       try {
         await firstValueFrom(client.deleteGarden(id));
         patchState(store, { gardens: sortByName(store.gardens().filter((existing) => existing.id !== id)) });
@@ -71,7 +67,7 @@ export const GardensStore = signalStore(
         toast.error(translate.instant('gardens.delete.failed') as string);
         return false;
       } finally {
-        patchState(store, { loading: false });
+        patchState(store, { deleting: false });
       }
     },
   })),

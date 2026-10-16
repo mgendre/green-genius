@@ -61,3 +61,5 @@ Result:
 | `## Notes` | What no task covers, a question for the user, one line `Decided: …` per decision a developer cannot read in a criterion. |
 
 A task ends with something a person can check by using the app or calling the API; building a piece and plugging it in is one task. More than three criteria, or two layers: several tasks, backend before frontend.
+
+A task never asks a developer to change a file their tool refuses: `angular.json`, `package.json`, `package-lock.json`, `shared/spartan/helm/`, `api-client.generated.ts`, a migration by hand, `compose.yaml`, a `Dockerfile`, `start.sh`, `.github/`, `dotnet-tools.json`. Such a change goes under `## Notes` as a question for the user.

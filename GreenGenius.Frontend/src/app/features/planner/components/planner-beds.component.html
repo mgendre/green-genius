@@ -4,11 +4,11 @@
 </div>
 
 @if (bedsStore.loading()) {
-  <p>{{ 'planner.beds.loading' | translate }}</p>
+  <p>{{ 'beds.loading' | translate }}</p>
 } @else if (bedsStore.loadError()) {
   <p class="text-destructive">{{ 'common.errors.load-error' | translate }}</p>
 } @else if (bedsStore.beds().length === 0) {
-  <p>{{ 'planner.beds.empty' | translate }}</p>
+  <p>{{ 'beds.empty' | translate }}</p>
 } @else {
   @for (bed of bedsStore.beds(); track bed.id) {
     <hlm-card>
@@ -26,7 +26,7 @@
                   type="button"
                   variant="outline"
                   size="icon-sm"
-                  [attr.aria-label]="'common.action.edit' | translate"
+                  [attr.aria-label]="'common.actions.edit' | translate"
                   (click)="$event.stopPropagation(); editBed(bed)">
             <ng-icon name="lucidePencil" aria-hidden="true" />
           </button>
@@ -34,7 +34,7 @@
                   type="button"
                   variant="outline"
                   size="icon-sm"
-                  [attr.aria-label]="'common.action.delete' | translate"
+                  [attr.aria-label]="'common.actions.delete' | translate"
                   (click)="$event.stopPropagation(); askDeleteBed(bed)">
             <ng-icon name="lucideTrash" aria-hidden="true" />
           </button>
@@ -43,7 +43,7 @@
       @if (isBedOpenAt(bed.id)) {
         <div hlmCardContent class="flex flex-col gap-sm">
           @if (bed.plants.length === 0) {
-            <p class="text-muted-foreground">{{ 'planner.beds.no-plants' | translate }}</p>
+            <p class="text-muted-foreground">{{ 'beds.no-plants' | translate }}</p>
           } @else {
             @for (plant of bed.plants; track plant.id) {
               <div class="flex items-center gap-2">
@@ -79,7 +79,7 @@
       <p hlmAlertDialogDescription>{{ 'beds.delete.body' | translate }}</p>
     </hlm-alert-dialog-header>
     <hlm-alert-dialog-footer>
-      <button hlmAlertDialogCancel type="button" (click)="closeDeleteDialog()">{{ 'common.action.cancel' | translate }}</button>
+      <button hlmAlertDialogCancel type="button" (click)="closeDeleteDialog()">{{ 'common.actions.cancel' | translate }}</button>
       <button hlmAlertDialogAction variant="destructive" type="button" (click)="confirmDeleteBed()" [disabled]="bedsStore.deleting()">{{ 'beds.delete.action' | translate }}</button>
     </hlm-alert-dialog-footer>
   </hlm-alert-dialog-content>
