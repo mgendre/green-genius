@@ -18,12 +18,12 @@ public class BedsApiIntegrationTest(
 {
     private static string GetBedsUrl(Guid gardenId)
     {
-        return RouteConstants.Gardens + "/" + gardenId + "/beds";
+        return RouteConstants.Gardens + "/" + gardenId + RouteConstants.Beds;
     }
 
     private static string GetBedUrl(Guid gardenId, Guid bedId)
     {
-        return RouteConstants.Gardens + "/" + gardenId + "/beds/" + bedId;
+        return GetBedsUrl(gardenId) + "/" + bedId;
     }
 
     [Fact]
@@ -153,6 +153,83 @@ public class BedsApiIntegrationTest(
         result.Value!.Name.ShouldBe("NewName");
         result.Value.Id.ShouldBe(bed.Id);
         result.Value.Plants.Count.ShouldBe(2);
+    }
+
+    [Fact]
+    public async Task UpdateBed_WhenPlantsReplaced_ShouldReturnTheNewPlantsSortedByName()
+    {
+        var garden = await PersistGardenAsync(DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, "MyBed", DefaultCurrentUser);
+
+        Plant alpha = null!;
+        Plant bravo = null!;
+        Plant charlie = null!;
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            alpha = await ctx.PersistPlantAsync("Alpha");
+            bravo = await ctx.PersistPlantAsync("Bravo");
+            charlie = await ctx.PersistPlantAsync("Charlie");
+            await ctx.LinkBedPlantAsync(bed.Id, alpha);
+            await ctx.LinkBedPlantAsync(bed.Id, bravo);
+        });
+
+        var result = await CreateClient().PutAndRead<BedDto, UpdateBedDto>(
+            GetBedUrl(garden.Id, bed.Id), new UpdateBedDto
+            {
+                Name = "MyBed",
+                PlantIds = [bravo.Id, charlie.Id]
+            });
+
+        result.Response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        result.Value!.Plants.Count.ShouldBe(2);
+        result.Value.Plants.Select(p => p.NameFr).ToList().ShouldBeInOrder(SortDirection.Ascending);
+        result.Value.Plants.Select(p => p.Id).ToList().ShouldContain(bravo.Id);
+        result.Value.Plants.Select(p => p.Id).ToList().ShouldContain(charlie.Id);
+
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            var linkedPlantIds = await ctx.BedPlants
+                .Where(bp => bp.BedId == bed.Id)
+                .Select(bp => bp.PlantId)
+                .ToListAsync();
+
+            linkedPlantIds.Count.ShouldBe(2);
+            linkedPlantIds.ShouldContain(bravo.Id);
+            linkedPlantIds.ShouldContain(charlie.Id);
+            linkedPlantIds.ShouldNotContain(alpha.Id);
+        });
+    }
+
+    [Fact]
+    public async Task UpdateBed_WhenPlantIdsEmpty_ShouldRemoveEveryPlant()
+    {
+        var garden = await PersistGardenAsync(DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, "MyBed", DefaultCurrentUser);
+
+        Plant alpha = null!;
+        Plant bravo = null!;
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            alpha = await ctx.PersistPlantAsync("Alpha");
+            bravo = await ctx.PersistPlantAsync("Bravo");
+            await ctx.LinkBedPlantAsync(bed.Id, alpha);
+            await ctx.LinkBedPlantAsync(bed.Id, bravo);
+        });
+
+        var result = await CreateClient().PutAndRead<BedDto, UpdateBedDto>(
+            GetBedUrl(garden.Id, bed.Id), new UpdateBedDto
+            {
+                Name = "MyBed",
+                PlantIds = []
+            });
+
+        result.Response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        result.Value!.Plants.ShouldBeEmpty();
+
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            (await ctx.BedPlants.AnyAsync(bp => bp.BedId == bed.Id)).ShouldBeFalse();
+        });
     }
 
     [Fact]
@@ -298,6 +375,37 @@ public class BedsApiIntegrationTest(
         await ExecuteInScopeAsync(async ctx =>
         {
             (await ctx.Beds.AnyAsync(b => b.GardenId == garden.Id)).ShouldBeFalse();
+        });
+    }
+
+    [Fact]
+    public async Task ReadBedPlants_WhenBedNotOwned_ShouldNotReturnTheLinks()
+    {
+        var myGarden = await PersistGardenAsync(DefaultCurrentUser);
+        var otherGarden = await PersistGardenAsync(Guid.NewGuid());
+        var myBed = await PersistBedAsync(myGarden.Id, "MyBed", DefaultCurrentUser);
+        var otherBed = await PersistBedAsync(otherGarden.Id, "OtherBed", Guid.NewGuid());
+
+        Plant myPlant = null!;
+        Plant otherPlant = null!;
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            myPlant = await ctx.PersistPlantAsync("MyPlant");
+            otherPlant = await ctx.PersistPlantAsync("OtherPlant");
+            await ctx.LinkBedPlantAsync(myBed.Id, myPlant);
+            await ctx.LinkBedPlantAsync(otherBed.Id, otherPlant);
+        });
+
+        Guid[] plantIds = [myPlant.Id, otherPlant.Id];
+
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            var links = await ctx.BedPlants
+                .Where(bp => ((IEnumerable<Guid>)plantIds).Contains(bp.PlantId))
+                .ToListAsync();
+
+            links.Count.ShouldBe(1);
+            links[0].BedId.ShouldBe(myBed.Id);
         });
     }
 

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GreenGenius.Common.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20261012201259_AddBedOwner")]
-    partial class AddBedOwner
+    [Migration("20261015211020_AddBeds")]
+    partial class AddBeds
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

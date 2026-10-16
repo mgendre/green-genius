@@ -117,6 +117,9 @@ permissions:
     resource: "* *.apikey*"
     effect: deny
   - action: shell
+    resource: "* *usersecrets*"
+    effect: deny
+  - action: shell
     resource: "* *.ssh*"
     effect: deny
   - action: shell

@@ -98,7 +98,10 @@ permissions:
     resource: "npm run build*"
     effect: allow
   - action: shell
-    resource: "dotnet *"
+    resource: "dotnet build*"
+    effect: allow
+  - action: shell
+    resource: "dotnet test*"
     effect: allow
   - action: shell
     resource: "dotnet ef database*"
@@ -218,6 +221,9 @@ permissions:
     resource: "* *.apikey*"
     effect: deny
   - action: shell
+    resource: "* *usersecrets*"
+    effect: deny
+  - action: shell
     resource: "* *.ssh*"
     effect: deny
   - action: shell
@@ -282,6 +288,30 @@ permissions:
     effect: deny
   - action: shell
     resource: "* *.local/share/opencode*"
+    effect: deny
+  - action: shell
+    resource: "dotnet * -t:*"
+    effect: deny
+  - action: shell
+    resource: "dotnet * /t:*"
+    effect: deny
+  - action: shell
+    resource: "dotnet * -target:*"
+    effect: deny
+  - action: shell
+    resource: "dotnet * /target:*"
+    effect: deny
+  - action: shell
+    resource: "dotnet * --source*"
+    effect: deny
+  - action: shell
+    resource: "dotnet build* -s *"
+    effect: deny
+  - action: shell
+    resource: "dotnet test* -s *"
+    effect: deny
+  - action: shell
+    resource: "dotnet * --configfile*"
     effect: deny
 ---
 

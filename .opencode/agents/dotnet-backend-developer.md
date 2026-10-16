@@ -48,7 +48,28 @@ permissions:
     resource: "cd *"
     effect: allow
   - action: shell
-    resource: "dotnet *"
+    resource: "dotnet build*"
+    effect: allow
+  - action: shell
+    resource: "dotnet test*"
+    effect: allow
+  - action: shell
+    resource: "dotnet list *package*"
+    effect: allow
+  - action: shell
+    resource: "dotnet ef migrations add*"
+    effect: allow
+  - action: shell
+    resource: "dotnet ef migrations list*"
+    effect: allow
+  - action: shell
+    resource: "dotnet ef migrations script*"
+    effect: allow
+  - action: shell
+    resource: "dotnet ef migrations remove*"
+    effect: allow
+  - action: shell
+    resource: "dotnet ef migrations has-pending-model-changes*"
     effect: allow
   - action: shell
     resource: "git status*"
@@ -201,6 +222,9 @@ permissions:
     resource: "* *.apikey*"
     effect: deny
   - action: shell
+    resource: "* *usersecrets*"
+    effect: deny
+  - action: shell
     resource: "* *.ssh*"
     effect: deny
   - action: shell
@@ -349,6 +373,48 @@ permissions:
     effect: deny
   - action: shell
     resource: "* *.local/share/opencode*"
+    effect: deny
+  - action: shell
+    resource: "dotnet * -t:*"
+    effect: deny
+  - action: shell
+    resource: "dotnet * /t:*"
+    effect: deny
+  - action: shell
+    resource: "dotnet * -target:*"
+    effect: deny
+  - action: shell
+    resource: "dotnet * /target:*"
+    effect: deny
+  - action: shell
+    resource: "dotnet * --source*"
+    effect: deny
+  - action: shell
+    resource: "dotnet build* -s *"
+    effect: deny
+  - action: shell
+    resource: "dotnet test* -s *"
+    effect: deny
+  - action: shell
+    resource: "dotnet * --configfile*"
+    effect: deny
+  - action: edit
+    resource: "GreenGenius.Frontend/*"
+    effect: deny
+  - action: edit
+    resource: "start.sh"
+    effect: deny
+  - action: edit
+    resource: "compose.yaml"
+    effect: deny
+  - action: edit
+    resource: "*Dockerfile*"
+    effect: deny
+  - action: edit
+    resource: ".dockerignore"
+    effect: deny
+  - action: edit
+    resource: "infra/*"
     effect: deny
 ---
 

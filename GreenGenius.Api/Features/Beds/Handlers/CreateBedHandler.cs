@@ -14,7 +14,7 @@ public class CreateBedHandler(ApplicationDbContext dbContext, ICurrentUserServic
 {
     public async Task<Created<BedDto>> Handle(CreateBedDto dto, Guid gardenId)
     {
-        var garden = await dbContext.Gardens.GetAsync(gardenId);
+        await dbContext.Gardens.GetAsync(gardenId);
 
         var bed = new Bed
         {

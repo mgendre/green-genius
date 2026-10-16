@@ -11,6 +11,11 @@ export interface BedsState {
   loading: boolean;
   loaded: boolean;
   loadError: boolean;
+  deleting: boolean;
+}
+
+function sortedBeds(beds: BedDto[]): BedDto[] {
+  return [...beds].sort((a, b) => a.name.localeCompare(b.name, 'fr'));
 }
 
 export const BedsStore = signalStore(
@@ -20,6 +25,7 @@ export const BedsStore = signalStore(
     loading: false,
     loaded: false,
     loadError: false,
+    deleting: false,
   }),
   withMethods((store, client = inject(Client), plannerStore = inject(PlannerStore), translate = inject(TranslateService)) => ({
     async loadBeds(gardenId: string): Promise<void> {
@@ -44,7 +50,7 @@ export const BedsStore = signalStore(
     async createBed(gardenId: string, name: string): Promise<boolean> {
       try {
         const bed = await firstValueFrom(client.createBed(gardenId, { name }));
-        patchState(store, { beds: [...store.beds(), bed] });
+        patchState(store, { beds: sortedBeds([...store.beds(), bed]) });
         toast.success(translate.instant('beds.save.done') as string);
         return true;
       } catch {
@@ -52,13 +58,15 @@ export const BedsStore = signalStore(
         return false;
       }
     },
-    async updateBed(gardenId: string, id: string, name: string, plantIds: string[]): Promise<boolean> {
+    async updateBed(gardenId: string, id: string, name: string): Promise<boolean> {
+      const current = store.beds().find((existing) => existing.id === id);
+      const plantIds = current?.plants.map((plant) => plant.id).filter((plantId): plantId is string => plantId !== undefined) ?? [];
       try {
         const bed = await firstValueFrom(client.updateBed(gardenId, id, { name, plantIds }));
         patchState(store, {
-          beds: store.beds().map((existing) =>
-            existing.id === id ? bed : existing,
-          ),
+          beds: sortedBeds(store.beds().map((existing) =>
+            existing.id === bed.id ? bed : existing,
+          )),
         });
         toast.success(translate.instant('beds.save.done') as string);
         return true;
@@ -68,6 +76,7 @@ export const BedsStore = signalStore(
       }
     },
     async deleteBed(gardenId: string, id: string): Promise<boolean> {
+      patchState(store, { deleting: true });
       try {
         await firstValueFrom(client.deleteBed(gardenId, id));
         patchState(store, { beds: store.beds().filter((existing) => existing.id !== id) });
@@ -76,6 +85,8 @@ export const BedsStore = signalStore(
       } catch {
         toast.error(translate.instant('beds.delete.failed') as string);
         return false;
+      } finally {
+        patchState(store, { deleting: false });
       }
     },
   })),

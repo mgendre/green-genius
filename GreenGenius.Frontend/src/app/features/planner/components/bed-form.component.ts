@@ -32,13 +32,9 @@ export class BedFormComponent {
   private async submit(): Promise<void> {
     const name = this.bedModel().name;
     const bedId = this.bedId();
-    let success: boolean;
-    if (bedId) {
-      const currentPlants = this.bedsStore.beds().find((b) => b.id === bedId);
-      success = await this.bedsStore.updateBed(this.gardenId(), bedId, name, currentPlants?.plants.map((p) => p.id ?? '').filter((id) => id !== '') || []);
-    } else {
-      success = await this.bedsStore.createBed(this.gardenId(), name);
-    }
+    const success = bedId
+      ? await this.bedsStore.updateBed(this.gardenId(), bedId, name)
+      : await this.bedsStore.createBed(this.gardenId(), name);
     if (success) {
       this.saved.emit();
     }

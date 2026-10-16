@@ -42,15 +42,18 @@
       </hlm-card-footer>
       @if (isBedOpenAt(bed.id)) {
         <div hlmCardContent class="flex flex-col gap-sm">
-          @for (plant of bed.plants; track plant.id) {
-            <div class="flex items-center gap-2"
-                 [attr.aria-label]="'beds.list.plant.identity' | translate: { plantName: plant.nameFr }">
-              <span class="text-xl" aria-hidden="true">{{ plant.emoji }}</span>
-              <span class="font-medium">{{ plant.nameFr }}</span>
-              @if (plant.binomialName) {
-                <span class="text-muted-foreground italic">{{ plant.binomialName }}</span>
-              }
-            </div>
+          @if (bed.plants.length === 0) {
+            <p class="text-muted-foreground">{{ 'planner.beds.no-plants' | translate }}</p>
+          } @else {
+            @for (plant of bed.plants; track plant.id) {
+              <div class="flex items-center gap-2">
+                <span class="text-xl" aria-hidden="true">{{ plant.emoji }}</span>
+                <span class="font-medium">{{ plant.nameFr }}</span>
+                @if (plant.binomialName) {
+                  <span class="text-muted-foreground italic">{{ plant.binomialName }}</span>
+                }
+              </div>
+            }
           }
         </div>
       }
@@ -77,7 +80,7 @@
     </hlm-alert-dialog-header>
     <hlm-alert-dialog-footer>
       <button hlmAlertDialogCancel type="button" (click)="closeDeleteDialog()">{{ 'common.action.cancel' | translate }}</button>
-      <button hlmAlertDialogAction variant="destructive" type="button" (click)="confirmDeleteBed()" [disabled]="bedsStore.loading()">{{ 'beds.delete.action' | translate }}</button>
+      <button hlmAlertDialogAction variant="destructive" type="button" (click)="confirmDeleteBed()" [disabled]="bedsStore.deleting()">{{ 'beds.delete.action' | translate }}</button>
     </hlm-alert-dialog-footer>
   </hlm-alert-dialog-content>
 </hlm-alert-dialog>

@@ -22,7 +22,7 @@ public class ApplicationDbContext(
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new BedConfiguration(this));
-        modelBuilder.ApplyConfiguration(new BedPlantConfiguration());
+        modelBuilder.ApplyConfiguration(new BedPlantConfiguration(this));
         modelBuilder.ApplyConfiguration(new GardenConfiguration(this));
         modelBuilder.ApplyConfiguration(new PlantConfiguration());
         modelBuilder.ApplyConfiguration(new PlantNeedsConfiguration());

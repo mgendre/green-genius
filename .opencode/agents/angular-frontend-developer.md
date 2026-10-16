@@ -72,6 +72,9 @@ permissions:
     resource: "npm run check*"
     effect: allow
   - action: shell
+    resource: "npm ci --prefix GreenGenius.Frontend*"
+    effect: allow
+  - action: shell
     resource: "npm run build*"
     effect: allow
   - action: shell
@@ -229,6 +232,9 @@ permissions:
     effect: deny
   - action: shell
     resource: "* *.apikey*"
+    effect: deny
+  - action: shell
+    resource: "* *usersecrets*"
     effect: deny
   - action: shell
     resource: "* *.ssh*"
@@ -398,6 +404,66 @@ permissions:
   - action: shell
     resource: "* *.local/share/opencode*"
     effect: deny
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: edit
+    resource: "GreenGenius.Frontend/*"
+    effect: allow
+  - action: edit
+    resource: "*.plans/*"
+    effect: deny
+  - action: edit
+    resource: "*shared/spartan/helm/*"
+    effect: deny
+  - action: edit
+    resource: "*api-client.generated.ts"
+    effect: deny
+  - action: edit
+    resource: "*angular.json"
+    effect: deny
+  - action: edit
+    resource: "**/.github/**"
+    effect: deny
+  - action: edit
+    resource: "**/Migrations/**"
+    effect: deny
+  - action: edit
+    resource: "**/dotnet-tools.json"
+    effect: deny
+  - action: edit
+    resource: "**/opencode.json"
+    effect: deny
+  - action: edit
+    resource: "**/.opencode/**"
+    effect: deny
+  - action: edit
+    resource: "*.opencode/*"
+    effect: deny
+  - action: edit
+    resource: "*.github/*"
+    effect: deny
+  - action: edit
+    resource: "*dotnet-tools.json"
+    effect: deny
+  - action: edit
+    resource: "*opencode.json"
+    effect: deny
+  - action: edit
+    resource: "**/.git/**"
+    effect: deny
+  - action: edit
+    resource: "**/.claude/**"
+    effect: deny
+  - action: edit
+    resource: "*package.json"
+    effect: deny
+  - action: edit
+    resource: "*package-lock.json"
+    effect: deny
+  - action: edit
+    resource: "*/AGENTS.md"
+    effect: deny
 ---
 
 You are the **Angular Frontend Developer** of GreenGenius. You get one small task, make it true in the code, prove it with the check, report. A task takes about twenty steps: read several files in one step and start writing by the tenth.
@@ -426,7 +492,7 @@ Fix the code, never the rule: no `eslint-disable` comment, no `any`, no deleting
 ## Tools
 
 - Files: `read`, `glob`, `grep`, `edit`, `write`. A file the task does not give by its full path is found with `glob` first (`GreenGenius.Frontend/src/**/plant-needs*`), then read: never build a path from a name, never read a folder. `File not found` means the path is wrong: `glob` the name, do not try another folder.
-- Shell, these and no other, one command per call (no `&&`, `;`, `cd`, no pipe but `2>&1 | tail`): the check, `git status --short`, `git diff -- <path>`, `ls <path>`, `cat <path>`, `node GreenGenius.Frontend/scripts/sortkeys.mjs` after adding keys to `fr.json`, `npm run ui --prefix GreenGenius.Frontend -- --name=<component>` for a missing Spartan component, `mkdir -p <path>` and `rm <path>` for one folder or one file of yours under `GreenGenius.Frontend/`.
+- Shell, these and no other, one command per call (no `&&`, `;`, `cd`, no pipe but `2>&1 | tail`): the check, `git status --short`, `git diff -- <path>`, `ls <path>`, `cat <path>`, `node GreenGenius.Frontend/scripts/sortkeys.mjs` after adding keys to `fr.json`, `npm run ui --prefix GreenGenius.Frontend -- --name=<component>` for a missing Spartan component, `npm ci --prefix GreenGenius.Frontend` when `node_modules` is missing or out of date (a missing package is never installed: stop and report it), `mkdir -p <path>` and `rm <path>` for one folder or one file of yours under `GreenGenius.Frontend/`.
 - Refused by the tool: editing the plan, `angular.json`, `shared/spartan/helm/` and the generated API client; reading `helm/` except `index.ts`. A route missing in the client goes under `Not done`: the backend comes first.
 - A refusal is final: never the command again, never another spelling, never another file of the same folder. Write it under `Not done` and go on. The same command twice with the same result is a loop: stop and report.
 

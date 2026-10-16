@@ -17,6 +17,7 @@ namespace GreenGenius.Common.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     GardenId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false)
                 },
                 constraints: table =>
@@ -60,9 +61,9 @@ namespace GreenGenius.Common.Data.Migrations
                 column: "PlantId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_beds_GardenId_Name",
+                name: "IX_beds_GardenId_OwnerId_Name",
                 table: "beds",
-                columns: new[] { "GardenId", "Name" });
+                columns: new[] { "GardenId", "OwnerId", "Name" });
         }
 
         /// <inheritdoc />

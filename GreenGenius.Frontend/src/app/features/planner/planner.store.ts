@@ -16,11 +16,6 @@ export const PlannerStore = signalStore(
   })),
   withHooks({
     onInit(store) {
-      effect(() => {
-        if (store.selectedGardenId() !== undefined) {
-          return;
-        }
-      });
       const gardensStore = inject(GardensStore);
       effect(() => {
         if (!gardensStore.loaded()) {

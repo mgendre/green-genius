@@ -1,7 +1,6 @@
 using GreenGenius.Api.Features.Beds.Dtos;
 using GreenGenius.Common.Data;
 using GreenGenius.Common.Data.Entities;
-using GreenGenius.Common.Data.Extensions;
 using GreenGenius.Common.Data.Exceptions;
 using GreenGenius.Infra.Hosting.Handlers;
 using JetBrains.Annotations;
@@ -15,59 +14,82 @@ public class UpdateBedHandler(ApplicationDbContext dbContext) : IApiHandler
 {
     public async Task<Ok<BedDto>> Handle(Guid gardenId, Guid id, UpdateBedDto dto)
     {
+        var bed = await GetBedAsync(gardenId, id);
+
+        bed.Name = dto.Name;
+
+        var plantIds = dto.PlantIds.Distinct().ToArray();
+
+        await EnsurePlantsExistAsync(plantIds);
+        await ReplacePlantsAsync(id, plantIds);
+
+        await dbContext.SaveChangesAsync();
+
+        return TypedResults.Ok(await GetBedDtoAsync(gardenId, id));
+    }
+
+    private async Task<Bed> GetBedAsync(Guid gardenId, Guid bedId)
+    {
         var bed = await dbContext.Beds
-            .Where(b => b.Id == id && b.GardenId == gardenId)
+            .Where(b => b.Id == bedId && b.GardenId == gardenId)
             .FirstOrDefaultAsync();
 
         if (bed is null)
         {
-            throw new DataNotFoundException($"Bed {id} not found in garden {gardenId}");
+            throw new DataNotFoundException($"Bed {bedId} not found in garden {gardenId}");
         }
 
-        bed.Name = dto.Name;
+        return bed;
+    }
 
-        var uniquePlantIds = dto.PlantIds.Distinct().ToHashSet();
+    private async Task EnsurePlantsExistAsync(Guid[] plantIds)
+    {
+        if (plantIds.Length == 0)
+        {
+            return;
+        }
 
-        var existingPlantIds = await dbContext.Plants
-            .Where(p => uniquePlantIds.Contains(p.Id))
+        var foundIds = await dbContext.Plants
+            .Where(p => ((IEnumerable<Guid>)plantIds).Contains(p.Id))
             .Select(p => p.Id)
             .ToListAsync();
 
-        if (existingPlantIds.Count != uniquePlantIds.Count)
+        var missingPlantId = plantIds.FirstOrDefault(plantId => !foundIds.Contains(plantId));
+
+        if (missingPlantId != Guid.Empty)
         {
-            var missingPlantId = uniquePlantIds.First(pid => !existingPlantIds.Contains(pid));
             throw new DataNotFoundException($"Plant not found: {missingPlantId}");
         }
+    }
 
-        var existingPlantIdsOnBed = await dbContext.BedPlants
-            .Where(bp => bp.BedId == id)
-            .Select(bp => bp.PlantId)
+    private async Task ReplacePlantsAsync(Guid bedId, Guid[] plantIds)
+    {
+        var links = await dbContext.BedPlants
+            .Where(bp => bp.BedId == bedId)
             .ToListAsync();
 
-        var existingSet = new HashSet<Guid>(existingPlantIdsOnBed);
+        var requestedPlantIds = plantIds.ToHashSet();
+        var linkedPlantIds = links.Select(link => link.PlantId).ToHashSet();
 
-        var plantIdsToRemove = existingPlantIdsOnBed.Where(pid => !uniquePlantIds.Contains(pid)).ToList();
-        var plantIdsToAdd = uniquePlantIds.Where(pid => !existingSet.Contains(pid)).ToArray();
-
-        foreach (var plantId in plantIdsToRemove)
+        foreach (var link in links.Where(link => !requestedPlantIds.Contains(link.PlantId)))
         {
-            var link = dbContext.BedPlants.Single(bp => bp.BedId == id && bp.PlantId == plantId);
             dbContext.BedPlants.Remove(link);
         }
 
-        foreach (var plantId in plantIdsToAdd)
+        foreach (var plantId in plantIds.Where(plantId => !linkedPlantIds.Contains(plantId)))
         {
-            dbContext.BedPlants.Add(new BedPlant { BedId = id, PlantId = plantId });
+            dbContext.BedPlants.Add(new BedPlant { BedId = bedId, PlantId = plantId });
         }
+    }
 
-        await dbContext.SaveChangesAsync();
+    private async Task<BedDto> GetBedDtoAsync(Guid gardenId, Guid bedId)
+    {
+        var bed = await dbContext.Beds
+            .Where(b => b.Id == bedId && b.GardenId == gardenId)
+            .Select(BedsExtensions.AsDto)
+            .FirstOrDefaultAsync();
 
-        var updatedBed = await dbContext.Beds
-            .Include("BedPlants.Plant")
-            .AsNoTracking()
-            .SingleAsync(b => b.Id == id);
-
-        return TypedResults.Ok(updatedBed.ToDto());
+        return bed ?? throw new DataNotFoundException($"Bed {bedId} not found in garden {gardenId}");
     }
 }
 
