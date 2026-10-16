@@ -1,5 +1,4 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using GreenGenius.App.Extensions;
 using GreenGenius.Common.Data;
 using GreenGenius.Common.Data.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -13,11 +12,6 @@ public sealed class PlantImporter(ApplicationDbContext dbContext, ILogger<PlantI
 
     public async Task<int> ImportAsync(CancellationToken ct = default)
     {
-        var options = new JsonSerializerOptions
-        {
-            Converters = { new JsonStringEnumConverter() }
-        };
-
         var files = Directory.GetFiles(_plantsDirectory, "*.json");
         var keys = files.Select(file => Path.GetFileNameWithoutExtension(file)).ToList();
 
@@ -30,48 +24,70 @@ public sealed class PlantImporter(ApplicationDbContext dbContext, ILogger<PlantI
         var imported = 0;
         foreach (var file in files)
         {
-            var key = Path.GetFileNameWithoutExtension(file);
-            var json = await File.ReadAllTextAsync(file, ct);
-
-            PlantJson? plantJson;
-            try
+            if (await ImportFileAsync(file, plants, ct))
             {
-                plantJson = JsonSerializer.Deserialize<PlantJson>(json, options);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Plant {Key} failed to import from JSON", key);
-                continue;
-            }
-
-            if (plantJson is null)
-            {
-                logger.LogWarning("Plant {Key} skipped: empty or invalid JSON", key);
-                continue;
-            }
-
-            try
-            {
-                if (ImportOne(dbContext, plants, key, plantJson))
-                {
-                    await dbContext.SaveChangesAsync(ct);
-                    imported++;
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Plant {Key} failed to import to database", key);
-                foreach (var entryInContext in dbContext.ChangeTracker.Entries())
-                {
-                    if (entryInContext.Entity is Plant { Key: var k } && k == key)
-                    {
-                        entryInContext.State = EntityState.Detached;
-                    }
-                }
+                imported++;
             }
         }
 
         return imported;
+    }
+
+    private async Task<bool> ImportFileAsync(string file, Dictionary<string, Plant> plants, CancellationToken ct)
+    {
+        var key = Path.GetFileNameWithoutExtension(file);
+        var json = await File.ReadAllTextAsync(file, ct);
+
+        PlantJson? plantJson;
+        try
+        {
+            plantJson = json.DeserializeWithAppJsonDefaults<PlantJson>();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Plant {Key} failed to import from JSON", key);
+            return false;
+        }
+
+        if (plantJson is not null)
+        {
+            return await SavePlantAsync(key, plantJson, plants, ct);
+        }
+
+        logger.LogWarning("Plant {Key} skipped: empty or invalid JSON", key);
+        return false;
+
+    }
+
+    private async Task<bool> SavePlantAsync(string key, PlantJson plantJson, Dictionary<string, Plant> plants, CancellationToken ct)
+    {
+        try
+        {
+            if (!ImportOne(dbContext, plants, key, plantJson))
+            {
+                return false;
+            }
+
+            await dbContext.SaveChangesAsync(ct);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Plant {Key} failed to import to database", key);
+            DetachFailedPlant(key);
+            return false;
+        }
+    }
+
+    private void DetachFailedPlant(string key)
+    {
+        foreach (var entryInContext in dbContext.ChangeTracker.Entries())
+        {
+            if (entryInContext.Entity is Plant { Key: var plantKey } && plantKey == key)
+            {
+                entryInContext.State = EntityState.Detached;
+            }
+        }
     }
 
     private static bool ImportOne(ApplicationDbContext dbContext, Dictionary<string, Plant> plants, string key, PlantJson plantJson)

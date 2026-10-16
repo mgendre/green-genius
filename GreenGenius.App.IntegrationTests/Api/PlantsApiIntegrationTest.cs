@@ -38,6 +38,20 @@ public class PlantsApiIntegrationTest(
     }
 
     [Fact]
+    public async Task ListPlants_ShouldSerializeEnumsAsStrings()
+    {
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            await ctx.PersistPlantAsync("Tomate", family: PlantFamily.Solanaceae, lifeCycle: PlantLifeCycle.Perennial);
+        });
+
+        var response = await CreateClient().GetAsync(RouteConstants.Plants);
+
+        var body = await response.Content.ReadAsStringAsync();
+        body.ShouldContain("\"family\":\"Solanaceae\"");
+    }
+
+    [Fact]
     public async Task Import_WhenAppStartsTwice_ShouldNotImportTomateTwice()
     {
         await ExecuteInScopeAsync(async ctx =>
