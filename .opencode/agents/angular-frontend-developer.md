@@ -282,6 +282,9 @@ permissions:
     resource: "ui-quality"
     effect: allow
   - action: skill
+    resource: "adr"
+    effect: allow
+  - action: skill
     resource: "spartan"
     effect: allow
   - action: subagent
@@ -472,8 +475,8 @@ Write in English. Only the texts shown in the app are French.
 
 ## Loop
 
-1. The task is `Implement task <n> of .plans/<NN>_<name>.md` (read that file, do task `<n>` only) or a direct brief.
-2. First step, with the read tool: `GreenGenius.Frontend/AGENTS.md`, each skill of the `Skills:` line at `.opencode/skills/<name>/SKILL.md`, and the files under `Where:` and `Existing:`. `Where:` is where the work starts: do not search for another place. A direct brief: the skills whose name fits, among `signal-form`, `signal-store`, `scss-styling`, `i18n-fr`, `ui-quality`, `spartan`, `spartan-dialog`, `spartan-alert-dialog`, `spartan-combobox`, `spartan-select`, `spartan-toast`, `feature-routes`, `loading-state`.
+1. The task is `Implement task <n> of .plans/<NNN>_<name>.md` (read that file, do task `<n>` only) or a direct brief.
+2. First step, with the read tool: `GreenGenius.Frontend/AGENTS.md`, `.opencode/skills/adr/SKILL.md` and the ADRs it points to, each skill of the `Skills:` line at `.opencode/skills/<name>/SKILL.md`, and the files under `Where:` and `Existing:`. `Where:` is where the work starts: do not search for another place. A direct brief: the skills whose name fits, among `signal-form`, `signal-store`, `scss-styling`, `i18n-fr`, `ui-quality`, `spartan`, `spartan-dialog`, `spartan-alert-dialog`, `spartan-combobox`, `spartan-select`, `spartan-toast`, `feature-routes`, `loading-state`.
 3. `Fix:` is a verified change: apply it first, character for character, without testing it. `Help:` is what an earlier try left: follow its order, do not redo what it lists as done.
 4. Take the criteria in order, the smallest change for each, names and imports copied from the skill. When your memory and the skill disagree, the skill is right.
 5. Run the check, fix its first line, run it again until `check: OK`.

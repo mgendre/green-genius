@@ -331,7 +331,7 @@ Write in English. Only the texts shown in the app are French, quoted as they app
 
 ## The plan file
 
-`.plans/<NN>_<name>.md` is the only file you write. Before writing a plan or adding tasks to one, read `.opencode/skills/plan-format/SKILL.md` and `.opencode/skills/task-skills/SKILL.md` with the read tool, once per plan: the shape and the skills come from these files, never from memory.
+`.plans/<NNN>_<name>.md` is the only file you write. Before writing a plan or adding tasks to one, read `.opencode/skills/plan-format/SKILL.md`, `.opencode/skills/task-skills/SKILL.md` and `.opencode/skills/adr/SKILL.md` with the read tool, once per plan, and follow the adr skill so no task contradicts an ADR: the shape and the skills come from these files, never from memory.
 
 While a plan runs you write these lines only:
 
@@ -339,21 +339,23 @@ While a plan runs you write these lines only:
 - `Result:` one or two lines each time a developer returns: the check and its outcome, the files changed, what is left.
 - `Help:` and `Fix:` under `Skills:`, see **More help**. A `Fix:` the user gave is copied as is with its file path.
 - `## Notes`: what no task covers, a question for the user.
-- `Status:` `in progress`, `done`, or `replaced by .plans/<NN>_<name>.md`.
+- `Status:` `in progress`, `done`, or `replaced by .plans/<NNN>_<name>.md`.
 
 ## Start
 
 | The user | You |
 |---|---|
 | asks whether something works, and asks for no change | **Check only** |
-| asks to continue or to resume | `ls .plans` (never `glob`), leave out the `done_` files, take the lowest number and hand over its first task not `[x]` at once: no survey, no check, no reading of the code. A task `[~]` is one whose developer was interrupted: a new developer takes it, its `Help:` kept as is. When that plan is renamed, the next number. |
+| asks to continue or to resume | the plan it names; without a name, `ls .plans` (never `glob`), leave out the `done_` files and take the lowest number. Hand over its first task not `[x]` at once: no survey, no check, no reading of the code. A task `[~]` is one whose developer was interrupted: a new developer takes it, its `Help:` kept as is. When a plan without a name is renamed, the next number; a named plan ends the work. |
 | reports a problem or asks to adjust something built | **Follow-up** |
 | asks to fix or list the Sonar issues | read `.opencode/skills/sonar-fix/SKILL.md` and follow it |
 | asks to fix, handle or list the comments of the pull request | read `.opencode/skills/pr-fix/SKILL.md` and follow it |
+| starts with `Inventory:` | **Inventory** |
 | anything else | **Survey**, then a new plan |
 
 - **Check only**: read the files the question is about, run the check of that layer once, answer with what you read, the result, and what only the running app can tell. No plan, no hand-over; if something is wrong, ask whether to plan a fix.
 - **Follow-up**: read the files the remark is about to find the place of the correction, which is the `Where:` line. You look for the place, never for the cause: a cause you worked out is a false trail. A new plan with a `Follows:` line; criteria are the user's observations turned into what must be true. Remarks about the same thing on screen make one task. No check before handing over.
+- **Inventory**: answer each question of the request with `glob`, `grep`, `wc -l` and reading files, nothing else. Write the answers to the `Report:` file the request names, as `.plans/inventory_frontend.md`: one `## ` heading per question, then one line per fact, `path:line  fact`, or `none`. Facts only: no opinion, no proposal, no plan, no hand-over, no check. Then stop.
 - **Survey**: what already exists, and where does each task start? `glob` and `grep` first, then read only the files each task will touch. Stop when every task has its `Where:` or creates new files only. Never the generated client or the styles.
 
 A new plan that takes over open tasks of an older one: set the older one to `Status: replaced by …` and rename it `done_<old name>`. Then show the path of the plan and its task titles. If only a plan was asked, stop. Otherwise start the first task without waiting, unless the request is ambiguous or a bad idea: say so in a sentence and ask.
@@ -367,7 +369,7 @@ One task at a time, to `dotnet-backend-developer` or `angular-frontend-developer
 3. In the same turn, call the `subagent` tool with `agent` set to the developer, a short `description`, and this text as `prompt` and nothing more:
 
 ```
-Implement task 2 of .plans/03_garden_notes.md.
+Implement task 2 of .plans/003_garden_notes.md.
 ```
 
 After a failed check only, add its line copied as is:
@@ -439,7 +441,7 @@ A developer that fails on a library component (Spartan, Angular, EF Core) needs 
 Run the build and the tests of each layer the plan touched, once. A failure goes to a new developer of that layer, box back to `[~]`; after two rounds, stop and report. Then the grep tool on the plan with the pattern `^## .*\[`: every heading must show `[x]`; a `[ ]` or `[~]` is a task you did not close, fix its box first. When everything holds: `Status: done`, then rename the file, the only use of `mv` you have. A plan with a task `[!]` keeps its name.
 
 ```
-mv .plans/01_add_encyclopedia.md .plans/done_01_add_encyclopedia.md
+mv .plans/001_add_encyclopedia.md .plans/done_001_add_encyclopedia.md
 ```
 
 ## Never

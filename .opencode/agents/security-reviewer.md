@@ -210,7 +210,7 @@ The diff the brief names, otherwise the whole repository: every `GreenGenius.*` 
 
 ## Checklist
 
-- **Owner scoping**: every user-scoped entity implements `IHasOwner` and its configuration calls `ConfigureOwnerIdQueryFilter`. `OwnerId` is set from `ICurrentUserService`, never from a body or a route. No `IgnoreQueryFilters()` outside an explicit, justified admin path. Follow each handler to its query: a path that reaches another owner's row is Critical.
+- **Owner scoping**: every user-scoped entity implements `IHasOwner` and has its owner `HasQueryFilter` in `ApplicationDbContext.OnModelCreating`. `OwnerId` is set from `ICurrentUserService`, never from a body or a route. No `IgnoreQueryFilters()` outside an explicit, justified admin path. Follow each handler to its query: a path that reaches another owner's row is Critical.
 - **Existence leak**: unknown and foreign resources both answer `404`, on every verb; never a `403`, never a different body or timing-visible branch.
 - **Injection**: EF LINQ only; `FromSqlRaw` or `ExecuteSqlRaw` with interpolation is Critical. No process, file path or URL built from input.
 - **Input bounds**: every request field is typed and every string column bounded by `EntitiesConstants`. The absence of a validation layer is decided; report only a field that reaches the database unbounded.

@@ -1,6 +1,6 @@
 # GreenGenius
 
-Permaculture garden planner: .NET 10 Minimal API on PostgreSQL, Angular 22 front end. Read the conventions of the layer you work on before writing code: `GreenGenius.Api/AGENTS.md` for the backend and its tests, `GreenGenius.Frontend/AGENTS.md` for the front end. An ADR wins over these files when they disagree.
+Permaculture garden planner: .NET 10 Minimal API on PostgreSQL, Angular 22 front end. Read the conventions of the layer you work on before writing code: `GreenGenius.Api/AGENTS.md` for the backend and its tests, `GreenGenius.Frontend/AGENTS.md` for the front end. Decisions are ADRs in `docs/adr/` (index `docs/adr/README.md`); an ADR wins over these files when they disagree.
 
 ## Rules
 

@@ -33,6 +33,12 @@ permissions:
     resource: "backend-tests"
     effect: allow
   - action: skill
+    resource: "adr"
+    effect: allow
+  - action: skill
+    resource: "architecture-tests"
+    effect: allow
+  - action: skill
     resource: "ef-queries"
     effect: allow
   - action: skill
@@ -424,7 +430,7 @@ Write in English. Only the texts shown in the app are French.
 
 ## Input
 
-- `Implement task <n> of .plans/<NN>_<name>.md`: read that file and do that task only. Its `Existing:` lines and the `Result:` lines of earlier tasks say what is already there.
+- `Implement task <n> of .plans/<NNN>_<name>.md`: read that file and do that task only. Its `Existing:` lines and the `Result:` lines of earlier tasks say what is already there.
 - A direct brief: routes, fields with their max lengths, status codes. If one is missing, ask before guessing.
 
 `Where:` is where the work starts: read those files first, do not search for another place. `Fix:` is a verified change: apply it first, exactly as written. `Help:` is what an earlier try left: follow its order, do not redo what it lists as done. Then take the criteria in order.
@@ -442,10 +448,11 @@ A skill is a file, `.opencode/skills/<name>/SKILL.md`, read with the read tool. 
 | a query, a loop over rows, an import, a bulk change | `ef-queries` |
 | a log line, a `catch`, something you want to print | `dotnet-logging` |
 | a `.csproj`, a data file copied to the output | `csproj-files` |
+| an architecture test in `GreenGenius.ArchitectureTests` | `architecture-tests` |
 
 ## Loop
 
-1. Read `GreenGenius.Api/AGENTS.md` (not in your context), the skills of the task and the files the plan names: five steps of reading at most, several files per step. Take paths from the plan, never guess one.
+1. Read `GreenGenius.Api/AGENTS.md` (not in your context), `.opencode/skills/adr/SKILL.md` and the ADRs it points to, the skills of the task and the files the plan names: five steps of reading at most, several files per step. Take paths from the plan, never guess one.
 2. Write first the file no open question touches (a DTO, a model, a mapping, a class with its signature), then build: the compiler answers faster than you can plan. Go on one file at a time, building after each.
 3. Tests are part of the task. A route: tests first, copied from `GardensApiIntegrationTest`, failing for the right reason before the handler exists. Anything else: the class first, then its tests.
 4. Entity or configuration changed: `ef-entity`, then `ef-migrations`, and read the generated file.
@@ -487,7 +494,7 @@ dotnet test GreenGenius.slnx --filter <TestClass> 2>&1 | tail -20
 - Remove an endpoint or a handler to avoid testing or fixing it.
 - Write to the console (`Console.WriteLine`, `Console.Error`, `Debug.WriteLine`), also to understand a failure: `ILogger<T>` only, `dotnet-logging` skill.
 - Write SQL by hand, return or accept a tuple, use `.Result` or `.Wait()`.
-- `= null!` on a property you write: a property that must have a value is `required`. Two exceptions already in the code: a `DbSet` of the context, and the navigation of a dependent back to its owner (`PlantTraits.Plant`).
+- `= null!` on a property you write: a property that must have a value is `required`. Two exceptions already in the code: a `DbSet` of the context, and the navigation of a dependent back to its owner (`BedPlant.Bed`).
 - `Thread.Sleep`, real timers, a container per test class.
 - End a turn by announcing an action: call the tool, and stop only when the tests are green or you are blocked.
 

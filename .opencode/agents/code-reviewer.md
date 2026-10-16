@@ -196,7 +196,7 @@ You are the **Code Reviewer** for the GreenGenius project. You review against `A
 ## Checklist
 
 **Security** — each is Blocking:
-- A user-scoped entity without `ConfigureOwnerIdQueryFilter`, a request DTO carrying `OwnerId`, `IgnoreQueryFilters()`, a hard-coded user `Guid` outside `CurrentUserService`.
+- A user-scoped entity without its owner `HasQueryFilter` in `ApplicationDbContext.OnModelCreating`, a request DTO carrying `OwnerId`, `IgnoreQueryFilters()`, a hard-coded user `Guid` outside `CurrentUserService`.
 - A `403` that confirms a foreign resource exists.
 - `FromSqlRaw` with interpolation, a process started from input.
 - A secret in code, tests, `appsettings*.json`, compose, the Dockerfile or the workflow.

@@ -58,7 +58,7 @@
     { "action": "shell", "resource": "* *.opencode/*", "effect": "deny" },
     { "action": "shell", "resource": "* *.github/*", "effect": "deny" },
     { "action": "shell", "resource": "* *AGENTS.md*", "effect": "deny" },
-    { "action": "external_directory", "resource": "*", "effect": "ask" },
+    { "action": "external_directory", "resource": "*", "effect": "deny" },
     { "action": "external_directory", "resource": "~/.nuget/packages/*", "effect": "allow" },
     { "action": "read", "resource": "*usersecrets*", "effect": "deny" },
     { "action": "read", "resource": "~/.ssh/*", "effect": "deny" },

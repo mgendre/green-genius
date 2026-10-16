@@ -5,7 +5,7 @@ description: "The shape of a plan file in `.plans/` — its name and number, the
 
 # The shape of a plan
 
-One file per request: `.plans/<NN>_<name>.md`, a two-digit number then snake_case, as `.plans/01_add_encyclopedia.md`. The number is the highest one in `.plans/`, `done_` files included, plus one: list them with `ls .plans`. A new request is a new file. Keep it short: a developer reads all of it at every task. No section and no line other than these.
+One file per request: `.plans/<NNN>_<name>.md`, a three-digit number then snake_case, as `.plans/001_add_encyclopedia.md`. The number is the highest one in `.plans/`, `done_` files included, plus one: list them with `ls .plans`. A new request is a new file. Keep it short: a developer reads all of it at every task. No section and no line other than these.
 
 ```
 # Garden notes
@@ -48,7 +48,7 @@ Result:
 
 | Line | What it holds |
 |---|---|
-| `Request:` | What the user asked. A plan that follows another has `Follows: .plans/done_<NN>_<name>.md` under it. |
+| `Request:` | What the user asked. A plan that follows another has `Follows: .plans/done_<NNN>_<name>.md` under it. |
 | `Status:` | `in progress` when written. |
 | `Existing:` | Two to five facts you read, each starting with the full path of its file. A cause the user gave is copied here as is. |
 | Title | The outcome: what is true for the user or the API once done, then `— backend` or `— frontend`. The box is `[ ]`. |
