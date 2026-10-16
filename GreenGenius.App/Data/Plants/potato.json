@@ -1,0 +1,28 @@
+{
+  "NameFr": "Pomme de terre",
+  "DescriptionFr": "Plante à tubercules sensible au gel et au mildiou, à butter pendant la croissance",
+  "BinomialName": "Solanum tuberosum",
+  "Emoji": "🥔",
+  "Family": "Solanaceae",
+  "LifeCycle": "Annual",
+  "Version": 1,
+  "DaysToMaturity": null,
+  "TemperatureMinC": null,
+  "Needs": {
+    "Sunlight": "High",
+    "WaterNeed": "Medium",
+    "RootDepth": "Medium",
+    "SoilPhMin": 5.0,
+    "SoilPhMax": 6.5,
+    "SpacingRowCm": 70,
+    "SpacingPlantCm": 35,
+    "HeightCm": 60,
+    "SpreadCm": 50
+  },
+  "Traits": {
+    "NitrogenFixer": false,
+    "DynamicAccumulator": false,
+    "PollinatorFriendly": false,
+    "DroughtTolerant": false
+  }
+}

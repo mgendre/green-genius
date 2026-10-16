@@ -75,6 +75,11 @@
     { "action": "edit", "resource": "**/.git/**", "effect": "deny" }
   ],
   "agents": {
+    "title": { "model": "strata/swift#none" },
+    "summary": { "model": "strata/swift#none" },
+    "compaction": { "model": "strata/swift#low" },
+    "explore": { "model": "strata/swift#low" },
+    "general": { "model": "strata/swift#low" },
     "build": {
       "permissions": [
         { "action": "edit", "resource": "opencode.json", "effect": "allow" },

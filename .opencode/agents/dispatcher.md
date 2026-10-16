@@ -1,7 +1,7 @@
 ---
 description: Use to build a feature end to end — writes the plan of the request as a file in `.plans/`, small tasks with acceptance criteria, hands each one to the local developers, verifies the result and keeps the plan up to date. Never writes or designs code. Run it as the session agent with `opencode --agent dispatcher`.
 mode: primary
-model: strata/swift#medium
+model: strata/swift#low
 request:
   body:
     temperature: 1.0

@@ -10,26 +10,30 @@ namespace GreenGenius.App.Extensions;
 
 public static class StartupExtensions
 {
-    public static void ConfigureServices(this WebApplicationBuilder builder)
+    extension(WebApplicationBuilder builder)
     {
-        builder.WithHostingServices();
-        builder.RegisterApiHandlers(typeof(GardensApi).Assembly);
-        builder.ConfigurePersistence();
-        
-        builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
-        builder.Services.AddScoped<PlantImporter>();
-        
-        builder.Services.AddHealthChecks();
-        builder.Services.AddOpenApi();
-
-        builder.ConfigureJsonOptions();
-    }
-
-    private static void ConfigureJsonOptions(this WebApplicationBuilder builder)
-    {
-        builder.Services.ConfigureHttpJsonOptions(options =>
+        public void ConfigureServices()
         {
-            options.SerializerOptions.UseAppJsonDefaults();
-        });
+            builder.WithHostingServices();
+            builder.RegisterApiHandlers(typeof(GardensApi).Assembly);
+            builder.ConfigurePersistence();
+        
+            builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+            builder.Services.AddScoped<PlantImporter>();
+            builder.Services.AddScoped<PlantAssociationImporter>();
+        
+            builder.Services.AddHealthChecks();
+            builder.Services.AddOpenApi();
+
+            builder.ConfigureJsonOptions();
+        }
+
+        private void ConfigureJsonOptions()
+        {
+            builder.Services.ConfigureHttpJsonOptions(options =>
+            {
+                options.SerializerOptions.UseAppJsonDefaults();
+            });
+        }
     }
 }

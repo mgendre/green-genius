@@ -22,5 +22,10 @@ public static class PlantsApi
             [FromServices] GetPlantHandler h) => h.Handle(id))
             .WithName("GetPlant")
             .ProducesProblem(StatusCodes.Status404NotFound);
+
+        plants.MapGet("/{id:guid}/associations", ([FromRoute] Guid id,
+            [FromServices] ListPlantAssociationsHandler h) => h.Handle(id))
+            .WithName("ListPlantAssociations")
+            .ProducesProblem(StatusCodes.Status404NotFound);
     }
 }

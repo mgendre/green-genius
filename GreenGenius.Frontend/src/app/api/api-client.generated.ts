@@ -362,6 +362,65 @@ export class Client {
     /**
      * @return OK
      */
+    listPlantAssociations(id: string): Observable<PlantAssociationDto[]> {
+        let url_ = this.baseUrl + "/plants/{id}/associations";
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processListPlantAssociations(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processListPlantAssociations(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PlantAssociationDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PlantAssociationDto[]>;
+        }));
+    }
+
+    protected processListPlantAssociations(response: HttpResponseBase): Observable<PlantAssociationDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PlantAssociationDto[];
+            return _observableOf(result200);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result404: any = null;
+            result404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return OK
+     */
     listBeds(gardenId: string): Observable<BedDto[]> {
         let url_ = this.baseUrl + "/gardens/{gardenId}/beds";
         if (gardenId === undefined || gardenId === null)
@@ -466,6 +525,68 @@ export class Client {
             let result201: any = null;
             result201 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BedDto;
             return _observableOf(result201);
+            }));
+        } else if (status === 404) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result404: any = null;
+            result404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+            return throwException("Not Found", status, _responseText, _headers, result404);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    /**
+     * @return OK
+     */
+    listBedAssociations(gardenId: string, id: string): Observable<BedAssociationDto[]> {
+        let url_ = this.baseUrl + "/gardens/{gardenId}/beds/{id}/associations";
+        if (gardenId === undefined || gardenId === null)
+            throw new globalThis.Error("The parameter 'gardenId' must be defined.");
+        url_ = url_.replace("{gardenId}", encodeURIComponent("" + gardenId));
+        if (id === undefined || id === null)
+            throw new globalThis.Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processListBedAssociations(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processListBedAssociations(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<BedAssociationDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<BedAssociationDto[]>;
+        }));
+    }
+
+    protected processListBedAssociations(response: HttpResponseBase): Observable<BedAssociationDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BedAssociationDto[];
+            return _observableOf(result200);
             }));
         } else if (status === 404) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
@@ -607,6 +728,17 @@ export class Client {
     }
 }
 
+export interface BedAssociationDto {
+    plantA: PlantSummaryDto;
+    plantB: PlantSummaryDto;
+    polarity: Polarity;
+    mechanism: Mechanism;
+    evidence: Evidence;
+    noteFr?: string | undefined;
+
+    [key: string]: any;
+}
+
 export interface BedDto {
     id?: string;
     name: string;
@@ -628,9 +760,29 @@ export interface CreateGardenDto {
     [key: string]: any;
 }
 
+export enum Evidence {
+    Established = "Established",
+    Limited = "Limited",
+}
+
 export interface GardenDto {
     id?: string;
     name: string;
+
+    [key: string]: any;
+}
+
+export enum Mechanism {
+    PestDeterrent = "PestDeterrent",
+    SharedPestOrDisease = "SharedPestOrDisease",
+}
+
+export interface PlantAssociationDto {
+    plant: PlantSummaryDto;
+    polarity: Polarity;
+    mechanism: Mechanism;
+    evidence: Evidence;
+    noteFr?: string | undefined;
 
     [key: string]: any;
 }
@@ -704,6 +856,11 @@ export interface PlantTraitsDto {
     droughtTolerant?: boolean;
 
     [key: string]: any;
+}
+
+export enum Polarity {
+    Beneficial = "Beneficial",
+    Antagonistic = "Antagonistic",
 }
 
 export interface ProblemDetails {

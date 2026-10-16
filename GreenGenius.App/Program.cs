@@ -33,6 +33,8 @@ if (!app.Environment.IsOpenApiGeneration())
         using var scope = app.Services.CreateScope();
         var importer = scope.ServiceProvider.GetRequiredService<PlantImporter>();
         await importer.ImportAsync();
+        var associationImporter = scope.ServiceProvider.GetRequiredService<PlantAssociationImporter>();
+        await associationImporter.ImportAsync();
     }
 }
 

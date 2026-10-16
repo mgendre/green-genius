@@ -25,6 +25,31 @@ public static class BedsExtensions
             .ToList()
     };
 
+    public static readonly Expression<Func<PlantAssociation, BedAssociationDto>> AsAssociationDto =
+        association => new BedAssociationDto
+        {
+            PlantA = new PlantSummaryDto
+            {
+                Id = association.PlantA.Id,
+                NameFr = association.PlantA.NameFr,
+                BinomialName = association.PlantA.BinomialName,
+                Emoji = association.PlantA.Emoji,
+                Family = association.PlantA.Family
+            },
+            PlantB = new PlantSummaryDto
+            {
+                Id = association.PlantB.Id,
+                NameFr = association.PlantB.NameFr,
+                BinomialName = association.PlantB.BinomialName,
+                Emoji = association.PlantB.Emoji,
+                Family = association.PlantB.Family
+            },
+            Polarity = association.Polarity,
+            Mechanism = association.Mechanism,
+            Evidence = association.Evidence,
+            NoteFr = association.NoteFr
+        };
+
     private static readonly Func<Bed, BedDto> AsDtoCompiled = AsDto.Compile();
 
     public static BedDto ToDto(this Bed bed)

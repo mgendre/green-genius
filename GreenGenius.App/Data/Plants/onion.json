@@ -1,0 +1,28 @@
+{
+  "NameFr": "Oignon",
+  "DescriptionFr": "Bulbe à planter au printemps, sans arrosage dès que les feuilles commencent à jaunir",
+  "BinomialName": "Allium cepa",
+  "Emoji": "🧅",
+  "Family": "Amaryllidaceae",
+  "LifeCycle": "Biennial",
+  "Version": 1,
+  "DaysToMaturity": null,
+  "TemperatureMinC": null,
+  "Needs": {
+    "Sunlight": "High",
+    "WaterNeed": "Medium",
+    "RootDepth": "Shallow",
+    "SoilPhMin": 6.0,
+    "SoilPhMax": 7.0,
+    "SpacingRowCm": 25,
+    "SpacingPlantCm": 10,
+    "HeightCm": 50,
+    "SpreadCm": 15
+  },
+  "Traits": {
+    "NitrogenFixer": false,
+    "DynamicAccumulator": false,
+    "PollinatorFriendly": false,
+    "DroughtTolerant": false
+  }
+}

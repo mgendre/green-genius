@@ -1,0 +1,28 @@
+{
+  "NameFr": "Carotte",
+  "DescriptionFr": "Racine à semer en place dans un sol meuble et sans cailloux",
+  "BinomialName": "Daucus carota subsp. sativus",
+  "Emoji": "🥕",
+  "Family": "Apiaceae",
+  "LifeCycle": "Biennial",
+  "Version": 1,
+  "DaysToMaturity": null,
+  "TemperatureMinC": null,
+  "Needs": {
+    "Sunlight": "High",
+    "WaterNeed": "Medium",
+    "RootDepth": "Deep",
+    "SoilPhMin": 6.0,
+    "SoilPhMax": 7.0,
+    "SpacingRowCm": 25,
+    "SpacingPlantCm": 5,
+    "HeightCm": 30,
+    "SpreadCm": 10
+  },
+  "Traits": {
+    "NitrogenFixer": false,
+    "DynamicAccumulator": false,
+    "PollinatorFriendly": false,
+    "DroughtTolerant": false
+  }
+}

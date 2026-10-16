@@ -203,6 +203,50 @@
         }
       }
     },
+    "/plants/{id}/associations": {
+      "get": {
+        "tags": [
+          "Plants"
+        ],
+        "operationId": "ListPlantAssociations",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PlantAssociationDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/gardens/{gardenId}/beds": {
       "get": {
         "tags": [
@@ -279,6 +323,59 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BedDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/gardens/{gardenId}/beds/{id}/associations": {
+      "get": {
+        "tags": [
+          "Beds"
+        ],
+        "operationId": "ListBedAssociations",
+        "parameters": [
+          {
+            "name": "gardenId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BedAssociationDto"
+                  }
                 }
               }
             }
@@ -400,6 +497,39 @@
   },
   "components": {
     "schemas": {
+      "BedAssociationDto": {
+        "required": [
+          "plantA",
+          "plantB",
+          "polarity",
+          "mechanism",
+          "evidence"
+        ],
+        "type": "object",
+        "properties": {
+          "plantA": {
+            "$ref": "#/components/schemas/PlantSummaryDto"
+          },
+          "plantB": {
+            "$ref": "#/components/schemas/PlantSummaryDto"
+          },
+          "polarity": {
+            "$ref": "#/components/schemas/Polarity"
+          },
+          "mechanism": {
+            "$ref": "#/components/schemas/Mechanism"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/Evidence"
+          },
+          "noteFr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "BedDto": {
         "required": [
           "name",
@@ -449,6 +579,12 @@
           }
         }
       },
+      "Evidence": {
+        "enum": [
+          "Established",
+          "Limited"
+        ]
+      },
       "GardenDto": {
         "required": [
           "name"
@@ -461,6 +597,41 @@
           },
           "name": {
             "type": "string"
+          }
+        }
+      },
+      "Mechanism": {
+        "enum": [
+          "PestDeterrent",
+          "SharedPestOrDisease"
+        ]
+      },
+      "PlantAssociationDto": {
+        "required": [
+          "plant",
+          "polarity",
+          "mechanism",
+          "evidence"
+        ],
+        "type": "object",
+        "properties": {
+          "plant": {
+            "$ref": "#/components/schemas/PlantSummaryDto"
+          },
+          "polarity": {
+            "$ref": "#/components/schemas/Polarity"
+          },
+          "mechanism": {
+            "$ref": "#/components/schemas/Mechanism"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/Evidence"
+          },
+          "noteFr": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -664,6 +835,12 @@
             "type": "boolean"
           }
         }
+      },
+      "Polarity": {
+        "enum": [
+          "Beneficial",
+          "Antagonistic"
+        ]
       },
       "ProblemDetails": {
         "type": "object",

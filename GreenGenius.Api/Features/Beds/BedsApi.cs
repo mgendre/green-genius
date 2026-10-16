@@ -20,6 +20,13 @@ public static class BedsApi
             .WithName("ListBeds")
             .ProducesProblem(StatusCodes.Status404NotFound);
 
+        beds.MapGet("/{id:guid}/associations",
+                ([FromRoute] Guid gardenId, [FromRoute] Guid id,
+                    [FromServices] ListBedAssociationsHandler h)
+                    => h.Handle(gardenId, id))
+            .WithName("ListBedAssociations")
+            .ProducesProblem(StatusCodes.Status404NotFound);
+
         beds.MapPost("/",
                 ([FromBody] CreateBedDto dto, [FromRoute] Guid gardenId,
                     [FromServices] CreateBedHandler h)

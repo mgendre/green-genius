@@ -5,15 +5,15 @@
   "Emoji": "🍅",
   "Family": "Solanaceae",
   "LifeCycle": "Annual",
-  "Version": 2,
+  "Version": 3,
   "DaysToMaturity": null,
   "TemperatureMinC": null,
   "Needs": {
     "Sunlight": "High",
     "WaterNeed": "High",
     "RootDepth": "Deep",
-    "SoilPhMin": null,
-    "SoilPhMax": null,
+    "SoilPhMin": 6.0,
+    "SoilPhMax": 6.8,
     "SpacingRowCm": 100,
     "SpacingPlantCm": 50,
     "HeightCm": 120,
@@ -22,7 +22,7 @@
   "Traits": {
     "NitrogenFixer": false,
     "DynamicAccumulator": false,
-    "PollinatorFriendly": true,
+    "PollinatorFriendly": false,
     "DroughtTolerant": false
   }
 }

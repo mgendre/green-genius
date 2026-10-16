@@ -15,6 +15,23 @@ public static class PlantsExtensions
         Family = plant.Family
     };
 
+    public static Expression<Func<PlantAssociation, PlantAssociationDto>> AsAssociationDto(Guid plantId) =>
+        association => new PlantAssociationDto
+        {
+            Plant = new PlantSummaryDto
+            {
+                Id = association.PlantAId == plantId ? association.PlantB.Id : association.PlantA.Id,
+                NameFr = association.PlantAId == plantId ? association.PlantB.NameFr : association.PlantA.NameFr,
+                BinomialName = association.PlantAId == plantId ? association.PlantB.BinomialName : association.PlantA.BinomialName,
+                Emoji = association.PlantAId == plantId ? association.PlantB.Emoji : association.PlantA.Emoji,
+                Family = association.PlantAId == plantId ? association.PlantB.Family : association.PlantA.Family
+            },
+            Polarity = association.Polarity,
+            Mechanism = association.Mechanism,
+            Evidence = association.Evidence,
+            NoteFr = association.NoteFr
+        };
+
     public static readonly Expression<Func<Plant, PlantDto>> AsDto = plant => new PlantDto
     {
         Id = plant.Id,

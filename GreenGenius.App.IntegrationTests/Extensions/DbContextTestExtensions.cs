@@ -58,6 +58,29 @@ public static class DbContextTestExtensions
             await dbContext.SaveChangesAsync();
         }
 
+        public async Task PersistPlantAssociationAsync(Plant plantA,
+            Plant plantB,
+            Polarity polarity = Polarity.Beneficial,
+            Mechanism mechanism = Mechanism.PestDeterrent,
+            Evidence evidence = Evidence.Established,
+            string? noteFr = null)
+        {
+            var association = new PlantAssociation
+            {
+                Id = Guid.NewGuid(),
+                PlantAId = plantA.Id,
+                PlantBId = plantB.Id,
+                Polarity = polarity,
+                Mechanism = mechanism,
+                Evidence = evidence,
+                NoteFr = noteFr
+            };
+
+            dbContext.Add(association);
+
+            await dbContext.SaveChangesAsync();
+        }
+
         public async Task<Plant> PersistPlantAsync(string nameFr,
             PlantFamily family = PlantFamily.Solanaceae,
             PlantLifeCycle lifeCycle = PlantLifeCycle.Annual,

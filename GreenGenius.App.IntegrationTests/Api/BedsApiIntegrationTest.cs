@@ -3,10 +3,12 @@ using System.Net.Http.Json;
 using GreenGenius.Api.Constants;
 using GreenGenius.Api.Features.Beds.Dtos;
 using GreenGenius.Api.Features.Beds.Handlers;
+using GreenGenius.Api.Features.Plants.Dtos;
 using GreenGenius.App.IntegrationTests.Extensions;
 using GreenGenius.App.IntegrationTests.Fixtures;
 using GreenGenius.App.IntegrationTests.Infra;
 using GreenGenius.Common.Data.Entities;
+using GreenGenius.Common.Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
 
@@ -24,6 +26,11 @@ public class BedsApiIntegrationTest(
     private static string GetBedUrl(Guid gardenId, Guid bedId)
     {
         return GetBedsUrl(gardenId) + "/" + bedId;
+    }
+
+    private static string GetBedAssociationsUrl(Guid gardenId, Guid bedId)
+    {
+        return GetBedUrl(gardenId, bedId) + "/associations";
     }
 
     [Fact]
@@ -457,6 +464,173 @@ public class BedsApiIntegrationTest(
             links.Count.ShouldBe(1);
             links[0].BedId.ShouldBe(myBed.Id);
         });
+    }
+
+    [Fact]
+    public async Task ListBedAssociations_ShouldReturnPairsOfTheBed()
+    {
+        var garden = await PersistGardenAsync(DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, "MyBed", DefaultCurrentUser);
+
+        var tomatoId = Guid.Empty;
+        var garlicId = Guid.Empty;
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            var tomato = await ctx.PersistPlantAsync("Tomate");
+            var garlic = await ctx.PersistPlantAsync("Ail", family: PlantFamily.Amaryllidaceae);
+            tomatoId = tomato.Id;
+            garlicId = garlic.Id;
+            await ctx.LinkBedPlantAsync(bed.Id, tomato);
+            await ctx.LinkBedPlantAsync(bed.Id, garlic);
+            await ctx.PersistPlantAssociationAsync(tomato, garlic,
+                polarity: Polarity.Beneficial, mechanism: Mechanism.PestDeterrent,
+                evidence: Evidence.Limited, noteFr: "note-ail");
+        });
+
+        var associations = await CreateClient().GetAndReadList<BedAssociationDto>(
+            GetBedAssociationsUrl(garden.Id, bed.Id));
+
+        associations.Count.ShouldBe(1);
+        var association = associations[0];
+        association.PlantA.Id.ShouldBe(tomatoId);
+        association.PlantA.NameFr.ShouldBe("Tomate");
+        association.PlantB.Id.ShouldBe(garlicId);
+        association.PlantB.NameFr.ShouldBe("Ail");
+        association.PlantB.Family.ShouldBe(PlantFamily.Amaryllidaceae);
+        association.Polarity.ShouldBe(Polarity.Beneficial);
+        association.Mechanism.ShouldBe(Mechanism.PestDeterrent);
+        association.Evidence.ShouldBe(Evidence.Limited);
+        association.NoteFr.ShouldBe("note-ail");
+    }
+
+    [Fact]
+    public async Task ListBedAssociations_WhenAssociationHasAPlantOutsideTheBed_ShouldExcludeIt()
+    {
+        var garden = await PersistGardenAsync(DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, "MyBed", DefaultCurrentUser);
+
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            var tomato = await ctx.PersistPlantAsync("Tomate");
+            var garlic = await ctx.PersistPlantAsync("Ail");
+            var zucchini = await ctx.PersistPlantAsync("Courgette");
+            await ctx.LinkBedPlantAsync(bed.Id, tomato);
+            await ctx.LinkBedPlantAsync(bed.Id, garlic);
+            await ctx.PersistPlantAssociationAsync(tomato, zucchini);
+            await ctx.PersistPlantAssociationAsync(tomato, garlic);
+        });
+
+        var associations = await CreateClient().GetAndReadList<BedAssociationDto>(
+            GetBedAssociationsUrl(garden.Id, bed.Id));
+
+        associations.Count.ShouldBe(1);
+        associations[0].PlantB.NameFr.ShouldBe("Ail");
+    }
+
+    [Fact]
+    public async Task ListBedAssociations_WhenMixedPolarity_ShouldListAntagonisticFirst()
+    {
+        var garden = await PersistGardenAsync(DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, "MyBed", DefaultCurrentUser);
+
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            var alpha = await ctx.PersistPlantAsync("Alpha");
+            var bravo = await ctx.PersistPlantAsync("Bravo");
+            var charlie = await ctx.PersistPlantAsync("Charlie");
+            await ctx.LinkBedPlantAsync(bed.Id, alpha);
+            await ctx.LinkBedPlantAsync(bed.Id, bravo);
+            await ctx.LinkBedPlantAsync(bed.Id, charlie);
+            await ctx.PersistPlantAssociationAsync(alpha, bravo, polarity: Polarity.Beneficial);
+            await ctx.PersistPlantAssociationAsync(alpha, charlie, polarity: Polarity.Antagonistic);
+        });
+
+        var associations = await CreateClient().GetAndReadList<BedAssociationDto>(
+            GetBedAssociationsUrl(garden.Id, bed.Id));
+
+        associations.Count.ShouldBe(2);
+        associations[0].Polarity.ShouldBe(Polarity.Antagonistic);
+        associations[0].PlantB.NameFr.ShouldBe("Charlie");
+        associations[1].Polarity.ShouldBe(Polarity.Beneficial);
+        associations[1].PlantB.NameFr.ShouldBe("Bravo");
+    }
+
+    [Fact]
+    public async Task ListBedAssociations_WhenBedHoldsNoAssociatedPair_ShouldReturnEmptyList()
+    {
+        var garden = await PersistGardenAsync(DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, "MyBed", DefaultCurrentUser);
+
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            var tomato = await ctx.PersistPlantAsync("Tomate");
+            await ctx.LinkBedPlantAsync(bed.Id, tomato);
+        });
+
+        var response = await CreateClient().GetAsync(GetBedAssociationsUrl(garden.Id, bed.Id));
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        var associations = await CreateClient().GetAndReadList<BedAssociationDto>(
+            GetBedAssociationsUrl(garden.Id, bed.Id));
+
+        associations.ShouldBeEmpty();
+    }
+
+    [Fact]
+    public async Task ListBedAssociations_WhenGardenDoesNotExist_ShouldBeNotFound()
+    {
+        var response = await CreateClient().GetAsync(
+            GetBedAssociationsUrl(Guid.NewGuid(), Guid.NewGuid()));
+
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task ListBedAssociations_WhenGardenNotOwned_ShouldBeNotFound()
+    {
+        var garden = await PersistGardenAsync(Guid.NewGuid());
+        var bed = await PersistBedAsync(garden.Id, "OtherBed", garden.OwnerId);
+
+        var response = await CreateClient().GetAsync(GetBedAssociationsUrl(garden.Id, bed.Id));
+
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task ListBedAssociations_WhenBedUnknown_ShouldBeNotFound()
+    {
+        var garden = await PersistGardenAsync(DefaultCurrentUser);
+
+        var response = await CreateClient().GetAsync(
+            GetBedAssociationsUrl(garden.Id, Guid.NewGuid()));
+
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task ListBedAssociations_WhenBedInOtherGarden_ShouldBeNotFound()
+    {
+        var myGarden = await PersistGardenAsync(DefaultCurrentUser);
+        var otherGardenOfMine = await PersistGardenAsync(DefaultCurrentUser);
+        var bed = await PersistBedAsync(myGarden.Id, "MyBed", DefaultCurrentUser);
+
+        var response = await CreateClient().GetAsync(
+            GetBedAssociationsUrl(otherGardenOfMine.Id, bed.Id));
+
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task ListBedAssociations_WhenBedNotOwned_ShouldBeNotFound()
+    {
+        var otherOwner = Guid.NewGuid();
+        var otherGarden = await PersistGardenAsync(otherOwner);
+        var bed = await PersistBedAsync(otherGarden.Id, "OtherBed", otherOwner);
+
+        var response = await CreateClient().GetAsync(
+            GetBedAssociationsUrl(otherGarden.Id, bed.Id));
+
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     private async Task<Garden> PersistGardenAsync(Guid owner)
