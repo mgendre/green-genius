@@ -1,0 +1,7 @@
+hlm-dialog-content {
+  @apply max-md:w-dialog;
+}
+
+.app-dialog-form {
+  @apply flex flex-col gap-md;
+}

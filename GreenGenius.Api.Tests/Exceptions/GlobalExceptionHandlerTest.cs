@@ -45,6 +45,7 @@ public class GlobalExceptionHandlerTest
         written.HttpContext.ShouldBe(_httpContext);
         written.Exception.ShouldBe(exception);
         written.ProblemDetails.Title.ShouldBe("Resource not found");
+        written.ProblemDetails.Detail.ShouldBe("Garden 42 not found");
     }
 
     [Fact]

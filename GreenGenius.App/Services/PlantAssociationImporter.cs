@@ -72,24 +72,13 @@ public sealed class PlantAssociationImporter(
         {
             var name = Path.GetFileName(path);
             var json = await ReadJsonAsync(path, ct);
-            if (json is not null && IsComplete(json, name))
+            if (json is not null)
             {
                 entries.Add(new AssociationEntry(name, json));
             }
         }
 
         return entries;
-    }
-
-    private bool IsComplete(PlantAssociationJson json, string file)
-    {
-        if (json.PlantA is null || json.PlantB is null || json.Mechanisms is null)
-        {
-            logger.LogWarning("Association {File} skipped: PlantA, PlantB or Mechanisms is null", file);
-            return false;
-        }
-
-        return true;
     }
 
     private async Task<PlantAssociationJson?> ReadJsonAsync(string file, CancellationToken ct)

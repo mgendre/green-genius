@@ -5,7 +5,10 @@ namespace GreenGenius.App.Json;
 
 public static class JsonDefaultsExtensions
 {
-    private static readonly JsonSerializerOptions AppOptions = new JsonSerializerOptions().UseAppJsonDefaults();
+    private static readonly JsonSerializerOptions AppOptions = new JsonSerializerOptions
+    {
+        RespectNullableAnnotations = true
+    }.UseAppJsonDefaults();
 
     public static JsonSerializerOptions UseAppJsonDefaults(this JsonSerializerOptions options)
     {

@@ -25,3 +25,4 @@ Michael Nygard format (Status, Context, Decision, Consequences), one file per de
 | [0018](0018-no-namespace-cycles.md)                           | No namespace cycles                                          | Superseded by 0020 |
 | [0019](0019-owner-query-filters-in-the-db-context.md)         | Owner query filters in the DbContext                         | Accepted           |
 | [0020](0020-no-cycle-between-features-and-namespaces.md)      | No cycle between features and namespaces                     | Accepted           |
+| [0021](0021-shared-happy-path-in-the-test-constructor.md)     | Shared happy path in the test constructor                    | Accepted           |

@@ -67,6 +67,8 @@ public class CurrentUserServiceTest
 ```
 
 - Build the class under test with `new`. A dependency is a `Mock<IDependency>` whose `.Object` goes to the constructor.
+- The happy path that two tests arrange identically goes in the constructor (ADR 0021): readonly fields for its ids,
+  `SaveChanges()` through a context of its own; a test arranges only what differs from it.
 - One behaviour per test. A rule with branches gets one test per branch, named after the condition.
 - No file of the repository, no clock: pass the data in. A database only as the next section says.
 

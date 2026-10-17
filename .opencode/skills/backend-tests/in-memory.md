@@ -39,6 +39,9 @@ public class GardensQueryTest
 }
 ```
 
+- The happy path shared by several tests is built once in the constructor, `SaveChanges()` on a context of its own, its
+  ids in `readonly` fields (ADR 0021); each test then arranges only its difference. Never copy the same `arrange` block
+  into each test.
 - `_databaseName` is a field: xUnit builds the class again for each test, so each test gets an empty database.
 - A new context for each step, on the same name: one to arrange, one for **each** call of the class under test, one to assert. Never `var db = NewDbContext();` kept for the whole test: a context remembers what it loaded, so the test passes where the application, which gets a new context at each start, fails. The plant import passed its tests that way and crashed on the second start with `An item with the same key has already been added`.
 - Usings: `GreenGenius.Common.Data`, `GreenGenius.Common.Data.Entities`, `GreenGenius.Common.Data.Security`, `Microsoft.EntityFrameworkCore`, `Moq`, `Shouldly`.

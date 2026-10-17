@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 
 cd "$(dirname "$0")"
 
 tasksDir=".tasks"
 plansDir=".plans"
 lockFile="$tasksDir/.lock"
-pollSeconds="${POLL_SECONDS:-30}"
+pollSeconds="${POLL_SECONDS:-15}"
 runPid=""
 declare -A setAsidePlans=()
 
@@ -77,7 +77,11 @@ nextPlan() {
 runTask() {
     local name="$1"
     runDispatcher "task $name" "$(cat "$tasksDir/$name")"
-    mv "$tasksDir/$name" "$tasksDir/done_$name"
+    if [[ -f "$tasksDir/$name" ]]; then
+        mv "$tasksDir/$name" "$tasksDir/done_$name"
+    else
+        log "Task $name vanished while it ran"
+    fi
 }
 
 runPlan() {
