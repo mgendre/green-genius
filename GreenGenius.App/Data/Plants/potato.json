@@ -5,9 +5,8 @@
   "Emoji": "🥔",
   "Family": "Solanaceae",
   "LifeCycle": "Annual",
-  "Version": 1,
-  "DaysToMaturity": null,
-  "TemperatureMinC": null,
+  "Version": 2,
+  "FrostToleranceC": -1,
   "Needs": {
     "Sunlight": "High",
     "WaterNeed": "Medium",

@@ -1,6 +1,6 @@
-import { spawnSync } from 'node:child_process';
-import { readdirSync, readFileSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import {spawnSync} from 'node:child_process';
+import {existsSync, readdirSync, readFileSync} from 'node:fs';
+import {join, relative} from 'node:path';
 
 const frontend = join(import.meta.dirname, '..');
 const repository = join(frontend, '..');
@@ -237,6 +237,23 @@ const duplicateKeyProblemsOf = (lines) => {
 
 const duplicateKeyProblems = duplicateKeyProblemsOf(translationLines);
 
+const featureTestProblems = readdirSync(join(app, 'features'), {withFileTypes: true})
+  .filter((entry) => entry.isDirectory())
+  .flatMap((entry) =>
+    [
+      {file: `e2e/${entry.name}.spec.ts`, hint: 'copy e2e/planner.spec.ts, skill e2e-tests'},
+      {
+        file: `e2e/screens/${entry.name}.shots.ts`,
+        hint: 'copy e2e/screens/planner.shots.ts, skill screenshots',
+      },
+    ].map((missing) => ({...missing, feature: entry.name})),
+  )
+  .filter(({file}) => !existsSync(join(frontend, file)))
+  .map(
+    ({file, feature, hint}) =>
+      `${relative(repository, join(frontend, file))}:1  the feature '${feature}' has no such file: ${hint}`,
+  );
+
 const conventions = ourFiles
   .flatMap((file) => {
     const content = readFileSync(file, 'utf8');
@@ -251,7 +268,13 @@ const conventions = ourFiles
           ),
       );
   })
-  .concat(wiringProblems, unsortedKeyProblems, unusedKeyProblems, duplicateKeyProblems)
+  .concat(
+    wiringProblems,
+    unsortedKeyProblems,
+    unusedKeyProblems,
+    duplicateKeyProblems,
+    featureTestProblems,
+  )
   .filter((line, index, lines) => lines.indexOf(line) === index);
 
 const build = spawnSync(join(frontend, 'node_modules/.bin/ng'), ['build'], {

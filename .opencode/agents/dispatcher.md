@@ -98,6 +98,12 @@ permissions:
     resource: "npm run build*"
     effect: allow
   - action: shell
+    resource: "npm run e2e*"
+    effect: allow
+  - action: shell
+    resource: "npm run screens*"
+    effect: allow
+  - action: shell
     resource: "dotnet build*"
     effect: allow
   - action: shell
@@ -393,6 +399,8 @@ A refusal is final: never another spelling, never another tool for the same effe
 
 ```
 npm run check --prefix GreenGenius.Frontend
+npm run e2e --prefix GreenGenius.Frontend 2>&1 | tail -20
+npm run screens --prefix GreenGenius.Frontend 2>&1 | tail -20
 dotnet build GreenGenius.slnx -v q --nologo 2>&1 | tail -20
 dotnet test GreenGenius.slnx --filter GardensApiIntegrationTest 2>&1 | tail -20
 ```
@@ -401,7 +409,11 @@ dotnet test GreenGenius.slnx --filter GardensApiIntegrationTest 2>&1 | tail -20
 3. Read what the task changed, never trust the report alone: `git diff -- <path>` one file at a time, the read tool for a new file (`??`). Compare with every criterion, one read per criterion.
    - Backend: met when a test asserts it and the check ran that test. Find the test by name with the grep tool: a criterion without one is not met.
    - A new migration: an empty `Up`, a second migration for one task, or an `<Entity>Id` column without its `ForeignKey` is a failure.
-   - Frontend: met when you saw the code that makes it true.
+   - Frontend: met when you saw the code that makes it true; for a task naming `e2e-tests`, also when a Playwright test
+     in `GreenGenius.Frontend/e2e/` asserts it and `npm run e2e` passed. For a task naming `screenshots`, you never read
+     an image: a criterion about how the screen looks is met when the developer's report has a `Screens:` line for it
+     (what the developer saw, for desktop and phone) and `npm run screens` ended with `passed`; a missing line or a
+     `not verified` is a failure.
    - A `Fix:` must show in the diff.
 4. Write the plan before anything else, also when the developer returned nothing, in two edits: first the heading (`## 2. [~] …` becomes `## 2. [x] …`, or `[!]`), then its `Result:`, which keeps its `before:` part (`Result: before: <…>; check OK, …`). Before each edit, read the line again with the grep tool on the plan (`^## 2\.` for the heading, `^Result:` for the results) and copy it whole as the text to replace: a line written from memory does not match, and a short piece such as `[~]` or `Result:` matches several tasks. Two tasks with the same `Result:` line: take the `Check:` line above it in the same edit.
 5. Decide:
@@ -438,7 +450,12 @@ A developer that fails on a library component (Spartan, Angular, EF Core) needs 
 
 ### When every task is done
 
-Run the build and the tests of each layer the plan touched, once. A failure goes to a new developer of that layer, box back to `[~]`; after two rounds, stop and report. Then the grep tool on the plan with the pattern `^## .*\[`: every heading must show `[x]`; a `[ ]` or `[~]` is a task you did not close, fix its box first. When everything holds: `Status: done`, then rename the file, the only use of `mv` you have. A plan with a task `[!]` keeps its name.
+Run the build and the tests of each layer the plan touched, once, then
+`npm run e2e --prefix GreenGenius.Frontend 2>&1 | tail -20` for every plan, whatever layer it touched: it must end with
+`passed` and no `failed`. A failure goes to a new developer of that layer, box back to `[~]`; after two rounds, stop and
+report. Then the grep tool on the plan with the pattern `^## .*\[`: every heading must show `[x]`; a `[ ]` or `[~]` is a
+task you did not close, fix its box first. When everything holds: `Status: done`, then rename the file, the only use of
+`mv` you have. A plan with a task `[!]` keeps its name.
 
 ```
 mv .plans/001_add_encyclopedia.md .plans/done_001_add_encyclopedia.md

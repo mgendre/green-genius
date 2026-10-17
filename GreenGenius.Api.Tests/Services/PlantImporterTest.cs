@@ -1,11 +1,10 @@
+using GreenGenius.Api.Tests.Infra;
 using GreenGenius.App.Services;
 using GreenGenius.Common.Data;
 using GreenGenius.Common.Data.Entities;
 using GreenGenius.Common.Data.Enums;
-using GreenGenius.Common.Data.Security;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
-using Moq;
 using Shouldly;
 
 namespace GreenGenius.Api.Tests.Services;
@@ -26,21 +25,22 @@ public class PlantImporterTest
     private static readonly Guid OwnerId = Guid.NewGuid();
     private readonly string _databaseName = Guid.NewGuid().ToString();
 
-    private ApplicationDbContext NewDbContext()
-    {
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(_databaseName)
-            .Options;
-        var currentUser = new Mock<ICurrentUserService>();
-        currentUser.Setup(service => service.GetCurrentUserId()).Returns(OwnerId);
+    private readonly string _directory;
 
-        return new ApplicationDbContext(options, currentUser.Object);
+    public PlantImporterTest()
+    {
+        _directory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(_directory);
     }
+
+    private ApplicationDbContext NewDbContext()
+        => InMemoryDbContextFactory.Create(_databaseName, OwnerId);
 
     [Fact]
     public async Task ImportAsync_WhenMapping_ShouldMapEveryPlantField()
     {
-        await PlantJsonWriter.WriteAsync(_directory, "tomato", CreatePlant("Tomate", "Plante nécessitant beaucoup d'eau", daysToMaturity: 60, temperatureMinC: 10));
+        await WritePlantFileAsync(
+            CreatePlant(descriptionFr: "Plante nécessitant beaucoup d'eau", frostToleranceC: -6), "tomato");
 
         var db = NewDbContext();
         var importer = new PlantImporter(db, NullLogger<PlantImporter>.Instance, _directory);
@@ -60,8 +60,7 @@ public class PlantImporterTest
         plant.BinomialName.ShouldBe("Solanum lycopersicum");
         plant.Family.ShouldBe(PlantFamily.Solanaceae);
         plant.LifeCycle.ShouldBe(PlantLifeCycle.Annual);
-        plant.DaysToMaturity.ShouldBe(60);
-        plant.TemperatureMinC.ShouldBe(10);
+        plant.FrostToleranceC.ShouldBe(-6);
         plant.Version.ShouldBe(1);
         plant.Needs.ShouldNotBeNull();
         plant.Traits.ShouldNotBeNull();
@@ -70,7 +69,7 @@ public class PlantImporterTest
     [Fact]
     public async Task ImportAsync_WhenImportingSameFileTwice_ShouldKeepOnePlant()
     {
-        await PlantJsonWriter.WriteAsync(_directory, "tomato", CreatePlant("Tomate", "Description"));
+        await WritePlantFileAsync(CreatePlant());
 
         var db = NewDbContext();
         var importer = new PlantImporter(db, NullLogger<PlantImporter>.Instance, _directory);
@@ -90,13 +89,13 @@ public class PlantImporterTest
     [Fact]
     public async Task ImportAsync_WhenFileVersionGreaterThanStored_ShouldUpdate()
     {
-        await PlantJsonWriter.WriteAsync(_directory, "tomato", CreatePlant("Tomate", "Ancienne", version: 1));
+        await WritePlantFileAsync(CreatePlant(descriptionFr: "Ancienne"));
 
         var db = NewDbContext();
         var first = new PlantImporter(db, NullLogger<PlantImporter>.Instance, _directory);
         await first.ImportAsync();
 
-        await PlantJsonWriter.WriteAsync(_directory, "tomato", CreatePlant("Tomate", "Nouvelle", version: 2));
+        await WritePlantFileAsync(CreatePlant(descriptionFr: "Nouvelle", version: 2));
 
         var second = new PlantImporter(db, NullLogger<PlantImporter>.Instance, _directory);
         await second.ImportAsync();
@@ -110,13 +109,13 @@ public class PlantImporterTest
     [Fact]
     public async Task ImportAsync_WhenFileVersionNotGreaterThanStored_ShouldNotUpdate()
     {
-        await PlantJsonWriter.WriteAsync(_directory, "tomato", CreatePlant("Tomate", "Ancienne", version: 3));
+        await WritePlantFileAsync(CreatePlant(descriptionFr: "Ancienne", version: 3));
 
         var db = NewDbContext();
         var first = new PlantImporter(db, NullLogger<PlantImporter>.Instance, _directory);
         await first.ImportAsync();
 
-        await PlantJsonWriter.WriteAsync(_directory, "tomato", CreatePlant("Tomate", "Plus ancienne", version: 2));
+        await WritePlantFileAsync(CreatePlant(descriptionFr: "Plus ancienne", version: 2));
 
         var second = new PlantImporter(db, NullLogger<PlantImporter>.Instance, _directory);
         await second.ImportAsync();
@@ -128,14 +127,14 @@ public class PlantImporterTest
     [Fact]
     public async Task ImportAsync_WhenStoredVersionMissing_ShouldCountAsZero()
     {
-        await PlantJsonWriter.WriteAsync(_directory, "tomato", CreatePlant("Tomate", "Ancienne", version: 0));
+        await WritePlantFileAsync(CreatePlant(descriptionFr: "Ancienne", version: 0));
 
         var db = NewDbContext();
         var first = new PlantImporter(db, NullLogger<PlantImporter>.Instance, _directory);
         await first.ImportAsync();
         db.Plants.First().Version.ShouldBe(0);
 
-        await PlantJsonWriter.WriteAsync(_directory, "tomato", CreatePlant("Tomate", "Nouvelle", version: 1));
+        await WritePlantFileAsync(CreatePlant(descriptionFr: "Nouvelle"));
 
         var second = new PlantImporter(db, NullLogger<PlantImporter>.Instance, _directory);
         await second.ImportAsync();
@@ -147,7 +146,7 @@ public class PlantImporterTest
     [Fact]
     public async Task ImportAsync_WhenNeedsAndTraitsMissing_ShouldAlwaysCreateBoth()
     {
-        await PlantJsonWriter.WriteAsync(_directory, "tomato", CreatePlant("Tomate", null, version: 1));
+        await WritePlantFileAsync(CreatePlant(descriptionFr: null), "tomato");
 
         var db = NewDbContext();
         var importer = new PlantImporter(db, NullLogger<PlantImporter>.Instance, _directory);
@@ -168,17 +167,16 @@ public class PlantImporterTest
     [Fact]
     public async Task ImportAsync_WhenReimportingWithHigherVersion_ShouldKeepOneOfEach()
     {
-        await PlantJsonWriter.WriteAsync(_directory, "tomato", CreatePlant("Tomate", "Ancienne", version: 1,
-            sunlight: SunlightLevel.Low, waterNeed: WaterNeedLevel.Low, rootDepth: RootDepthLevel.Shallow,
-            nitrogenFixer: true, dynamicAccumulator: false));
+        await WritePlantFileAsync(CreatePlant(descriptionFr: "Ancienne", nitrogenFixer: true));
 
         var db = NewDbContext();
         var first = new PlantImporter(db, NullLogger<PlantImporter>.Instance, _directory);
         await first.ImportAsync();
 
-        await PlantJsonWriter.WriteAsync(_directory, "tomato", CreatePlant("Tomate", "Nouvelle", version: 2,
-            sunlight: SunlightLevel.Medium, waterNeed: WaterNeedLevel.High, rootDepth: RootDepthLevel.Deep,
-            nitrogenFixer: false, dynamicAccumulator: true));
+        await WritePlantFileAsync(
+            CreatePlant(descriptionFr: "Nouvelle", version: 2,
+                sunlight: SunlightLevel.Medium, waterNeed: WaterNeedLevel.High, dynamicAccumulator: true),
+            "tomato");
 
         var second = new PlantImporter(NewDbContext(), NullLogger<PlantImporter>.Instance, _directory);
         await second.ImportAsync();
@@ -199,7 +197,7 @@ public class PlantImporterTest
     [Fact]
     public async Task ImportAsync_WhenOnePlantFails_ShouldLogAndSaveTheOthers()
     {
-        await PlantJsonWriter.WriteAsync(_directory, "tomato", CreatePlant("Tomate", "Bonne"));
+        await WritePlantFileAsync(CreatePlant(descriptionFr: "Bonne"), "tomato");
         await PlantJsonWriter.WriteAsync(_directory, "broken", "{}");
 
         var db = NewDbContext();
@@ -216,20 +214,14 @@ public class PlantImporterTest
         db2.Plants.FindPlant("broken").ShouldBeNull();
     }
 
-    private readonly string _directory;
-
-    public PlantImporterTest()
-    {
-        _directory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        Directory.CreateDirectory(_directory);
-    }
+    private Task WritePlantFileAsync(PlantJson plant, string fileName = "tomato")
+        => PlantJsonWriter.WriteAsync(_directory, fileName, plant);
 
     private static PlantJson CreatePlant(
-        string nameFr,
-        string? descriptionFr,
+        string nameFr = "Tomate",
+        string? descriptionFr = "Plante nécessitant beaucoup d'eau",
         int? version = 1,
-        int? daysToMaturity = null,
-        int? temperatureMinC = null,
+        int? frostToleranceC = null,
         SunlightLevel sunlight = SunlightLevel.Low,
         WaterNeedLevel waterNeed = WaterNeedLevel.Low,
         RootDepthLevel rootDepth = RootDepthLevel.Shallow,
@@ -243,8 +235,7 @@ public class PlantImporterTest
             BinomialName = "Solanum lycopersicum",
             Family = PlantFamily.Solanaceae,
             LifeCycle = PlantLifeCycle.Annual,
-            DaysToMaturity = daysToMaturity,
-            TemperatureMinC = temperatureMinC,
+            FrostToleranceC = frostToleranceC,
             Version = version,
             Needs = new PlantNeedsJson
             {
@@ -259,5 +250,4 @@ public class PlantImporterTest
             }
         };
     }
-
 }

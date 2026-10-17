@@ -10,16 +10,26 @@ using Microsoft.Extensions.DependencyInjection;
 namespace GreenGenius.App.IntegrationTests.Infra;
 
 [Collection(IntegrationTestsCollection.Name)]
-public abstract class AbstractApiIntegrationTest(
-        IntegrationTestsApplicationFixture integrationFixture)
+public abstract class AbstractApiIntegrationTest(IntegrationTestsApplicationFixture integrationFixture)
     : WebApplicationFactory<Program>,
-    IAsyncLifetime
+        IAsyncLifetime
 {
     protected readonly Guid DefaultCurrentUser = Guid.NewGuid();
+    protected IntegrationTestsApplicationFixture Fixture { get; } = integrationFixture;
+
+    public Task InitializeAsync()
+    {
+        return Fixture.ResetDbAsync();
+    }
+
+    Task IAsyncLifetime.DisposeAsync()
+    {
+        return Task.CompletedTask;
+    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseSetting("ConnectionStrings:DefaultConnection", integrationFixture.GetPostgresContainerConnectionString());
+        builder.UseSetting("ConnectionStrings:DefaultConnection", Fixture.GetPostgresContainerConnectionString());
         builder.UseSetting("PlantsImporterEnabled", "false");
         builder.ConfigureServices(UseMocks);
     }
@@ -36,15 +46,5 @@ public abstract class AbstractApiIntegrationTest(
         using var scope = Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         await action(context);
-    }
-
-    public Task InitializeAsync()
-    {
-        return integrationFixture.ResetDbAsync();
-    }
-
-    Task IAsyncLifetime.DisposeAsync()
-    {
-        return Task.CompletedTask;
     }
 }

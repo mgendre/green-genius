@@ -14,32 +14,18 @@ public class UpdateBedHandler(ApplicationDbContext dbContext) : IApiHandler
 {
     public async Task<Ok<BedDto>> Handle(Guid gardenId, Guid id, UpdateBedDto dto)
     {
-        var bed = await GetBedAsync(gardenId, id);
+        var bed = await dbContext.Beds.GetBedWithPlantsAsync(gardenId, id);
 
         bed.Name = dto.Name;
 
         var plantIds = dto.PlantIds.Distinct().ToArray();
 
         await EnsurePlantsExistAsync(plantIds);
-        await ReplacePlantsAsync(id, plantIds);
+        ApplyPlants(bed, plantIds);
 
         await dbContext.SaveChangesAsync();
 
         return TypedResults.Ok(await GetBedDtoAsync(gardenId, id));
-    }
-
-    private async Task<Bed> GetBedAsync(Guid gardenId, Guid bedId)
-    {
-        var bed = await dbContext.Beds
-            .Where(b => b.Id == bedId && b.GardenId == gardenId)
-            .FirstOrDefaultAsync();
-
-        if (bed is null)
-        {
-            throw new DataNotFoundException($"Bed {bedId} not found in garden {gardenId}");
-        }
-
-        return bed;
     }
 
     private async Task EnsurePlantsExistAsync(Guid[] plantIds)
@@ -50,7 +36,7 @@ public class UpdateBedHandler(ApplicationDbContext dbContext) : IApiHandler
         }
 
         var foundIds = await dbContext.Plants
-            .Where(p => ((IEnumerable<Guid>)plantIds).Contains(p.Id))
+            .Where(p => plantIds.Contains(p.Id))
             .Select(p => p.Id)
             .ToListAsync();
 
@@ -62,23 +48,19 @@ public class UpdateBedHandler(ApplicationDbContext dbContext) : IApiHandler
         }
     }
 
-    private async Task ReplacePlantsAsync(Guid bedId, Guid[] plantIds)
+    private static void ApplyPlants(Bed bed, Guid[] plantIds)
     {
-        var links = await dbContext.BedPlants
-            .Where(bp => bp.BedId == bedId)
-            .ToListAsync();
-
         var requestedPlantIds = plantIds.ToHashSet();
-        var linkedPlantIds = links.Select(link => link.PlantId).ToHashSet();
+        var linkedPlantIds = bed.BedPlants.Select(link => link.PlantId).ToHashSet();
 
-        foreach (var link in links.Where(link => !requestedPlantIds.Contains(link.PlantId)))
+        foreach (var link in bed.BedPlants.Where(link => !requestedPlantIds.Contains(link.PlantId)).ToList())
         {
-            dbContext.BedPlants.Remove(link);
+            bed.BedPlants.Remove(link);
         }
 
         foreach (var plantId in plantIds.Where(plantId => !linkedPlantIds.Contains(plantId)))
         {
-            dbContext.BedPlants.Add(new BedPlant { BedId = bedId, PlantId = plantId });
+            bed.BedPlants.Add(new BedPlant { BedId = bed.Id, PlantId = plantId });
         }
     }
 
@@ -89,7 +71,7 @@ public class UpdateBedHandler(ApplicationDbContext dbContext) : IApiHandler
             .Select(BedsExtensions.AsDto)
             .FirstOrDefaultAsync();
 
-        return bed ?? throw new DataNotFoundException($"Bed {bedId} not found in garden {gardenId}");
+        return bed!;
     }
 }
 

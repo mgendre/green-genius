@@ -1,16 +1,25 @@
 using GreenGenius.Common.Data.Enums;
+using JetBrains.Annotations;
 
 namespace GreenGenius.Api.Features.Plants.Dtos;
 
 public class PlantNeedsDto
 {
-    public SunlightLevel Sunlight { get; set; }
-    public WaterNeedLevel WaterNeed { get; set; }
-    public RootDepthLevel RootDepth { get; set; }
-    public decimal? SoilPhMin { get; set; }
-    public decimal? SoilPhMax { get; set; }
-    public int SpacingRowCm { get; set; }
-    public int SpacingPlantCm { get; set; }
-    public int HeightCm { get; set; }
-    public int SpreadCm { get; set; }
+    [UsedImplicitly] public required SunlightLevel Sunlight { get; set; }
+
+    [UsedImplicitly] public required WaterNeedLevel WaterNeed { get; set; }
+
+    [UsedImplicitly] public required RootDepthLevel RootDepth { get; set; }
+
+    [UsedImplicitly] public decimal? SoilPhMin { get; set; }
+
+    [UsedImplicitly] public decimal? SoilPhMax { get; set; }
+
+    [UsedImplicitly] public required int SpacingRowCm { get; set; }
+
+    [UsedImplicitly] public required int SpacingPlantCm { get; set; }
+
+    [UsedImplicitly] public required int HeightCm { get; set; }
+
+    [UsedImplicitly] public required int SpreadCm { get; set; }
 }

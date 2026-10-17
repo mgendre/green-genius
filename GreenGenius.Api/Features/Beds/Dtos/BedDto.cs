@@ -5,7 +5,7 @@ namespace GreenGenius.Api.Features.Beds.Dtos;
 
 public class BedDto
 {
-    public Guid Id { get; [UsedImplicitly] set; }
+    public required Guid Id { get; [UsedImplicitly] set; }
     public required string Name { get; [UsedImplicitly] set; }
     public required Guid GardenId { get; [UsedImplicitly] set; }
     public required List<PlantSummaryDto> Plants { get; [UsedImplicitly] set; } = [];

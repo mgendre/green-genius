@@ -1,14 +1,18 @@
-using GreenGenius.App.Extensions;
+using GreenGenius.App.Json;
 using GreenGenius.Common.Data;
 using GreenGenius.Common.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace GreenGenius.App.Services;
 
-public sealed class PlantImporter(ApplicationDbContext dbContext, ILogger<PlantImporter> logger, string? plantsDirectory = null)
+public sealed class PlantImporter(
+    ApplicationDbContext dbContext,
+    ILogger<PlantImporter> logger,
+    string? plantsDirectory = null)
 {
-    private readonly string _plantsDirectory = plantsDirectory ?? Environment.GetEnvironmentVariable("GREENGENIUS_PLANTS_DIRECTORY")
-        ?? Path.Combine(AppContext.BaseDirectory, "Data", "Plants");
+    private readonly string _plantsDirectory = plantsDirectory ??
+                                               Environment.GetEnvironmentVariable("GREENGENIUS_PLANTS_DIRECTORY")
+                                               ?? Path.Combine(AppContext.BaseDirectory, "Data", "Plants");
 
     public async Task<int> ImportAsync(CancellationToken ct = default)
     {
@@ -30,6 +34,7 @@ public sealed class PlantImporter(ApplicationDbContext dbContext, ILogger<PlantI
             }
         }
 
+        await dbContext.SaveChangesAsync(ct);
         return imported;
     }
 
@@ -51,46 +56,14 @@ public sealed class PlantImporter(ApplicationDbContext dbContext, ILogger<PlantI
 
         if (plantJson is not null)
         {
-            return await SavePlantAsync(key, plantJson, plants, ct);
+            return ImportOne(key, plantJson, plants);
         }
 
         logger.LogWarning("Plant {Key} skipped: empty or invalid JSON", key);
         return false;
-
     }
 
-    private async Task<bool> SavePlantAsync(string key, PlantJson plantJson, Dictionary<string, Plant> plants, CancellationToken ct)
-    {
-        try
-        {
-            if (!ImportOne(dbContext, plants, key, plantJson))
-            {
-                return false;
-            }
-
-            await dbContext.SaveChangesAsync(ct);
-            return true;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "Plant {Key} failed to import to database", key);
-            DetachFailedPlant(key);
-            return false;
-        }
-    }
-
-    private void DetachFailedPlant(string key)
-    {
-        foreach (var entryInContext in dbContext.ChangeTracker.Entries())
-        {
-            if (entryInContext.Entity is Plant { Key: var plantKey } && plantKey == key)
-            {
-                entryInContext.State = EntityState.Detached;
-            }
-        }
-    }
-
-    private static bool ImportOne(ApplicationDbContext dbContext, Dictionary<string, Plant> plants, string key, PlantJson plantJson)
+    private bool ImportOne(string key, PlantJson plantJson, Dictionary<string, Plant> plants)
     {
         if (!plants.TryGetValue(key, out var plant))
         {
@@ -121,8 +94,7 @@ public sealed class PlantImporter(ApplicationDbContext dbContext, ILogger<PlantI
         plant.Emoji = plantJson.Emoji;
         plant.Family = plantJson.Family;
         plant.LifeCycle = plantJson.LifeCycle;
-        plant.DaysToMaturity = plantJson.DaysToMaturity;
-        plant.TemperatureMinC = plantJson.TemperatureMinC;
+        plant.FrostToleranceC = plantJson.FrostToleranceC;
         plant.Version = plantJson.Version ?? 0;
 
         plant.Needs.Sunlight = plantJson.Needs.Sunlight;

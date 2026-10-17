@@ -18,6 +18,7 @@ dotnet test GreenGenius.slnx --filter <Class>                 # integration test
 dotnet ef migrations add <Name> -p GreenGenius.Common.Data/GreenGenius.Common.Data.csproj -s GreenGenius.App/GreenGenius.App.csproj
 npm run build --prefix GreenGenius.Frontend
 npm run check --prefix GreenGenius.Frontend                   # build without warnings + frontend conventions, prints check: OK
+npm run e2e --prefix GreenGenius.Frontend                     # Playwright tests, API mocked; once: npx --prefix GreenGenius.Frontend playwright install chromium
 ```
 
 The Debug build of `GreenGenius.App` writes `openapi/GreenGenius.App.json` and regenerates the TypeScript client.
@@ -38,5 +39,6 @@ GreenGenius.Frontend               Angular app
 
 ## Quality gate
 
-`.github/workflows/ci.yaml` builds, tests with coverage and runs SonarCloud (`mgendre_green-genius`) on pull requests to `main` and pushes to `main`.
+`.github/workflows/ci.yaml` builds, tests with coverage and runs SonarCloud (`mgendre_green-genius`) on pull requests to
+`main` and pushes to `main`. A second job, `frontend`, runs `npm run check` and the Playwright tests (Chromium only).
 

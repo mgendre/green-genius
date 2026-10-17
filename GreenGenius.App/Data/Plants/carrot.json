@@ -5,9 +5,8 @@
   "Emoji": "🥕",
   "Family": "Apiaceae",
   "LifeCycle": "Biennial",
-  "Version": 1,
-  "DaysToMaturity": null,
-  "TemperatureMinC": null,
+  "Version": 2,
+  "FrostToleranceC": -6,
   "Needs": {
     "Sunlight": "High",
     "WaterNeed": "Medium",

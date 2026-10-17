@@ -70,3 +70,8 @@ CLAUDE.md
 # Dispatcher work plans
 .plans/
 .tasks/
+
+# Playwright
+GreenGenius.Frontend/test-results/
+GreenGenius.Frontend/playwright-report/
+GreenGenius.Frontend/screenshots/

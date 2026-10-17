@@ -1,9 +1,14 @@
+using JetBrains.Annotations;
+
 namespace GreenGenius.Api.Features.Plants.Dtos;
 
 public class PlantTraitsDto
 {
-    public bool NitrogenFixer { get; set; }
-    public bool DynamicAccumulator { get; set; }
-    public bool PollinatorFriendly { get; set; }
-    public bool DroughtTolerant { get; set; }
+    [UsedImplicitly] public required bool NitrogenFixer { get; set; }
+
+    [UsedImplicitly] public required bool DynamicAccumulator { get; set; }
+
+    [UsedImplicitly] public required bool PollinatorFriendly { get; set; }
+
+    [UsedImplicitly] public required bool DroughtTolerant { get; set; }
 }

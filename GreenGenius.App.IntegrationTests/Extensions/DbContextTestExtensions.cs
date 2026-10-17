@@ -8,7 +8,7 @@ public static class DbContextTestExtensions
 {
     extension(ApplicationDbContext dbContext)
     {
-        public async Task<Garden> PersistGardenAsync(string name, Guid ownerId)
+        public async Task<Garden> PersistGardenAsync(Guid ownerId, string name = "MyGarden")
         {
             var garden = new Garden
             {
@@ -18,20 +18,17 @@ public static class DbContextTestExtensions
             };
 
             dbContext.Add(garden);
-        
+
             await dbContext.SaveChangesAsync();
 
             return garden;
         }
 
-        public async Task<Bed> PersistBedAsync(Guid id,
-            Guid gardenId,
-            string name,
-            Guid ownerId)
+        public async Task<Bed> PersistBedAsync(Guid gardenId, Guid ownerId, string name = "MyBed")
         {
             var bed = new Bed
             {
-                Id = id,
+                Id = Guid.NewGuid(),
                 GardenId = gardenId,
                 OwnerId = ownerId,
                 Name = name
@@ -44,13 +41,13 @@ public static class DbContextTestExtensions
             return bed;
         }
 
-        public async Task LinkBedPlantAsync(Guid bedId,
-            Plant plant)
+        public async Task LinkBedPlantAsync(Guid bedId, Plant? plant = null)
         {
+            var linkedPlant = plant ?? await dbContext.PersistPlantAsync();
             var bedPlant = new BedPlant
             {
                 BedId = bedId,
-                PlantId = plant.Id
+                PlantId = linkedPlant.Id
             };
 
             dbContext.Add(bedPlant);
@@ -60,20 +57,29 @@ public static class DbContextTestExtensions
 
         public async Task PersistPlantAssociationAsync(Plant plantA,
             Plant plantB,
-            Polarity polarity = Polarity.Beneficial,
-            Mechanism mechanism = Mechanism.PestDeterrent,
+            Effect effect = Effect.Beneficial,
+            Mechanism[]? mechanisms = null,
             Evidence evidence = Evidence.Established,
             string? noteFr = null)
         {
+            var id = Guid.NewGuid();
             var association = new PlantAssociation
             {
-                Id = Guid.NewGuid(),
+                Id = id,
                 PlantAId = plantA.Id,
                 PlantBId = plantB.Id,
-                Polarity = polarity,
-                Mechanism = mechanism,
+                Effect = effect,
                 Evidence = evidence,
-                NoteFr = noteFr
+                NoteFr = noteFr,
+                Mechanisms =
+                [
+                    .. (mechanisms ?? [Mechanism.PestDeterrent])
+                    .Select(mechanism => new PlantAssociationMechanism
+                    {
+                        PlantAssociationId = id,
+                        Mechanism = mechanism
+                    })
+                ]
             };
 
             dbContext.Add(association);
@@ -81,10 +87,11 @@ public static class DbContextTestExtensions
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task<Plant> PersistPlantAsync(string nameFr,
+        public async Task<Plant> PersistPlantAsync(string nameFr = "Tomate",
             PlantFamily family = PlantFamily.Solanaceae,
             PlantLifeCycle lifeCycle = PlantLifeCycle.Annual,
-            string? binomialName = null)
+            string? binomialName = null,
+            int? frostToleranceC = null)
         {
             var id = Guid.NewGuid();
             var plant = new Plant
@@ -94,6 +101,7 @@ public static class DbContextTestExtensions
                 BinomialName = binomialName,
                 Family = family,
                 LifeCycle = lifeCycle,
+                FrostToleranceC = frostToleranceC,
                 Needs = new PlantNeeds
                 {
                     PlantId = id,

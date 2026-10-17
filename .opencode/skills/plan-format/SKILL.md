@@ -46,19 +46,20 @@ Result:
 ## Notes
 ```
 
-| Line | What it holds |
-|---|---|
-| `Request:` | What the user asked. A plan that follows another has `Follows: .plans/done_<NNN>_<name>.md` under it. |
-| `Status:` | `in progress` when written. |
-| `Existing:` | Two to five facts you read, each starting with the full path of its file. A cause the user gave is copied here as is. |
-| Title | The outcome: what is true for the user or the API once done, then `— backend` or `— frontend`. The box is `[ ]`. |
-| `Skills:` | From the table of `.opencode/skills/task-skills/SKILL.md`, read with the read tool once per plan. Never a name that is not in it, never from memory. |
-| `Where:` | One to three lines: an existing file by its full path with a landmark you read in it, or the folder of a new file. Never a guess, never the name of something to create. |
-| `Criteria:` | Three at most, one behaviour each: a criterion that needs two tests is two criteria. What a person sees, does or receives: a behaviour, a French text as shown, a limit, a status code, a response field. Never the name of a component, class, selector, signal, i18n key, import or method. |
-| `Out of scope:` | What sits next to the task and stays untouched. |
-| `Check:` | Backend `dotnet test GreenGenius.slnx --filter <TestClass> 2>&1 | tail -20`, frontend `npm run check --prefix GreenGenius.Frontend`. |
-| `Result:` | Empty: the dispatcher fills it. |
-| `## Notes` | What no task covers, a question for the user, one line `Decided: …` per decision a developer cannot read in a criterion. |
+| Line                  | What it holds                                                                                                                                                                                                                                                                                 |
+|-----------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Request:`            | What the user asked. A plan that follows another has `Follows: .plans/done_<NNN>_<name>.md` under it.                                                                                                                                                                                         |
+| `Status:`             | `in progress` when written.                                                                                                                                                                                                                                                                   |
+| `Existing:`           | Two to five facts you read, each starting with the full path of its file. A cause the user gave is copied here as is.                                                                                                                                                                         |
+| Title                 | The outcome: what is true for the user or the API once done, then `— backend` or `— frontend`. The box is `[ ]`.                                                                                                                                                                              |
+| `Skills:`             | From the table of `.opencode/skills/task-skills/SKILL.md`, read with the read tool once per plan. Never a name that is not in it, never from memory.                                                                                                                                          |
+| `Where:`              | One to three lines: an existing file by its full path with a landmark you read in it, or the folder of a new file. Never a guess, never the name of something to create.                                                                                                                      |
+| `Criteria:`           | Three at most, one behaviour each: a criterion that needs two tests is two criteria. What a person sees, does or receives: a behaviour, a French text as shown, a limit, a status code, a response field. Never the name of a component, class, selector, signal, i18n key, import or method. |
+| `Criteria:`, new page | A task that creates a page adds the criterion: its `e2e/<feature>.spec.ts` and its `e2e/screens/<feature>.shots.ts` exist and pass. `npm run check` fails without them.                                                                                                                       |
+| `Out of scope:`       | What sits next to the task and stays untouched.                                                                                                                                                                                                                                               |
+| `Check:`              | Backend `dotnet test GreenGenius.slnx --filter <TestClass> 2>&1                                                                                                                                                                                                                               | tail -20`, frontend `npm run check --prefix GreenGenius.Frontend`, and `npm run e2e --prefix GreenGenius.Frontend` on a second `Check:` line when `Skills:` names `e2e-tests`. |
+| `Result:`             | Empty: the dispatcher fills it.                                                                                                                                                                                                                                                               |
+| `## Notes`            | What no task covers, a question for the user, one line `Decided: …` per decision a developer cannot read in a criterion.                                                                                                                                                                      |
 
 A task ends with something a person can check by using the app or calling the API; building a piece and plugging it in is one task. More than three criteria, or two layers: several tasks, backend before frontend.
 

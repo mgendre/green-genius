@@ -1,6 +1,7 @@
 import eslint from '@eslint/js';
 import angular from 'angular-eslint';
-import { defineConfig, globalIgnores } from 'eslint/config';
+import {defineConfig, globalIgnores} from 'eslint/config';
+import playwright from 'eslint-plugin-playwright';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig([
@@ -37,6 +38,11 @@ export default defineConfig([
         { type: 'attribute', prefix: 'app', style: 'camelCase' },
       ],
     },
+  },
+  {
+    files: ['e2e/**/*.ts'],
+    extends: [playwright.configs['flat/recommended']],
+    rules: {'playwright/no-nth-methods': 'error'},
   },
   {
     files: ['**/*.html'],

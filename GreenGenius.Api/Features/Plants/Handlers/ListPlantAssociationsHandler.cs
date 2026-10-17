@@ -19,7 +19,7 @@ public class ListPlantAssociationsHandler(ApplicationDbContext dbContext) : IApi
             .OrderBy(association => association.PlantAId == plantId
                 ? association.PlantB.NameFr
                 : association.PlantA.NameFr)
-            .Select(PlantsExtensions.AsAssociationDto(plantId))
+            .Select(PlantsExtensions.AsAssociationDto)
             .ToListAsync();
 
         return TypedResults.Ok(associations);

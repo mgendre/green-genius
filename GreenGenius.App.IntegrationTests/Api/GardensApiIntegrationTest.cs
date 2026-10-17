@@ -29,10 +29,7 @@ public class GardensApiIntegrationTest(
         result.Value!.Id.ShouldNotBe(Guid.Empty);
         result.Value.Name.ShouldBe(name);
 
-        await ExecuteInScopeAsync(async ctx =>
-        {
-            (await ctx.Gardens.AnyAsync(g => g.Name == name)).ShouldBeTrue();
-        });
+        await ExecuteInScopeAsync(async ctx => { (await ctx.Gardens.AnyAsync(g => g.Name == name)).ShouldBeTrue(); });
     }
 
     [Fact]
@@ -40,9 +37,9 @@ public class GardensApiIntegrationTest(
     {
         await ExecuteInScopeAsync(async ctx =>
         {
-            await ctx.PersistGardenAsync("ZName", DefaultCurrentUser);
-            await ctx.PersistGardenAsync("AName", DefaultCurrentUser);
-            await ctx.PersistGardenAsync("BName", DefaultCurrentUser);
+            await ctx.PersistGardenAsync(DefaultCurrentUser, "ZName");
+            await ctx.PersistGardenAsync(DefaultCurrentUser, "AName");
+            await ctx.PersistGardenAsync(DefaultCurrentUser, "BName");
         });
 
         var gardens = await CreateClient().GetAndReadList<GardenDto>(RouteConstants.Gardens);
@@ -141,10 +138,7 @@ public class GardensApiIntegrationTest(
     private async Task<Garden> PersistGardenAsync(Guid owner)
     {
         Garden garden = null!;
-        await ExecuteInScopeAsync(async ctx =>
-        {
-            garden = await ctx.PersistGardenAsync("MyGarden", owner);
-        });
+        await ExecuteInScopeAsync(async ctx => { garden = await ctx.PersistGardenAsync(owner); });
         return garden;
     }
 

@@ -14,5 +14,4 @@ public class PlantNeeds
     public int SpacingPlantCm { get; set; }
     public int HeightCm { get; set; }
     public int SpreadCm { get; set; }
-    public Plant Plant { get; init; } = null!;
 }

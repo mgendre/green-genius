@@ -10,20 +10,7 @@ public sealed class PlantAssociationConfiguration : IEntityTypeConfiguration<Pla
     {
         builder.ToTable("plant_associations");
 
-        builder.HasKey(association => association.Id);
         builder.Property(association => association.Id).ValueGeneratedNever();
-
-        builder.Property(association => association.Polarity)
-            .HasConversion<string>()
-            .HasMaxLength(EntitiesConstants.ShortTextMaxLength);
-
-        builder.Property(association => association.Mechanism)
-            .HasConversion<string>()
-            .HasMaxLength(EntitiesConstants.ShortTextMaxLength);
-
-        builder.Property(association => association.Evidence)
-            .HasConversion<string>()
-            .HasMaxLength(EntitiesConstants.ShortTextMaxLength);
 
         builder.Property(association => association.NoteFr)
             .HasMaxLength(EntitiesConstants.LongTextMaxLength);
@@ -33,12 +20,10 @@ public sealed class PlantAssociationConfiguration : IEntityTypeConfiguration<Pla
 
         builder.HasOne(association => association.PlantA)
             .WithMany()
-            .HasForeignKey(association => association.PlantAId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(association => association.PlantAId);
 
         builder.HasOne(association => association.PlantB)
             .WithMany()
-            .HasForeignKey(association => association.PlantBId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey(association => association.PlantBId);
     }
 }

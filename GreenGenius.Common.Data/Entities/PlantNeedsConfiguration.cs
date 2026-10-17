@@ -1,5 +1,3 @@
-using GreenGenius.Common.Data.Constants;
-using GreenGenius.Common.Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,18 +10,6 @@ public sealed class PlantNeedsConfiguration : IEntityTypeConfiguration<PlantNeed
         builder.ToTable("plant_needs");
 
         builder.HasKey(needs => needs.PlantId);
-
-        builder.Property(needs => needs.Sunlight)
-            .HasConversion<string>()
-            .HasMaxLength(EntitiesConstants.ShortTextMaxLength);
-
-        builder.Property(needs => needs.WaterNeed)
-            .HasConversion<string>()
-            .HasMaxLength(EntitiesConstants.ShortTextMaxLength);
-
-        builder.Property(needs => needs.RootDepth)
-            .HasConversion<string>()
-            .HasMaxLength(EntitiesConstants.ShortTextMaxLength);
 
         builder.Property(needs => needs.SoilPhMin)
             .HasPrecision(3, 1);

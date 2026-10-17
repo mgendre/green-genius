@@ -15,19 +15,30 @@ public static class PlantsExtensions
         Family = plant.Family
     };
 
-    public static Expression<Func<PlantAssociation, PlantAssociationDto>> AsAssociationDto(Guid plantId) =>
+    public static readonly Expression<Func<PlantAssociation, PlantAssociationDto>> AsAssociationDto =
         association => new PlantAssociationDto
         {
-            Plant = new PlantSummaryDto
+            PlantA = new PlantSummaryDto
             {
-                Id = association.PlantAId == plantId ? association.PlantB.Id : association.PlantA.Id,
-                NameFr = association.PlantAId == plantId ? association.PlantB.NameFr : association.PlantA.NameFr,
-                BinomialName = association.PlantAId == plantId ? association.PlantB.BinomialName : association.PlantA.BinomialName,
-                Emoji = association.PlantAId == plantId ? association.PlantB.Emoji : association.PlantA.Emoji,
-                Family = association.PlantAId == plantId ? association.PlantB.Family : association.PlantA.Family
+                Id = association.PlantA.Id,
+                NameFr = association.PlantA.NameFr,
+                BinomialName = association.PlantA.BinomialName,
+                Emoji = association.PlantA.Emoji,
+                Family = association.PlantA.Family
             },
-            Polarity = association.Polarity,
-            Mechanism = association.Mechanism,
+            PlantB = new PlantSummaryDto
+            {
+                Id = association.PlantB.Id,
+                NameFr = association.PlantB.NameFr,
+                BinomialName = association.PlantB.BinomialName,
+                Emoji = association.PlantB.Emoji,
+                Family = association.PlantB.Family
+            },
+            Effect = association.Effect,
+            Mechanisms = association.Mechanisms
+                .OrderBy(mechanism => mechanism.Mechanism)
+                .Select(mechanism => mechanism.Mechanism)
+                .ToList(),
             Evidence = association.Evidence,
             NoteFr = association.NoteFr
         };
@@ -41,8 +52,7 @@ public static class PlantsExtensions
         DescriptionFr = plant.DescriptionFr,
         Family = plant.Family,
         LifeCycle = plant.LifeCycle,
-        DaysToMaturity = plant.DaysToMaturity,
-        TemperatureMinC = plant.TemperatureMinC,
+        FrostToleranceC = plant.FrostToleranceC,
         Needs = new PlantNeedsDto
         {
             Sunlight = plant.Needs.Sunlight,

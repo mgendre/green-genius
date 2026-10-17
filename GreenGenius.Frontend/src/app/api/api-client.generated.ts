@@ -7,10 +7,10 @@
 /* eslint-disable */
 // ReSharper disable InconsistentNaming
 
-import { mergeMap as _observableMergeMap, catchError as _observableCatch } from 'rxjs/operators';
-import { Observable, throwError as _observableThrow, of as _observableOf } from 'rxjs';
-import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
+import {catchError as _observableCatch, mergeMap as _observableMergeMap} from 'rxjs/operators';
+import {Observable, of as _observableOf, throwError as _observableThrow} from 'rxjs';
+import {Inject, Injectable, InjectionToken, Optional} from '@angular/core';
+import {HttpClient, HttpHeaders, HttpResponse, HttpResponseBase} from '@angular/common/http';
 
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
@@ -543,7 +543,7 @@ export class Client {
     /**
      * @return OK
      */
-    listBedAssociations(gardenId: string, id: string): Observable<BedAssociationDto[]> {
+    listBedAssociations(gardenId: string, id: string): Observable<PlantAssociationDto[]> {
         let url_ = this.baseUrl + "/gardens/{gardenId}/beds/{id}/associations";
         if (gardenId === undefined || gardenId === null)
             throw new globalThis.Error("The parameter 'gardenId' must be defined.");
@@ -568,14 +568,14 @@ export class Client {
                 try {
                     return this.processListBedAssociations(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<BedAssociationDto[]>;
+                  return _observableThrow(e) as any as Observable<PlantAssociationDto[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<BedAssociationDto[]>;
+              return _observableThrow(response_) as any as Observable<PlantAssociationDto[]>;
         }));
     }
 
-    protected processListBedAssociations(response: HttpResponseBase): Observable<BedAssociationDto[]> {
+  protected processListBedAssociations(response: HttpResponseBase): Observable<PlantAssociationDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -585,7 +585,7 @@ export class Client {
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BedAssociationDto[];
+              result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as PlantAssociationDto[];
             return _observableOf(result200);
             }));
         } else if (status === 404) {
@@ -728,19 +728,8 @@ export class Client {
     }
 }
 
-export interface BedAssociationDto {
-    plantA: PlantSummaryDto;
-    plantB: PlantSummaryDto;
-    polarity: Polarity;
-    mechanism: Mechanism;
-    evidence: Evidence;
-    noteFr?: string | undefined;
-
-    [key: string]: any;
-}
-
 export interface BedDto {
-    id?: string;
+  id: string;
     name: string;
     gardenId: string;
     plants: PlantSummaryDto[];
@@ -760,27 +749,44 @@ export interface CreateGardenDto {
     [key: string]: any;
 }
 
+export enum Effect {
+  Beneficial = "Beneficial",
+  Antagonistic = "Antagonistic",
+}
+
 export enum Evidence {
     Established = "Established",
     Limited = "Limited",
 }
 
 export interface GardenDto {
-    id?: string;
+  id: string;
     name: string;
 
     [key: string]: any;
 }
 
 export enum Mechanism {
+  NitrogenFixation = "NitrogenFixation",
     PestDeterrent = "PestDeterrent",
+  TrapCrop = "TrapCrop",
+  PredatorAttraction = "PredatorAttraction",
+  PollinatorAttraction = "PollinatorAttraction",
+  PhysicalSupport = "PhysicalSupport",
+  ShadeOrShelter = "ShadeOrShelter",
+  GroundCover = "GroundCover",
+  RootComplementarity = "RootComplementarity",
+  NutrientAccumulation = "NutrientAccumulation",
     SharedPestOrDisease = "SharedPestOrDisease",
+  Allelopathy = "Allelopathy",
+  ResourceCompetition = "ResourceCompetition",
 }
 
 export interface PlantAssociationDto {
-    plant: PlantSummaryDto;
-    polarity: Polarity;
-    mechanism: Mechanism;
+  plantA: PlantSummaryDto;
+  plantB: PlantSummaryDto;
+  effect: Effect;
+  mechanisms: Mechanism[];
     evidence: Evidence;
     noteFr?: string | undefined;
 
@@ -788,15 +794,14 @@ export interface PlantAssociationDto {
 }
 
 export interface PlantDto {
-    id?: string;
+  id: string;
     nameFr: string;
     binomialName?: string | undefined;
     emoji?: string | undefined;
     descriptionFr?: string | undefined;
-    family?: PlantFamily;
-    lifeCycle?: PlantLifeCycle;
-    daysToMaturity?: number | undefined;
-    temperatureMinC?: number | undefined;
+  family: PlantFamily;
+  lifeCycle: PlantLifeCycle;
+  frostToleranceC?: number | undefined;
     needs: PlantNeedsDto;
     traits: PlantTraitsDto;
 
@@ -826,21 +831,21 @@ export enum PlantLifeCycle {
 }
 
 export interface PlantNeedsDto {
-    sunlight?: SunlightLevel;
-    waterNeed?: WaterNeedLevel;
-    rootDepth?: RootDepthLevel;
+  sunlight: SunlightLevel;
+  waterNeed: WaterNeedLevel;
+  rootDepth: RootDepthLevel;
     soilPhMin?: number | undefined;
     soilPhMax?: number | undefined;
-    spacingRowCm?: number;
-    spacingPlantCm?: number;
-    heightCm?: number;
-    spreadCm?: number;
+  spacingRowCm: number;
+  spacingPlantCm: number;
+  heightCm: number;
+  spreadCm: number;
 
     [key: string]: any;
 }
 
 export interface PlantSummaryDto {
-    id?: string;
+  id: string;
     nameFr: string;
     binomialName?: string | undefined;
     emoji?: string | undefined;
@@ -850,17 +855,12 @@ export interface PlantSummaryDto {
 }
 
 export interface PlantTraitsDto {
-    nitrogenFixer?: boolean;
-    dynamicAccumulator?: boolean;
-    pollinatorFriendly?: boolean;
-    droughtTolerant?: boolean;
+  nitrogenFixer: boolean;
+  dynamicAccumulator: boolean;
+  pollinatorFriendly: boolean;
+  droughtTolerant: boolean;
 
     [key: string]: any;
-}
-
-export enum Polarity {
-    Beneficial = "Beneficial",
-    Antagonistic = "Antagonistic",
 }
 
 export interface ProblemDetails {

@@ -17,6 +17,6 @@ public class GetPlantHandler(ApplicationDbContext dbContext) : IApiHandler
             .Select(PlantsExtensions.AsDto)
             .FirstOrDefaultAsync();
 
-        return plant is null ? throw new DataNotFoundException($"Plant not found") : TypedResults.Ok(plant);
+        return plant is null ? throw new DataNotFoundException($"Plant {id} not found") : TypedResults.Ok(plant);
     }
 }

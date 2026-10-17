@@ -12,8 +12,9 @@ public class PlantAssociation
     public Guid PlantBId { get; init; }
     public Plant PlantB { get; init; } = null!;
 
-    public Polarity Polarity { get; set; }
-    public Mechanism Mechanism { get; set; }
+    public Effect Effect { get; set; }
     public Evidence Evidence { get; set; }
     public string? NoteFr { get; set; }
+
+    public List<PlantAssociationMechanism> Mechanisms { get; init; } = [];
 }

@@ -72,6 +72,12 @@ permissions:
     resource: "npm run check*"
     effect: allow
   - action: shell
+    resource: "npm run e2e*"
+    effect: allow
+  - action: shell
+    resource: "npm run screens*"
+    effect: allow
+  - action: shell
     resource: "npm ci --prefix GreenGenius.Frontend*"
     effect: allow
   - action: shell
@@ -268,6 +274,12 @@ permissions:
     effect: allow
   - action: skill
     resource: "loading-state"
+    effect: allow
+  - action: skill
+    resource: "e2e-tests"
+    effect: allow
+  - action: skill
+    resource: "screenshots"
     effect: allow
   - action: skill
     resource: "signal-store"
@@ -476,10 +488,17 @@ Write in English. Only the texts shown in the app are French.
 ## Loop
 
 1. The task is `Implement task <n> of .plans/<NNN>_<name>.md` (read that file, do task `<n>` only) or a direct brief.
-2. First step, with the read tool: `GreenGenius.Frontend/AGENTS.md`, `.opencode/skills/adr/SKILL.md` and the ADRs it points to, each skill of the `Skills:` line at `.opencode/skills/<name>/SKILL.md`, and the files under `Where:` and `Existing:`. `Where:` is where the work starts: do not search for another place. A direct brief: the skills whose name fits, among `signal-form`, `signal-store`, `scss-styling`, `i18n-fr`, `ui-quality`, `spartan`, `spartan-dialog`, `spartan-alert-dialog`, `spartan-combobox`, `spartan-select`, `spartan-toast`, `feature-routes`, `loading-state`.
+2. First step, with the read tool: `GreenGenius.Frontend/AGENTS.md`, `.opencode/skills/adr/SKILL.md` and the ADRs it
+   points to, each skill of the `Skills:` line at `.opencode/skills/<name>/SKILL.md`, and the files under `Where:` and
+   `Existing:`. `Where:` is where the work starts: do not search for another place. A direct brief: the skills whose
+   name fits, among `signal-form`, `signal-store`, `scss-styling`, `i18n-fr`, `ui-quality`, `spartan`, `spartan-dialog`,
+   `spartan-alert-dialog`, `spartan-combobox`, `spartan-select`, `spartan-toast`, `feature-routes`, `loading-state`,
+   `e2e-tests`, `screenshots`.
 3. `Fix:` is a verified change: apply it first, character for character, without testing it. `Help:` is what an earlier try left: follow its order, do not redo what it lists as done.
 4. Take the criteria in order, the smallest change for each, names and imports copied from the skill. When your memory and the skill disagree, the skill is right.
-5. Run the check, fix its first line, run it again until `check: OK`.
+5. Run the check, fix its first line, run it again until `check: OK`. When the `Skills:` line names `e2e-tests`, then
+   run `npm run e2e --prefix GreenGenius.Frontend` until it ends with `passed` and no `failed`. When it names
+   `screenshots`, then follow that skill: look at the PNG, fix, and report one `Screens:` line per image.
 6. `check: OK` and the criteria hold: report and stop. No further reading, no next task, no improvement nobody asked for.
 
 ## The check
@@ -490,12 +509,22 @@ npm run check --prefix GreenGenius.Frontend
 
 It is the build, the project's own rules, then ESLint, and the only verdict. Each line it prints is `file:line  what to do`: do exactly that; after `check: OK` never undo a change. The same line failing after three tries: stop and report it.
 
+A Playwright test that fails is fixed like a check line: the test when it is wrong, the app when it is wrong, never
+`playwright.config.ts`, `e2e/api-mock.ts` or `e2e/fixtures.ts`. A browser error the test reports is always fixed in the
+app code.
+
 Fix the code, never the rule: no `eslint-disable` comment, no `any`, no deleting the code that fails, no change to `eslint.config.mjs`, to a `tsconfig` file or to `angular.json`. A budget or a limit the check prints is never raised: when your code is not its cause, write the line under `Not done`.
 
 ## Tools
 
 - Files: `read`, `glob`, `grep`, `edit`, `write`. A file the task does not give by its full path is found with `glob` first (`GreenGenius.Frontend/src/**/plant-needs*`), then read: never build a path from a name, never read a folder. `File not found` means the path is wrong: `glob` the name, do not try another folder.
-- Shell, these and no other, one command per call (no `&&`, `;`, `cd`, no pipe but `2>&1 | tail`): the check, `git status --short`, `git diff -- <path>`, `ls <path>`, `cat <path>`, `node GreenGenius.Frontend/scripts/sortkeys.mjs` after adding keys to `fr.json`, `npm run ui --prefix GreenGenius.Frontend -- --name=<component>` for a missing Spartan component, `npm ci --prefix GreenGenius.Frontend` when `node_modules` is missing or out of date (a missing package is never installed: stop and report it), `mkdir -p <path>` and `rm <path>` for one folder or one file of yours under `GreenGenius.Frontend/`.
+- Shell, these and no other, one command per call (no `&&`, `;`, `cd`, no pipe but `2>&1 | tail`): the check,
+  `npm run e2e --prefix GreenGenius.Frontend`, `npm run screens --prefix GreenGenius.Frontend`, `git status --short`,
+  `git diff -- <path>`, `ls <path>`, `cat <path>`, `node GreenGenius.Frontend/scripts/sortkeys.mjs` after adding keys to
+  `fr.json`, `npm run ui --prefix GreenGenius.Frontend -- --name=<component>` for a missing Spartan component,
+  `npm ci --prefix GreenGenius.Frontend` when `node_modules` is missing or out of date (a missing package is never
+  installed: stop and report it), `mkdir -p <path>` and `rm <path>` for one folder or one file of yours under
+  `GreenGenius.Frontend/`.
 - Refused by the tool: editing the plan, `angular.json`, `shared/spartan/helm/` and the generated API client; reading `helm/` except `index.ts`. A route missing in the client goes under `Not done`: the backend comes first.
 - A refusal is final: never the command again, never another spelling, never another file of the same folder. Write it under `Not done` and go on. The same command twice with the same result is a loop: stop and report.
 

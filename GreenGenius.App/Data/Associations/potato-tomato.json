@@ -1,8 +1,10 @@
 {
   "PlantA": "potato",
   "PlantB": "tomato",
-  "Polarity": "Antagonistic",
-  "Mechanism": "SharedPestOrDisease",
+  "Effect": "Antagonistic",
+  "Mechanisms": [
+    "SharedPestOrDisease"
+  ],
   "Evidence": "Established",
   "NoteFr": "La tomate et la pomme de terre partagent le mildiou, qui passe facilement de l’une à l’autre : cultivez-les dans des planches éloignées."
 }

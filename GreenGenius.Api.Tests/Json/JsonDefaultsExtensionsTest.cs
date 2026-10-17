@@ -1,30 +1,20 @@
 using System.Text.Json;
-using GreenGenius.App.Extensions;
+using GreenGenius.App.Json;
 using GreenGenius.Common.Data.Enums;
 using Shouldly;
 
-namespace GreenGenius.Api.Tests.Extensions;
+namespace GreenGenius.Api.Tests.Json;
 
 public class JsonDefaultsExtensionsTest
 {
+    private static readonly JsonSerializerOptions AppOptions = new JsonSerializerOptions().UseAppJsonDefaults();
+
     [Fact]
     public void UseAppJsonDefaults_ShouldWriteEnumAsAString()
     {
-        var options = new JsonSerializerOptions().UseAppJsonDefaults();
-
-        var json = JsonSerializer.Serialize(PlantFamily.Solanaceae, options);
+        var json = JsonSerializer.Serialize(PlantFamily.Solanaceae, AppOptions);
 
         json.ShouldBe("\"Solanaceae\"");
-    }
-
-    [Fact]
-    public void UseAppJsonDefaults_ShouldNotWriteEnumAsAString()
-    {
-        var options = new JsonSerializerOptions();
-
-        var json = JsonSerializer.Serialize(PlantFamily.Solanaceae, options);
-
-        json.ShouldNotBe("\"Solanaceae\"");
     }
 
     [Fact]

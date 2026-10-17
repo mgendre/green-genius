@@ -1,3 +1,4 @@
+using GreenGenius.Common.Data.Constants;
 using GreenGenius.Common.Data.Entities;
 using GreenGenius.Common.Data.Security;
 using Microsoft.EntityFrameworkCore;
@@ -19,15 +20,25 @@ public class ApplicationDbContext(
     // EF re-evaluates a global query filter per query only when it reads a member of the DbContext instance
     public Guid CurrentUserId => currentUserService.GetCurrentUserId();
 
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        configurationBuilder.Properties<Enum>()
+            .HaveConversion<string>()
+            .HaveMaxLength(EntitiesConstants.ShortTextMaxLength);
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.ApplyConfiguration(new BedConfiguration(this));
-        modelBuilder.ApplyConfiguration(new BedPlantConfiguration(this));
-        modelBuilder.ApplyConfiguration(new GardenConfiguration(this));
-        modelBuilder.ApplyConfiguration(new PlantConfiguration());
-        modelBuilder.ApplyConfiguration(new PlantAssociationConfiguration());
-        modelBuilder.ApplyConfiguration(new PlantNeedsConfiguration());
-        modelBuilder.ApplyConfiguration(new PlantTraitsConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+
+        ApplyOwnerQueryFilters(modelBuilder);
+    }
+
+    private void ApplyOwnerQueryFilters(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Garden>().HasQueryFilter(garden => garden.OwnerId == CurrentUserId);
+        modelBuilder.Entity<Bed>().HasQueryFilter(bed => bed.OwnerId == CurrentUserId);
+        modelBuilder.Entity<BedPlant>().HasQueryFilter(bedPlant => bedPlant.Bed.OwnerId == CurrentUserId);
     }
 }

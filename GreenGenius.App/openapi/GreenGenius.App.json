@@ -374,7 +374,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/BedAssociationDto"
+                    "$ref": "#/components/schemas/PlantAssociationDto"
                   }
                 }
               }
@@ -497,41 +497,9 @@
   },
   "components": {
     "schemas": {
-      "BedAssociationDto": {
-        "required": [
-          "plantA",
-          "plantB",
-          "polarity",
-          "mechanism",
-          "evidence"
-        ],
-        "type": "object",
-        "properties": {
-          "plantA": {
-            "$ref": "#/components/schemas/PlantSummaryDto"
-          },
-          "plantB": {
-            "$ref": "#/components/schemas/PlantSummaryDto"
-          },
-          "polarity": {
-            "$ref": "#/components/schemas/Polarity"
-          },
-          "mechanism": {
-            "$ref": "#/components/schemas/Mechanism"
-          },
-          "evidence": {
-            "$ref": "#/components/schemas/Evidence"
-          },
-          "noteFr": {
-            "type": [
-              "null",
-              "string"
-            ]
-          }
-        }
-      },
       "BedDto": {
         "required": [
+          "id",
           "name",
           "gardenId",
           "plants"
@@ -579,6 +547,12 @@
           }
         }
       },
+      "Effect": {
+        "enum": [
+          "Beneficial",
+          "Antagonistic"
+        ]
+      },
       "Evidence": {
         "enum": [
           "Established",
@@ -587,6 +561,7 @@
       },
       "GardenDto": {
         "required": [
+          "id",
           "name"
         ],
         "type": "object",
@@ -602,27 +577,45 @@
       },
       "Mechanism": {
         "enum": [
+          "NitrogenFixation",
           "PestDeterrent",
-          "SharedPestOrDisease"
+          "TrapCrop",
+          "PredatorAttraction",
+          "PollinatorAttraction",
+          "PhysicalSupport",
+          "ShadeOrShelter",
+          "GroundCover",
+          "RootComplementarity",
+          "NutrientAccumulation",
+          "SharedPestOrDisease",
+          "Allelopathy",
+          "ResourceCompetition"
         ]
       },
       "PlantAssociationDto": {
         "required": [
-          "plant",
-          "polarity",
-          "mechanism",
+          "plantA",
+          "plantB",
+          "effect",
+          "mechanisms",
           "evidence"
         ],
         "type": "object",
         "properties": {
-          "plant": {
+          "plantA": {
             "$ref": "#/components/schemas/PlantSummaryDto"
           },
-          "polarity": {
-            "$ref": "#/components/schemas/Polarity"
+          "plantB": {
+            "$ref": "#/components/schemas/PlantSummaryDto"
           },
-          "mechanism": {
-            "$ref": "#/components/schemas/Mechanism"
+          "effect": {
+            "$ref": "#/components/schemas/Effect"
+          },
+          "mechanisms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Mechanism"
+            }
           },
           "evidence": {
             "$ref": "#/components/schemas/Evidence"
@@ -637,7 +630,10 @@
       },
       "PlantDto": {
         "required": [
+          "id",
           "nameFr",
+          "family",
+          "lifeCycle",
           "needs",
           "traits"
         ],
@@ -674,16 +670,7 @@
           "lifeCycle": {
             "$ref": "#/components/schemas/PlantLifeCycle"
           },
-          "daysToMaturity": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "null",
-              "integer",
-              "string"
-            ],
-            "format": "int32"
-          },
-          "temperatureMinC": {
+          "frostToleranceC": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "null",
@@ -725,6 +712,15 @@
         ]
       },
       "PlantNeedsDto": {
+        "required": [
+          "sunlight",
+          "waterNeed",
+          "rootDepth",
+          "spacingRowCm",
+          "spacingPlantCm",
+          "heightCm",
+          "spreadCm"
+        ],
         "type": "object",
         "properties": {
           "sunlight": {
@@ -790,6 +786,7 @@
       },
       "PlantSummaryDto": {
         "required": [
+          "id",
           "nameFr",
           "family"
         ],
@@ -820,6 +817,12 @@
         }
       },
       "PlantTraitsDto": {
+        "required": [
+          "nitrogenFixer",
+          "dynamicAccumulator",
+          "pollinatorFriendly",
+          "droughtTolerant"
+        ],
         "type": "object",
         "properties": {
           "nitrogenFixer": {
@@ -835,12 +838,6 @@
             "type": "boolean"
           }
         }
-      },
-      "Polarity": {
-        "enum": [
-          "Beneficial",
-          "Antagonistic"
-        ]
       },
       "ProblemDetails": {
         "type": "object",

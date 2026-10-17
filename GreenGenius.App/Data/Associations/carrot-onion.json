@@ -1,8 +1,10 @@
 {
   "PlantA": "carrot",
   "PlantB": "onion",
-  "Polarity": "Beneficial",
-  "Mechanism": "PestDeterrent",
+  "Effect": "Beneficial",
+  "Mechanisms": [
+    "PestDeterrent"
+  ],
   "Evidence": "Limited",
   "NoteFr": "L’oignon masque l’odeur de la carotte à la mouche de la carotte, mais seulement avec environ quatre rangs d’oignon pour un rang de carotte et tant que l’oignon est en pleine feuille."
 }

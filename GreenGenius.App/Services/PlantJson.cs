@@ -11,8 +11,7 @@ public sealed class PlantJson
     public string? Emoji { get; [UsedImplicitly] init; }
     public required PlantFamily Family { get; [UsedImplicitly] init; }
     public PlantLifeCycle LifeCycle { get; [UsedImplicitly] init; }
-    public int? DaysToMaturity { get; [UsedImplicitly] init; }
-    public int? TemperatureMinC { get; [UsedImplicitly] init; }
+    public int? FrostToleranceC { get; [UsedImplicitly] init; }
     public int? Version { get; [UsedImplicitly] init; }
     public required PlantNeedsJson Needs { get; [UsedImplicitly] init; }
     public required PlantTraitsJson Traits { get; [UsedImplicitly] init; }

@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace GreenGenius.App.Extensions;
+namespace GreenGenius.App.Json;
 
 public static class JsonDefaultsExtensions
 {

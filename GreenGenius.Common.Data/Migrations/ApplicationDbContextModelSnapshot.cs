@@ -89,9 +89,6 @@ namespace GreenGenius.Common.Data.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("character varying(250)");
 
-                    b.Property<int?>("DaysToMaturity")
-                        .HasColumnType("integer");
-
                     b.Property<string>("DescriptionFr")
                         .HasMaxLength(4000)
                         .HasColumnType("character varying(4000)");
@@ -104,6 +101,10 @@ namespace GreenGenius.Common.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<int?>("FrostToleranceC")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Relational:OldColumnName", "TemperatureMinC");
 
                     b.Property<string>("Key")
                         .HasMaxLength(250)
@@ -119,9 +120,6 @@ namespace GreenGenius.Common.Data.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("character varying(250)");
 
-                    b.Property<int?>("TemperatureMinC")
-                        .HasColumnType("integer");
-
                     b.Property<int>("Version")
                         .HasColumnType("integer");
 
@@ -131,6 +129,55 @@ namespace GreenGenius.Common.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("plants", (string)null);
+                });
+
+            modelBuilder.Entity("GreenGenius.Common.Data.Entities.PlantAssociation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Effect")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Evidence")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("NoteFr")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<Guid>("PlantAId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PlantBId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlantBId");
+
+                    b.HasIndex("PlantAId", "PlantBId")
+                        .IsUnique();
+
+                    b.ToTable("plant_associations", (string)null);
+                });
+
+            modelBuilder.Entity("GreenGenius.Common.Data.Entities.PlantAssociationMechanism", b =>
+                {
+                    b.Property<Guid>("PlantAssociationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Mechanism")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("PlantAssociationId", "Mechanism");
+
+                    b.ToTable("plant_association_mechanisms", (string)null);
                 });
 
             modelBuilder.Entity("GreenGenius.Common.Data.Entities.PlantNeeds", b =>
@@ -228,6 +275,36 @@ namespace GreenGenius.Common.Data.Migrations
                     b.Navigation("Plant");
                 });
 
+            modelBuilder.Entity("GreenGenius.Common.Data.Entities.PlantAssociation", b =>
+                {
+                    b.HasOne("GreenGenius.Common.Data.Entities.Plant", "PlantA")
+                        .WithMany()
+                        .HasForeignKey("PlantAId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GreenGenius.Common.Data.Entities.Plant", "PlantB")
+                        .WithMany()
+                        .HasForeignKey("PlantBId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PlantA");
+
+                    b.Navigation("PlantB");
+                });
+
+            modelBuilder.Entity("GreenGenius.Common.Data.Entities.PlantAssociationMechanism", b =>
+                {
+                    b.HasOne("GreenGenius.Common.Data.Entities.PlantAssociation", "PlantAssociation")
+                        .WithMany("Mechanisms")
+                        .HasForeignKey("PlantAssociationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PlantAssociation");
+                });
+
             modelBuilder.Entity("GreenGenius.Common.Data.Entities.PlantNeeds", b =>
                 {
                     b.HasOne("GreenGenius.Common.Data.Entities.Plant", "Plant")
@@ -262,6 +339,11 @@ namespace GreenGenius.Common.Data.Migrations
 
                     b.Navigation("Traits")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("GreenGenius.Common.Data.Entities.PlantAssociation", b =>
+                {
+                    b.Navigation("Mechanisms");
                 });
 #pragma warning restore 612, 618
         }

@@ -7,5 +7,4 @@ public class PlantTraits
     public bool DynamicAccumulator { get; set; }
     public bool PollinatorFriendly { get; set; }
     public bool DroughtTolerant { get; set; }
-    public Plant Plant { get; init; } = null!;
 }

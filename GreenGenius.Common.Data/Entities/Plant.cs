@@ -12,8 +12,7 @@ public class Plant
     public string? Emoji { get; set; }
     public PlantFamily Family { get; set; }
     public PlantLifeCycle LifeCycle { get; set; }
-    public int? DaysToMaturity { get; set; }
-    public int? TemperatureMinC { get; set; }
+    public int? FrostToleranceC { get; set; }
     public int Version { get; set; }
     public required PlantNeeds Needs { get; init; }
     public required PlantTraits Traits { get; init; }

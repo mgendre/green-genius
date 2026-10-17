@@ -10,13 +10,5 @@ public sealed class PlantTraitsConfiguration : IEntityTypeConfiguration<PlantTra
         builder.ToTable("plant_traits");
 
         builder.HasKey(traits => traits.PlantId);
-
-        builder.Property(traits => traits.NitrogenFixer);
-
-        builder.Property(traits => traits.DynamicAccumulator);
-
-        builder.Property(traits => traits.PollinatorFriendly);
-
-        builder.Property(traits => traits.DroughtTolerant);
     }
 }

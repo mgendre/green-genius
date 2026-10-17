@@ -83,8 +83,8 @@ public class BedsApiIntegrationTest(
     public async Task ListBeds_ShouldReturnBedsOfGardenSortedByName()
     {
         var garden = await PersistGardenAsync(DefaultCurrentUser);
-        await PersistBedAsync(garden.Id, "ZBed", DefaultCurrentUser);
-        await PersistBedAsync(garden.Id, "ABed", DefaultCurrentUser);
+        await PersistBedAsync(garden.Id, DefaultCurrentUser, "ZBed");
+        await PersistBedAsync(garden.Id, DefaultCurrentUser, "ABed");
 
         var beds = await CreateClient().GetAndReadList<BedDto>(
             GetBedsUrl(garden.Id));
@@ -120,12 +120,9 @@ public class BedsApiIntegrationTest(
     public async Task ListBeds_ShouldIncludePlantsOfBeds()
     {
         var garden = await PersistGardenAsync(DefaultCurrentUser);
-        var bed = await PersistBedAsync(garden.Id, "MyBed", DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, DefaultCurrentUser);
 
-        await ExecuteInScopeAsync(async ctx =>
-        {
-            await ctx.LinkBedPlantAsync(bed.Id, await ctx.PersistPlantAsync("Tomate"));
-        });
+        await ExecuteInScopeAsync(async ctx => { await ctx.LinkBedPlantAsync(bed.Id); });
 
         var beds = await CreateClient().GetAndReadList<BedDto>(
             GetBedsUrl(garden.Id));
@@ -139,14 +136,14 @@ public class BedsApiIntegrationTest(
     public async Task UpdateBed_ShouldRenameAndReplacePlants()
     {
         var garden = await PersistGardenAsync(DefaultCurrentUser);
-        var bed = await PersistBedAsync(garden.Id, "OldName", DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, DefaultCurrentUser);
 
         Plant? plante = null;
         Plant? tomate = null;
         await ExecuteInScopeAsync(async ctx =>
         {
-            plante = await ctx.PersistPlantAsync("PlanteA");
-            tomate = await ctx.PersistPlantAsync("Tomate");
+            plante = await ctx.PersistPlantAsync();
+            tomate = await ctx.PersistPlantAsync();
         });
 
         var result = await CreateClient().PutAndRead<BedDto, UpdateBedDto>(
@@ -166,7 +163,7 @@ public class BedsApiIntegrationTest(
     public async Task UpdateBed_WhenPlantsReplaced_ShouldReturnTheNewPlantsSortedByName()
     {
         var garden = await PersistGardenAsync(DefaultCurrentUser);
-        var bed = await PersistBedAsync(garden.Id, "MyBed", DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, DefaultCurrentUser);
 
         Plant alpha = null!;
         Plant bravo = null!;
@@ -211,16 +208,12 @@ public class BedsApiIntegrationTest(
     public async Task UpdateBed_WhenPlantIdsEmpty_ShouldRemoveEveryPlant()
     {
         var garden = await PersistGardenAsync(DefaultCurrentUser);
-        var bed = await PersistBedAsync(garden.Id, "MyBed", DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, DefaultCurrentUser);
 
-        Plant alpha;
-        Plant bravo;
         await ExecuteInScopeAsync(async ctx =>
         {
-            alpha = await ctx.PersistPlantAsync("Alpha");
-            bravo = await ctx.PersistPlantAsync("Bravo");
-            await ctx.LinkBedPlantAsync(bed.Id, alpha);
-            await ctx.LinkBedPlantAsync(bed.Id, bravo);
+            await ctx.LinkBedPlantAsync(bed.Id);
+            await ctx.LinkBedPlantAsync(bed.Id);
         });
 
         var result = await CreateClient().PutAndRead<BedDto, UpdateBedDto>(
@@ -260,7 +253,7 @@ public class BedsApiIntegrationTest(
     {
         var otherOwner = Guid.NewGuid();
         var otherGarden = await PersistGardenAsync(otherOwner);
-        var bed = await PersistBedAsync(otherGarden.Id, "OldName", otherOwner);
+        var bed = await PersistBedAsync(otherGarden.Id, otherOwner, "OldName");
 
         var response = await CreateClient().PutAsJsonAsync(
             GetBedUrl(otherGarden.Id, bed.Id),
@@ -280,7 +273,7 @@ public class BedsApiIntegrationTest(
     {
         var myGarden = await PersistGardenAsync(DefaultCurrentUser);
         var otherGardenOfMine = await PersistGardenAsync(DefaultCurrentUser);
-        var bed = await PersistBedAsync(myGarden.Id, "OldName", DefaultCurrentUser);
+        var bed = await PersistBedAsync(myGarden.Id, DefaultCurrentUser, "OldName");
 
         var response = await CreateClient().PutAsJsonAsync(
             GetBedUrl(otherGardenOfMine.Id, bed.Id),
@@ -300,7 +293,7 @@ public class BedsApiIntegrationTest(
     public async Task UpdateBed_WhenPlantIdNotFound_ShouldBeNotFound()
     {
         var garden = await PersistGardenAsync(DefaultCurrentUser);
-        var bed = await PersistBedAsync(garden.Id, "OldName", DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, DefaultCurrentUser);
 
         var response = await CreateClient().PutAsJsonAsync(
             GetBedUrl(garden.Id, bed.Id),
@@ -313,13 +306,10 @@ public class BedsApiIntegrationTest(
     public async Task UpdateBed_WhenPlantIdsContainDuplicates_ShouldReturnUniquePlants()
     {
         var garden = await PersistGardenAsync(DefaultCurrentUser);
-        var bed = await PersistBedAsync(garden.Id, "MyBed", DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, DefaultCurrentUser);
 
         Plant plante = null!;
-        await ExecuteInScopeAsync(async ctx =>
-        {
-            plante = await ctx.PersistPlantAsync("PlanteA");
-        });
+        await ExecuteInScopeAsync(async ctx => { plante = await ctx.PersistPlantAsync(); });
 
         var result = await CreateClient().PutAndRead<BedDto, UpdateBedDto>(
             GetBedUrl(garden.Id, bed.Id), new UpdateBedDto
@@ -338,17 +328,11 @@ public class BedsApiIntegrationTest(
     public async Task DeleteBed_ShouldRemoveBedAndLinks()
     {
         var garden = await PersistGardenAsync(DefaultCurrentUser);
-        var bed = await PersistBedAsync(garden.Id, "ToDelete", DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, DefaultCurrentUser);
 
         Plant plant = null!;
-        await ExecuteInScopeAsync(async ctx =>
-        {
-            plant = await ctx.PersistPlantAsync("Tomate");
-        });
-        await ExecuteInScopeAsync(async ctx =>
-        {
-            await ctx.LinkBedPlantAsync(bed.Id, plant);
-        });
+        await ExecuteInScopeAsync(async ctx => { plant = await ctx.PersistPlantAsync(); });
+        await ExecuteInScopeAsync(async ctx => { await ctx.LinkBedPlantAsync(bed.Id, plant); });
 
         var response = await CreateClient().DeleteAsync(
             GetBedUrl(garden.Id, bed.Id));
@@ -366,10 +350,7 @@ public class BedsApiIntegrationTest(
             (await ctx.Beds.CountAsync(b => b.GardenId == garden.Id)).ShouldBe(0);
         });
 
-        await ExecuteInScopeAsync(async ctx =>
-        {
-            (await ctx.Plants.AnyAsync(p => p.Id == plant.Id)).ShouldBeTrue();
-        });
+        await ExecuteInScopeAsync(async ctx => { (await ctx.Plants.AnyAsync(p => p.Id == plant.Id)).ShouldBeTrue(); });
     }
 
     [Fact]
@@ -387,7 +368,7 @@ public class BedsApiIntegrationTest(
     {
         var otherOwner = Guid.NewGuid();
         var otherGarden = await PersistGardenAsync(otherOwner);
-        var bed = await PersistBedAsync(otherGarden.Id, "ToDelete", otherOwner);
+        var bed = await PersistBedAsync(otherGarden.Id, otherOwner);
 
         var response = await CreateClient().DeleteAsync(
             GetBedUrl(otherGarden.Id, bed.Id));
@@ -405,24 +386,21 @@ public class BedsApiIntegrationTest(
     {
         var myGarden = await PersistGardenAsync(DefaultCurrentUser);
         var otherGardenOfMine = await PersistGardenAsync(DefaultCurrentUser);
-        var bed = await PersistBedAsync(myGarden.Id, "ToKeep", DefaultCurrentUser);
+        var bed = await PersistBedAsync(myGarden.Id, DefaultCurrentUser);
 
         var response = await CreateClient().DeleteAsync(
             GetBedUrl(otherGardenOfMine.Id, bed.Id));
 
         response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 
-        await ExecuteInScopeAsync(async ctx =>
-        {
-            (await ctx.Beds.AnyAsync(b => b.Id == bed.Id)).ShouldBeTrue();
-        });
+        await ExecuteInScopeAsync(async ctx => { (await ctx.Beds.AnyAsync(b => b.Id == bed.Id)).ShouldBeTrue(); });
     }
 
     [Fact]
     public async Task DeleteGarden_ShouldCascadeDeleteBeds()
     {
         var garden = await PersistGardenAsync(DefaultCurrentUser);
-        await PersistBedAsync(garden.Id, "TestBed", DefaultCurrentUser);
+        await PersistBedAsync(garden.Id, DefaultCurrentUser);
 
         var response = await CreateClient().DeleteAsync(
             RouteConstants.Gardens + "/" + garden.Id);
@@ -440,15 +418,15 @@ public class BedsApiIntegrationTest(
     {
         var myGarden = await PersistGardenAsync(DefaultCurrentUser);
         var otherGarden = await PersistGardenAsync(Guid.NewGuid());
-        var myBed = await PersistBedAsync(myGarden.Id, "MyBed", DefaultCurrentUser);
-        var otherBed = await PersistBedAsync(otherGarden.Id, "OtherBed", Guid.NewGuid());
+        var myBed = await PersistBedAsync(myGarden.Id, DefaultCurrentUser);
+        var otherBed = await PersistBedAsync(otherGarden.Id, Guid.NewGuid());
 
         Plant myPlant = null!;
         Plant otherPlant = null!;
         await ExecuteInScopeAsync(async ctx =>
         {
-            myPlant = await ctx.PersistPlantAsync("MyPlant");
-            otherPlant = await ctx.PersistPlantAsync("OtherPlant");
+            myPlant = await ctx.PersistPlantAsync();
+            otherPlant = await ctx.PersistPlantAsync();
             await ctx.LinkBedPlantAsync(myBed.Id, myPlant);
             await ctx.LinkBedPlantAsync(otherBed.Id, otherPlant);
         });
@@ -470,24 +448,23 @@ public class BedsApiIntegrationTest(
     public async Task ListBedAssociations_ShouldReturnPairsOfTheBed()
     {
         var garden = await PersistGardenAsync(DefaultCurrentUser);
-        var bed = await PersistBedAsync(garden.Id, "MyBed", DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, DefaultCurrentUser);
 
         var tomatoId = Guid.Empty;
         var garlicId = Guid.Empty;
         await ExecuteInScopeAsync(async ctx =>
         {
-            var tomato = await ctx.PersistPlantAsync("Tomate");
+            var tomato = await ctx.PersistPlantAsync();
             var garlic = await ctx.PersistPlantAsync("Ail", family: PlantFamily.Amaryllidaceae);
             tomatoId = tomato.Id;
             garlicId = garlic.Id;
             await ctx.LinkBedPlantAsync(bed.Id, tomato);
             await ctx.LinkBedPlantAsync(bed.Id, garlic);
             await ctx.PersistPlantAssociationAsync(tomato, garlic,
-                polarity: Polarity.Beneficial, mechanism: Mechanism.PestDeterrent,
                 evidence: Evidence.Limited, noteFr: "note-ail");
         });
 
-        var associations = await CreateClient().GetAndReadList<BedAssociationDto>(
+        var associations = await CreateClient().GetAndReadList<PlantAssociationDto>(
             GetBedAssociationsUrl(garden.Id, bed.Id));
 
         associations.Count.ShouldBe(1);
@@ -497,8 +474,8 @@ public class BedsApiIntegrationTest(
         association.PlantB.Id.ShouldBe(garlicId);
         association.PlantB.NameFr.ShouldBe("Ail");
         association.PlantB.Family.ShouldBe(PlantFamily.Amaryllidaceae);
-        association.Polarity.ShouldBe(Polarity.Beneficial);
-        association.Mechanism.ShouldBe(Mechanism.PestDeterrent);
+        association.Effect.ShouldBe(Effect.Beneficial);
+        association.Mechanisms.ShouldBe([Mechanism.PestDeterrent]);
         association.Evidence.ShouldBe(Evidence.Limited);
         association.NoteFr.ShouldBe("note-ail");
     }
@@ -507,20 +484,20 @@ public class BedsApiIntegrationTest(
     public async Task ListBedAssociations_WhenAssociationHasAPlantOutsideTheBed_ShouldExcludeIt()
     {
         var garden = await PersistGardenAsync(DefaultCurrentUser);
-        var bed = await PersistBedAsync(garden.Id, "MyBed", DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, DefaultCurrentUser);
 
         await ExecuteInScopeAsync(async ctx =>
         {
-            var tomato = await ctx.PersistPlantAsync("Tomate");
+            var tomato = await ctx.PersistPlantAsync();
             var garlic = await ctx.PersistPlantAsync("Ail");
-            var zucchini = await ctx.PersistPlantAsync("Courgette");
+            var zucchini = await ctx.PersistPlantAsync();
             await ctx.LinkBedPlantAsync(bed.Id, tomato);
             await ctx.LinkBedPlantAsync(bed.Id, garlic);
             await ctx.PersistPlantAssociationAsync(tomato, zucchini);
             await ctx.PersistPlantAssociationAsync(tomato, garlic);
         });
 
-        var associations = await CreateClient().GetAndReadList<BedAssociationDto>(
+        var associations = await CreateClient().GetAndReadList<PlantAssociationDto>(
             GetBedAssociationsUrl(garden.Id, bed.Id));
 
         associations.Count.ShouldBe(1);
@@ -528,10 +505,10 @@ public class BedsApiIntegrationTest(
     }
 
     [Fact]
-    public async Task ListBedAssociations_WhenMixedPolarity_ShouldListAntagonisticFirst()
+    public async Task ListBedAssociations_WhenMixedEffect_ShouldListAntagonisticFirst()
     {
         var garden = await PersistGardenAsync(DefaultCurrentUser);
-        var bed = await PersistBedAsync(garden.Id, "MyBed", DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, DefaultCurrentUser);
 
         await ExecuteInScopeAsync(async ctx =>
         {
@@ -541,39 +518,56 @@ public class BedsApiIntegrationTest(
             await ctx.LinkBedPlantAsync(bed.Id, alpha);
             await ctx.LinkBedPlantAsync(bed.Id, bravo);
             await ctx.LinkBedPlantAsync(bed.Id, charlie);
-            await ctx.PersistPlantAssociationAsync(alpha, bravo, polarity: Polarity.Beneficial);
-            await ctx.PersistPlantAssociationAsync(alpha, charlie, polarity: Polarity.Antagonistic);
+            await ctx.PersistPlantAssociationAsync(alpha, bravo);
+            await ctx.PersistPlantAssociationAsync(alpha, charlie, effect: Effect.Antagonistic);
         });
 
-        var associations = await CreateClient().GetAndReadList<BedAssociationDto>(
+        var associations = await CreateClient().GetAndReadList<PlantAssociationDto>(
             GetBedAssociationsUrl(garden.Id, bed.Id));
 
         associations.Count.ShouldBe(2);
-        associations[0].Polarity.ShouldBe(Polarity.Antagonistic);
+        associations[0].Effect.ShouldBe(Effect.Antagonistic);
         associations[0].PlantB.NameFr.ShouldBe("Charlie");
-        associations[1].Polarity.ShouldBe(Polarity.Beneficial);
+        associations[1].Effect.ShouldBe(Effect.Beneficial);
         associations[1].PlantB.NameFr.ShouldBe("Bravo");
+    }
+
+    [Fact]
+    public async Task ListBedAssociations_ShouldListMechanismsSortedByName()
+    {
+        var garden = await PersistGardenAsync(DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, DefaultCurrentUser);
+
+        await ExecuteInScopeAsync(async ctx =>
+        {
+            var tomato = await ctx.PersistPlantAsync();
+            var garlic = await ctx.PersistPlantAsync();
+            await ctx.LinkBedPlantAsync(bed.Id, tomato);
+            await ctx.LinkBedPlantAsync(bed.Id, garlic);
+            await ctx.PersistPlantAssociationAsync(tomato, garlic,
+                mechanisms: [Mechanism.NutrientAccumulation, Mechanism.Allelopathy, Mechanism.GroundCover]);
+        });
+
+        var associations = await CreateClient().GetAndReadList<PlantAssociationDto>(
+            GetBedAssociationsUrl(garden.Id, bed.Id));
+
+        associations.Single().Mechanisms
+            .ShouldBe([Mechanism.Allelopathy, Mechanism.GroundCover, Mechanism.NutrientAccumulation]);
     }
 
     [Fact]
     public async Task ListBedAssociations_WhenBedHoldsNoAssociatedPair_ShouldReturnEmptyList()
     {
         var garden = await PersistGardenAsync(DefaultCurrentUser);
-        var bed = await PersistBedAsync(garden.Id, "MyBed", DefaultCurrentUser);
+        var bed = await PersistBedAsync(garden.Id, DefaultCurrentUser);
 
-        await ExecuteInScopeAsync(async ctx =>
-        {
-            var tomato = await ctx.PersistPlantAsync("Tomate");
-            await ctx.LinkBedPlantAsync(bed.Id, tomato);
-        });
+        await ExecuteInScopeAsync(async ctx => { await ctx.LinkBedPlantAsync(bed.Id); });
 
-        var response = await CreateClient().GetAsync(GetBedAssociationsUrl(garden.Id, bed.Id));
-        response.StatusCode.ShouldBe(HttpStatusCode.OK);
-
-        var associations = await CreateClient().GetAndReadList<BedAssociationDto>(
+        var result = await CreateClient().GetAndRead<List<PlantAssociationDto>>(
             GetBedAssociationsUrl(garden.Id, bed.Id));
 
-        associations.ShouldBeEmpty();
+        result.Response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        result.Value!.ShouldBeEmpty();
     }
 
     [Fact]
@@ -589,7 +583,7 @@ public class BedsApiIntegrationTest(
     public async Task ListBedAssociations_WhenGardenNotOwned_ShouldBeNotFound()
     {
         var garden = await PersistGardenAsync(Guid.NewGuid());
-        var bed = await PersistBedAsync(garden.Id, "OtherBed", garden.OwnerId);
+        var bed = await PersistBedAsync(garden.Id, garden.OwnerId);
 
         var response = await CreateClient().GetAsync(GetBedAssociationsUrl(garden.Id, bed.Id));
 
@@ -612,7 +606,7 @@ public class BedsApiIntegrationTest(
     {
         var myGarden = await PersistGardenAsync(DefaultCurrentUser);
         var otherGardenOfMine = await PersistGardenAsync(DefaultCurrentUser);
-        var bed = await PersistBedAsync(myGarden.Id, "MyBed", DefaultCurrentUser);
+        var bed = await PersistBedAsync(myGarden.Id, DefaultCurrentUser);
 
         var response = await CreateClient().GetAsync(
             GetBedAssociationsUrl(otherGardenOfMine.Id, bed.Id));
@@ -625,7 +619,7 @@ public class BedsApiIntegrationTest(
     {
         var otherOwner = Guid.NewGuid();
         var otherGarden = await PersistGardenAsync(otherOwner);
-        var bed = await PersistBedAsync(otherGarden.Id, "OtherBed", otherOwner);
+        var bed = await PersistBedAsync(otherGarden.Id, otherOwner);
 
         var response = await CreateClient().GetAsync(
             GetBedAssociationsUrl(otherGarden.Id, bed.Id));
@@ -636,19 +630,18 @@ public class BedsApiIntegrationTest(
     private async Task<Garden> PersistGardenAsync(Guid owner)
     {
         Garden garden = null!;
-        await ExecuteInScopeAsync(async ctx =>
-        {
-            garden = await ctx.PersistGardenAsync("MyGarden", owner);
-        });
+        await ExecuteInScopeAsync(async ctx => { garden = await ctx.PersistGardenAsync(owner); });
         return garden;
     }
 
-    private async Task<Bed> PersistBedAsync(Guid gardenId, string name, Guid ownerId)
+    private async Task<Bed> PersistBedAsync(Guid gardenId, Guid ownerId, string? name = null)
     {
         Bed bed = null!;
         await ExecuteInScopeAsync(async ctx =>
         {
-            bed = await ctx.PersistBedAsync(Guid.NewGuid(), gardenId, name, ownerId);
+            bed = name is null
+                ? await ctx.PersistBedAsync(gardenId, ownerId)
+                : await ctx.PersistBedAsync(gardenId, ownerId, name);
         });
         return bed;
     }

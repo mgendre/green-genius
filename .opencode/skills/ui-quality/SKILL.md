@@ -57,6 +57,10 @@ A view that handles only content is not finished. Check all four in the template
 
 ## Accessibility
 
+Out of scope for now (decided by the user): accessibility. No axe or ARIA-snapshot test, no task criterion, no review
+finding and no new rule about it. The conventions already in the code and the Angular accessibility lint stay as they
+are.
+
 - Colour never carries a meaning alone: a status has an icon or a text too (the badges do).
 - Keep the focus ring: never `outline-none` without `focus-visible:` replacement.
 - Headings in order (one `h1` per page, then `h2`); a landmark per region (`nav`, `main`).

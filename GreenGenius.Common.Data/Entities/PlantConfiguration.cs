@@ -1,5 +1,4 @@
 using GreenGenius.Common.Data.Constants;
-using GreenGenius.Common.Data.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,7 +10,6 @@ public sealed class PlantConfiguration : IEntityTypeConfiguration<Plant>
     {
         builder.ToTable("plants");
 
-        builder.HasKey(plant => plant.Id);
         builder.Property(plant => plant.Id).ValueGeneratedNever();
 
         builder.Property(plant => plant.NameFr)
@@ -31,26 +29,12 @@ public sealed class PlantConfiguration : IEntityTypeConfiguration<Plant>
         builder.Property(plant => plant.Emoji)
             .HasMaxLength(4);
 
-        builder.Property(plant => plant.Family)
-            .HasConversion<string>()
-            .HasMaxLength(EntitiesConstants.ShortTextMaxLength);
-
-        builder.Property(plant => plant.LifeCycle)
-            .HasConversion<string>()
-            .HasMaxLength(EntitiesConstants.ShortTextMaxLength);
-
         builder.HasOne(plant => plant.Needs)
-            .WithOne(needs => needs.Plant)
-            .HasForeignKey<PlantNeeds>(needs => needs.PlantId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Navigation(plant => plant.Needs);
+            .WithOne()
+            .HasForeignKey<PlantNeeds>(needs => needs.PlantId);
 
         builder.HasOne(plant => plant.Traits)
-            .WithOne(traits => traits.Plant)
-            .HasForeignKey<PlantTraits>(traits => traits.PlantId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Navigation(plant => plant.Traits);
+            .WithOne()
+            .HasForeignKey<PlantTraits>(traits => traits.PlantId);
     }
 }

@@ -1,6 +1,6 @@
 namespace GreenGenius.Common.Data.Enums;
 
-public enum Polarity
+public enum Effect
 {
     Beneficial,
     Antagonistic

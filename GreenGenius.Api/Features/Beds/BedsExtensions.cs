@@ -2,6 +2,8 @@ using System.Linq.Expressions;
 using GreenGenius.Api.Features.Beds.Dtos;
 using GreenGenius.Api.Features.Plants.Dtos;
 using GreenGenius.Common.Data.Entities;
+using GreenGenius.Common.Data.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace GreenGenius.Api.Features.Beds;
 
@@ -25,35 +27,48 @@ public static class BedsExtensions
             .ToList()
     };
 
-    public static readonly Expression<Func<PlantAssociation, BedAssociationDto>> AsAssociationDto =
-        association => new BedAssociationDto
-        {
-            PlantA = new PlantSummaryDto
-            {
-                Id = association.PlantA.Id,
-                NameFr = association.PlantA.NameFr,
-                BinomialName = association.PlantA.BinomialName,
-                Emoji = association.PlantA.Emoji,
-                Family = association.PlantA.Family
-            },
-            PlantB = new PlantSummaryDto
-            {
-                Id = association.PlantB.Id,
-                NameFr = association.PlantB.NameFr,
-                BinomialName = association.PlantB.BinomialName,
-                Emoji = association.PlantB.Emoji,
-                Family = association.PlantB.Family
-            },
-            Polarity = association.Polarity,
-            Mechanism = association.Mechanism,
-            Evidence = association.Evidence,
-            NoteFr = association.NoteFr
-        };
-
     private static readonly Func<Bed, BedDto> AsDtoCompiled = AsDto.Compile();
 
     public static BedDto ToDto(this Bed bed)
     {
         return AsDtoCompiled(bed);
+    }
+
+    extension(DbSet<Bed> beds)
+    {
+        public async Task<Bed> GetBedWithPlantsAsync(Guid gardenId, Guid bedId)
+        {
+            var bed = await beds
+                .Include(bed => bed.BedPlants)
+                .Where(bed => bed.Id == bedId && bed.GardenId == gardenId)
+                .FirstOrDefaultAsync();
+
+            return bed ?? throw BedNotFound(gardenId, bedId);
+        }
+
+        public async Task<Bed> GetBedWithoutPlantsAsync(Guid gardenId, Guid bedId)
+        {
+            var bed = await beds
+                .Where(bed => bed.Id == bedId && bed.GardenId == gardenId)
+                .FirstOrDefaultAsync();
+
+            return bed ?? throw BedNotFound(gardenId, bedId);
+        }
+
+        public async Task ThrowWhenBedMissingAsync(Guid gardenId, Guid bedId)
+        {
+            var present = await beds
+                .AnyAsync(bed => bed.Id == bedId && bed.GardenId == gardenId);
+
+            if (!present)
+            {
+                throw BedNotFound(gardenId, bedId);
+            }
+        }
+    }
+
+    private static DataNotFoundException BedNotFound(Guid gardenId, Guid bedId)
+    {
+        return new DataNotFoundException($"Bed {bedId} not found in garden {gardenId}");
     }
 }
